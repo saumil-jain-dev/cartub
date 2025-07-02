@@ -17,6 +17,7 @@ return new class extends Migration
             $table->datetime('job_start_time')->nullable()->after('scheduled_time');
             $table->datetime('job_end_time')->nullable()->after('job_start_time');
             $table->integer('job_duration')->nullable()->after('job_end_time'); // duration in minutes
+            $table->text('cleaner_note')->nullable()->after('status'); // Cleaner note after job completion
         });
         
         // Modify ENUM column to include new value
@@ -30,7 +31,7 @@ return new class extends Migration
     {
         //
         Schema::table('bookings', function (Blueprint $table) {
-            $table->dropColumn(['job_start_time', 'job_end_time', 'job_duration']);
+            $table->dropColumn(['job_start_time', 'job_end_time', 'job_duration','cleaner_note']);
         });
         // Revert ENUM to previous values
         DB::statement("ALTER TABLE bookings MODIFY COLUMN status ENUM('pending', 'accepted', 'in_progress', 'completed', 'cancelled') DEFAULT 'pending'");
