@@ -144,7 +144,7 @@ class UpdateBookingStatusRequest extends FormRequest
                 }
             
                 if ($booking->status != 'in_progress') {
-                    $validator->errors()->add('booking_id', 'Booking must be marked as arrived before starting the job.');
+                    $validator->errors()->add('booking_id', 'Booking must be marked as in progress before starting the job.');
                 }
                 if (!$after_image) {
                     $validator->errors()->add('after_image', 'After image is required when complete the booking.');

@@ -100,6 +100,22 @@ class BookingService {
                     break;
                 case 'complete':
                     $booking->status = 'completed';
+                    $booking->cleaner_note = $request->input('cleaner_note', null);
+                    $after_image = [];
+                    if($request->hasFile('after_image')){
+                        $after_image = uploadMultipleImages($request->file('after_image'), 'job_image/'.$booking->id).'/after';
+                        
+                    }
+                    if($after_image) {
+                        foreach ($after_image as $image) {
+                            BookingPhoto::create([
+                                'booking_id' => $booking->id,
+                                'photo_path' => $image,
+                                'photo_type' => 'after',
+                                'photo_taken_at' => Carbon::now(),
+                            ]);
+                        }
+                    }
                     break;
                 case 'cancel':
                     $booking->status = 'pending';
@@ -108,6 +124,7 @@ class BookingService {
                         'booking_id' => $booking->id,
                         'cleaner_id' => Auth::id(),
                     ]);
+                    
                     break;
                 default:
                     throw new Exception('Invalid action.');
