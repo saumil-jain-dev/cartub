@@ -104,4 +104,14 @@ class AuthenticationController extends Controller
             return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
         }
     }
+
+    public function getDashboardData(Request $request)
+    {
+        try {
+            $dashboardData = $this->authService->getDashboardData($request);
+            return success($dashboardData, trans('messages.update',['attribute' => 'Profile']), config('code.SUCCESS_CODE'));
+        } catch (Exception $e) {
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+    }
 }

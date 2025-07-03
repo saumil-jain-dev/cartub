@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Api\Customer;
+namespace App\Http\Resources\Api\Cleaner;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -14,7 +14,6 @@ class BookingDetailsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-    
         return [
             'id' => $this->id,
             'booking_number' => $this->booking_number,
