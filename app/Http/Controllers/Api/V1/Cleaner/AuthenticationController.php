@@ -7,6 +7,7 @@ use App\Http\Requests\Api\Cleaner\LoginRequest;
 use App\Http\Requests\Api\Cleaner\MarkNotificationReadRequest;
 use App\Http\Requests\Api\Cleaner\ProfileUpdateRequest;
 use App\Http\Requests\Api\Cleaner\RegisterRequest;
+use App\Http\Requests\Api\Cleaner\UpdateLocationRequest;
 use App\Http\Resources\Api\Cleaner\NotificationListResource;
 use App\Http\Resources\Api\Cleaner\RegisterResource;
 use App\Http\Resources\Api\Cleaner\UserResource;
@@ -100,6 +101,29 @@ class AuthenticationController extends Controller
         try {
             $markNotification = $this->authService->markNotificationAsRead($request);
             return success([], trans('messages.update',['attribute' => 'Notification']), config('code.SUCCESS_CODE'));
+        } catch (Exception $e) {
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+    }
+
+    public function getDashboardData(Request $request)
+    {
+        try {
+            $dashboardData = $this->authService->getDashboardData($request);
+            return success($dashboardData, trans('messages.update',['attribute' => 'Profile']), config('code.SUCCESS_CODE'));
+        } catch (Exception $e) {
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+    }
+
+    public function updateLocation(UpdateLocationRequest $request)
+    {
+        try {
+            $updateLocation = $this->authService->updateLocation($request);
+            return success(
+                $updateLocation,trans('messages.update', ['attribute' => 'Location']),
+                config('code.SUCCESS_CODE')
+            );
         } catch (Exception $e) {
             return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
         }

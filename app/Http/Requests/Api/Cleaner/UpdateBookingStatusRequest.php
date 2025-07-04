@@ -138,7 +138,7 @@ class UpdateBookingStatusRequest extends FormRequest
                 }
             }
 
-            if ($action == 'completed') {
+            if ($action == 'complete') {
                 if ($booking->cleaner_id != $userId) {
                     $validator->errors()->add('booking_id', 'This booking is not assigned to you.');
                 }

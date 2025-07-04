@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\BookingCancellation;
 use App\Models\BookingPhoto;
 use App\Models\CleanerEarning;
+use App\Models\CleanerLocation;
 use App\Models\Coupon;
 use App\Models\Payment;
 use App\Models\Rating;
@@ -41,7 +42,7 @@ class BookingService {
             $bookingId = $request->input('booking_id');
             $booking = Booking::with(['customer', 'cleaner', 'vehicle', 'washType', 'service','beforePhoto', 'afterPhoto','rating', 'tip','cleaner_location'])
                 ->where('id', $bookingId)
-                ->where('customer_id', Auth::id())
+                ->where('cleaner_id', Auth::id())
                 ->first();
 
             if (!$booking) {
@@ -77,12 +78,12 @@ class BookingService {
                 case 'start_job':
                     $booking->status = 'in_progress';
                     $booking->job_start_time = Carbon::now();
-                    $before_image = [];
+                    
                     if($request->hasFile('before_image')){
-                        $before_image = uploadMultipleImages($request->file('before_image'), 'job_image/'.$booking->id).'/before';
+                        $before_image = uploadMultipleImages($request->file('before_image'), 'job_image/'.$booking->id.'/before') ?? [];
                         
                     }
-                    if($before_image) {
+                    if(isset($before_image) && $before_image) {
                         foreach ($before_image as $image) {
                             BookingPhoto::create([
                                 'booking_id' => $booking->id,
@@ -101,12 +102,12 @@ class BookingService {
                 case 'complete':
                     $booking->status = 'completed';
                     $booking->cleaner_note = $request->input('cleaner_note', null);
-                    $after_image = [];
+                    
                     if($request->hasFile('after_image')){
-                        $after_image = uploadMultipleImages($request->file('after_image'), 'job_image/'.$booking->id).'/after';
+                        $after_image = uploadMultipleImages($request->file('after_image'), 'job_image/'.$booking->id.'/after');
                         
                     }
-                    if($after_image) {
+                    if(isset($after_image) && $after_image) {
                         foreach ($after_image as $image) {
                             BookingPhoto::create([
                                 'booking_id' => $booking->id,
@@ -116,6 +117,14 @@ class BookingService {
                             ]);
                         }
                     }
+
+                    $cleanerEarnings = new CleanerEarning();
+                    $cleanerEarnings->cleaner_id = $booking->cleaner_id;
+                    $cleanerEarnings->booking_id = $booking->id;
+                    $cleanerEarnings->amount = $booking->total_amount;
+                    $cleanerEarnings->earned_on = Carbon::now();
+                    $cleanerEarnings->save();
+
                     break;
                 case 'cancel':
                     $booking->status = 'pending';
@@ -136,6 +145,23 @@ class BookingService {
         } catch (Exception $e) {
             DB::rollBack();
             throw new Exception('Error updating booking status: ' . $e->getMessage());
+        }
+    }
+
+    public function getBookingsList($request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $query = Booking::with(['vehicle','service','washType'])->where('cleaner_id', Auth::id())->where('status', "!=",'pending');
+
+            if ($request->has('booking_date')) {
+                $bookingDate = Carbon::parse($request->input('booking_date'));
+                $query->whereDate('created_at', $bookingDate);
+            }
+
+            return $query->orderBy('id', 'desc')->paginate($perPage)->withQueryString();
+        } catch (Exception $e) {
+            throw new Exception('Error listing bookings: ' . $e->getMessage());
         }
     }
 

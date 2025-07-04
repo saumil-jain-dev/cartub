@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api\Cleaner;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Cleaner\BookingDetailsRequest;
 use App\Http\Requests\Api\Cleaner\UpdateBookingStatusRequest;
+use App\Http\Requests\Api\Cleaner\UpdateLocationRequest;
+use App\Http\Resources\Api\Cleaner\BookingDetailsResource;
 use App\Http\Resources\Api\Cleaner\BookingListResource;
 use Illuminate\Http\Request;
 use App\Services\Api\Cleaner\BookingService;
@@ -41,6 +44,40 @@ class BookingController extends Controller
                 return success(
                     $request->all(),
                     trans('messages.update', ['attribute' => 'Booking']),
+                    config('code.SUCCESS_CODE')
+                );
+            }
+        } catch(Exception $e){
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+    }
+
+    public function bookingDetails(BookingDetailsRequest $request)
+    {
+        try {
+            $booking = $this->bookingService->bookingDetails($request);
+            if($booking){
+                return success(
+                    new BookingDetailsResource($booking),
+                    trans('messages.view', ['attribute' => 'Booking']),
+                    config('code.SUCCESS_CODE')
+                );
+            } else {
+                return fail([], trans('messages.not_found', ['attribute' => 'Booking']), config('code.NO_RECORD_CODE'));
+            }
+        } catch (Exception $e) {
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+    }
+
+    public function getBookingsList(Request $request)
+    {
+        try {
+            $bookings = $this->bookingService->getBookingsList($request);
+            if($bookings){
+                return success(
+                    pagination(BookingListResource::class, $bookings),
+                    trans('messages.list', ['attribute' => 'Booking']),
                     config('code.SUCCESS_CODE')
                 );
             }
