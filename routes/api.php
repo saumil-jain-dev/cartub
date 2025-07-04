@@ -71,6 +71,7 @@ Route::prefix('v1')->group(function () {
             Route::controller(CleanerAuthenticationController::class)->group(function () {
 
                 Route::post('dashboard','getDashboardData');
+                Route::post('update-location','updateLocation');
                 Route::get('profile','profile');
                 Route::post('profile/update','updateProfile');
                 Route::post('logout','logout');
@@ -82,6 +83,7 @@ Route::prefix('v1')->group(function () {
             Route::controller(CleanerBookingController::class)->group(function () {
                 Route::prefix('booking')->group(function () {
                     Route::post('assign-list', 'assignBookingList');
+                    Route::post('list', 'getBookingsList');
                     Route::post('actions', 'updateBookingStatus');
                     Route::post('details', 'bookingDetails');
                 });

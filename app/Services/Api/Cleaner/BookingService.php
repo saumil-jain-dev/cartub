@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\BookingCancellation;
 use App\Models\BookingPhoto;
 use App\Models\CleanerEarning;
+use App\Models\CleanerLocation;
 use App\Models\Coupon;
 use App\Models\Payment;
 use App\Models\Rating;
@@ -144,6 +145,23 @@ class BookingService {
         } catch (Exception $e) {
             DB::rollBack();
             throw new Exception('Error updating booking status: ' . $e->getMessage());
+        }
+    }
+
+    public function getBookingsList($request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $query = Booking::with(['vehicle','service','washType'])->where('cleaner_id', Auth::id())->where('status', "!=",'pending');
+
+            if ($request->has('booking_date')) {
+                $bookingDate = Carbon::parse($request->input('booking_date'));
+                $query->whereDate('created_at', $bookingDate);
+            }
+
+            return $query->orderBy('id', 'desc')->paginate($perPage)->withQueryString();
+        } catch (Exception $e) {
+            throw new Exception('Error listing bookings: ' . $e->getMessage());
         }
     }
 

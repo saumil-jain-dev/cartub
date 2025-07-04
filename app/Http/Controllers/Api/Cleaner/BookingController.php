@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Cleaner;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Cleaner\BookingDetailsRequest;
 use App\Http\Requests\Api\Cleaner\UpdateBookingStatusRequest;
+use App\Http\Requests\Api\Cleaner\UpdateLocationRequest;
 use App\Http\Resources\Api\Cleaner\BookingDetailsResource;
 use App\Http\Resources\Api\Cleaner\BookingListResource;
 use Illuminate\Http\Request;
@@ -65,6 +66,22 @@ class BookingController extends Controller
                 return fail([], trans('messages.not_found', ['attribute' => 'Booking']), config('code.NO_RECORD_CODE'));
             }
         } catch (Exception $e) {
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+    }
+
+    public function getBookingsList(Request $request)
+    {
+        try {
+            $bookings = $this->bookingService->getBookingsList($request);
+            if($bookings){
+                return success(
+                    pagination(BookingListResource::class, $bookings),
+                    trans('messages.list', ['attribute' => 'Booking']),
+                    config('code.SUCCESS_CODE')
+                );
+            }
+        } catch(Exception $e){
             return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
         }
     }

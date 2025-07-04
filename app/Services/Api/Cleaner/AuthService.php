@@ -7,6 +7,7 @@ use App\Http\Resources\Api\Auth\VerificationResource;
 use App\Models\Booking;
 use App\Models\BookingCancellation;
 use App\Models\CleanerEarning;
+use App\Models\CleanerLocation;
 use App\Models\Feedback;
 use App\Models\HelpCenter;
 use App\Models\Notification;
@@ -235,5 +236,20 @@ class AuthService {
             Rating::where('cleaner_id', $cleaner->id)->avg('rating') ?? 0,
             2
         );
+    }
+    public function updateLocation($request)
+    {
+        try {
+            
+            $cleaner = CleanerLocation::updateOrCreate(
+                ['cleaner_id' => Auth::id()],
+                ['latitude' => $request->input('latitude'), 'longitude' => $request->input('longitude')]
+            );
+            
+
+            return $cleaner;
+        } catch (Exception $e) {
+            throw new Exception('Error updating location: ' . $e->getMessage());
+        }
     }
 }
