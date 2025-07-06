@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Customer\ValidateVehicleRequest;
 use App\Http\Requests\Api\Customer\VehicleRequest;
 use App\Http\Resources\Api\Customer\VehicleListResource;
 use App\Http\Resources\Api\Customer\VehicleResource;

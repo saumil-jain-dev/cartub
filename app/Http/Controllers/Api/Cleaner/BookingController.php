@@ -8,6 +8,7 @@ use App\Http\Requests\Api\Cleaner\UpdateBookingStatusRequest;
 use App\Http\Requests\Api\Cleaner\UpdateLocationRequest;
 use App\Http\Resources\Api\Cleaner\BookingDetailsResource;
 use App\Http\Resources\Api\Cleaner\BookingListResource;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use App\Services\Api\Cleaner\BookingService;
 use Exception;
@@ -81,6 +82,19 @@ class BookingController extends Controller
                     config('code.SUCCESS_CODE')
                 );
             }
+        } catch(Exception $e){
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+    }
+
+    public function assignBooking(Request $request){
+        try{
+            $bookingUpdate = Booking::where('id',$request->booking_id)->update(['cleaner_id' => $request->cleaner_id ]);
+            return success(
+                    $request->all(),
+                    trans('messages.update', ['attribute' => 'Booking']),
+                    config('code.SUCCESS_CODE')
+                );
         } catch(Exception $e){
             return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
         }
