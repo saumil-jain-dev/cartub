@@ -55,8 +55,8 @@ Route::prefix('v1')->group(function () {
                     Route::post('add-tip', 'addTip');
                 });
             });
-            
-            
+
+
         });
     });
 
@@ -86,6 +86,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('list', 'getBookingsList');
                     Route::post('actions', 'updateBookingStatus');
                     Route::post('details', 'bookingDetails');
+                    Route::post('assign-booking','assignBooking');
                 });
             });
         });
