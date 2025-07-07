@@ -9,6 +9,7 @@ use App\Http\Requests\Api\Cleaner\ProfileUpdateRequest;
 use App\Http\Requests\Api\Cleaner\RegisterRequest;
 use App\Http\Requests\Api\Cleaner\UpdateLocationRequest;
 use App\Http\Resources\Api\Cleaner\NotificationListResource;
+use App\Http\Resources\Api\Cleaner\PaymentListResource;
 use App\Http\Resources\Api\Cleaner\RegisterResource;
 use App\Http\Resources\Api\Cleaner\UserResource;
 use App\Models\User;
@@ -125,6 +126,23 @@ class AuthenticationController extends Controller
                 config('code.SUCCESS_CODE')
             );
         } catch (Exception $e) {
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+    }
+
+    public function listPaymentHistory(Request $request)
+    {
+        try {
+            
+            $paymentHistory = $this->authService->listPaymentHistory($request);
+            if($paymentHistory){
+                return success(
+                    pagination(PaymentListResource::class, $paymentHistory),
+                    trans('messages.list', ['attribute' => 'Payment History']),
+                    config('code.SUCCESS_CODE')
+                );
+            }
+        } catch(Exception $e) {
             return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
         }
     }

@@ -18,7 +18,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/otp/verify', 'verifyOtp');
 
         });
-        Route::middleware('auth:sanctum')->group( function (): void {
+        Route::middleware(['auth:sanctum','role:customer'])->group( function (): void {
             Route::controller(AuthenticationController::class)->group(function () {
 
                 Route::get('profile', 'profile');
@@ -67,7 +67,7 @@ Route::prefix('v1')->group(function () {
             Route::post('register','register');
             Route::post('login','login');
         });
-        Route::middleware('auth:sanctum')->group( function (): void {
+        Route::middleware(['auth:sanctum','role:cleaner'])->group( function (): void {
             Route::controller(CleanerAuthenticationController::class)->group(function () {
 
                 Route::post('dashboard','getDashboardData');
@@ -78,6 +78,8 @@ Route::prefix('v1')->group(function () {
                 //notification routes
                 Route::post('notification/list', 'listNotifications');
                 Route::post('notification/mark-as-read', 'markNotificationAsRead');
+
+                Route::post('payment/history', 'listPaymentHistory');
             });
 
             Route::controller(CleanerBookingController::class)->group(function () {

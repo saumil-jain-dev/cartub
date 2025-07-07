@@ -252,4 +252,19 @@ class AuthService {
             throw new Exception('Error updating location: ' . $e->getMessage());
         }
     }
+
+    public function listPaymentHistory($request)
+    {
+        try {
+            $perPage = $request->input('per_page', 10);
+            $user = Auth::user();
+            $paymentHistory = CleanerEarning::with('booking')->where('cleaner_id', $user->id)
+                ->orderBy('booking_id', 'desc')
+                ->paginate($perPage)->withQueryString();
+            return $paymentHistory;
+
+        } catch (Exception $e) {
+            throw new Exception('Failed to list payment history: ' . $e->getMessage());
+        }
+    }
 }
