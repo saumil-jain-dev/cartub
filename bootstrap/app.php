@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\ForceJsonResponse;
+use App\Http\Middleware\RedirectIfUnauthenticated;
 use App\Http\Middleware\RoleMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -18,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(ForceJsonResponse::class);
         $middleware->alias([
             'role' => RoleMiddleware::class,
+            'redirect.if.unauthenticated' => RedirectIfUnauthenticated::class, // Register middleware alias
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
