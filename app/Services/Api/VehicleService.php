@@ -17,10 +17,10 @@ class VehicleService {
             DB::beginTransaction();
             $vehicle = new Vehicle();
             $vehicle->customer_id = Auth::id();
-            $vehicle->make = "Toyota";
-            $vehicle->model = "Corolla";
-            $vehicle->year = "2015";
-            $vehicle->color = "White";
+            $vehicle->make = $request->make;
+            $vehicle->model = $request->model;
+            $vehicle->year = $request->year;
+            $vehicle->color = $request->color;
             $vehicle->license_plate = $request->license_plate;
             $vehicle->save();
 
@@ -71,5 +71,44 @@ class VehicleService {
             DB::rollBack();
             throw new Exception($e->getMessage());
         }
+    }
+
+    public function vehicleSearch($request){
+
+        $vehicleNumber = $request->vehicle_number;
+        $apikey = env('APP_ENV') == "local" ? config('constants.CAR_CHECK_TEST_API_KEY') : config('constants.CAR_CHECK_LIVE_API_KEY');
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://api.checkcardetails.co.uk/vehicledata/ukvehicledata?apikey='.$apikey.'&vrm='.$vehicleNumber,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
+
+        $apiResponse = curl_exec($curl);
+
+        curl_close($curl);
+        $response = json_decode($apiResponse, true);
+        $result = [];
+        if (isset($response['VehicleRegistration'])) {
+            // Success case
+            $data = $response['VehicleRegistration'];
+        
+            $result = [
+                'Colour' => $data['Colour'] ?? null,
+                'Vrm' => $data['Vrm'] ?? null,
+                'Make' => $data['Make'] ?? null,
+                'Model' => $data['Model'] ?? null,
+                'YearOfManufacture' => $data['YearOfManufacture'] ?? null,
+                'VehicleClass' => $data['VehicleClass'] ?? null,
+            ];
+        
+        }
+        return $result;
     }
 }
