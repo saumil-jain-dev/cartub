@@ -41,6 +41,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('add', 'addVehicle');
                     Route::post('list', 'listVehicles');
                     Route::post('delete', 'deleteVehicle');
+                    Route::post('search','vehicleSearch');
                 });
             });
 
