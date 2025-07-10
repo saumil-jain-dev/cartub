@@ -82,6 +82,13 @@ class BookingService {
                     Coupon::where('id', $request->input('coupon_id'))->increment('used_count');
                 }
                 DB::commit();
+
+                $emailData = [
+                    'customer_name' => Auth::user()->name,
+                    'to_email' => Auth::user()->email,
+                    'booking_data' => $booking,
+                    
+                ];
                 return $booking;
             } else {
                 DB::rollBack();
