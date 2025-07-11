@@ -35,15 +35,15 @@
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title" href="#">
                             <svg class="stroke-icon">
-                                <use href="assets/svg/icon-sprite.svg#stroke-home"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="assets/svg/icon-sprite.svg#fill-home"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-home') }}"></use>
                             </svg>
                             <span class="lan-3">Dashboard</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="/">Overview </a></li>
+                            <li><a href="{{ route('dashboard') }}">Overview </a></li>
                             <li><a href="live-wash-status">Live Wash Status </a></li>
                             <li><a href="today-booking">Today's Bookings</a></li>
                         </ul>
@@ -57,10 +57,10 @@
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title" href="#">
                             <svg class="stroke-icon">
-                                <use href="assets/svg/icon-sprite.svg#stroke-user"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="assets/svg/icon-sprite.svg#fill-user"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"></use>
                             </svg>
                             <span>Users</span>
                         </a>
@@ -90,12 +90,24 @@
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav" href="admin-cards">
                             <svg class="stroke-icon">
-                                <use href="assets/svg/icon-sprite.svg#crm-user"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#crm-user') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="assets/svg/icon-sprite.svg#fill-api"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-api') }}"></use>
                             </svg>
                             <span>Admin Users</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        <i class="fa-solid fa-thumbtack"></i>
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('roles-permission.index') }}">
+                            <svg class="stroke-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#crm-user') }}"></use>
+                            </svg>
+                            <svg class="fill-icon">
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-api') }}"></use>
+                            </svg>
+                            <span>Roles & Permission</span>
                         </a>
                     </li>
                     <li class="sidebar-main-title">
