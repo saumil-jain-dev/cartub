@@ -2,6 +2,7 @@
 
 namespace App\Services\Api\Cleaner;
 
+use App\Jobs\Customer\SendMailJob;
 use App\Models\Booking;
 use App\Models\BookingCancellation;
 use App\Models\BookingPhoto;
@@ -124,6 +125,17 @@ class BookingService {
                     $cleanerEarnings->amount = $booking->total_amount;
                     $cleanerEarnings->earned_on = Carbon::now();
                     $cleanerEarnings->save();
+
+                    $bookingData = Booking::with(['cleaner','customer','afterPhoto'])->where('id', $bookingId)->first();
+                    //send booking complete mail
+                    $paymentData = [
+                        'customer_name' => $bookingData->customer->name ?? "",
+                        'to_email' => $bookingData->customer->email ?? "",
+                        'booking_data' => $bookingData,
+                        '_blade' => 'booking-complete',
+                        'subject' => 'Car Wash Completed 🎉'
+                    ];
+                    SendMailJob::dispatch($paymentData);
 
                     break;
                 case 'cancel':

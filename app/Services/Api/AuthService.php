@@ -4,6 +4,7 @@ namespace App\Services\Api;
 
 use App\Http\Resources\Api\Auth\LoginRegisterResource;
 use App\Http\Resources\Api\Auth\VerificationResource;
+use App\Jobs\Customer\SendMailJob;
 use App\Models\Booking;
 use App\Models\Feedback;
 use App\Models\HelpCenter;
@@ -46,9 +47,19 @@ class AuthService {
             $otp = rand(100000, 999999);
 
             $user->otp = $otp; // Store OTP in the user model
-            $user->otp_expires_at = now()->addMinutes(5); // Set OTP expiration time
+            $user->otp_expires_at = now()->addMinutes(10); // Set OTP expiration time
             $user->save();
             DB::commit();
+
+            //Send otp mail
+            $otpData = [
+                'customer_name' => $user->name,
+                'to_email' => $user->email,
+                'otp' => $otp,
+                '_blade' => 'otp',
+                'subject' => '🔐 OTP Verification'
+            ];
+            SendMailJob::dispatch($otpData);
             return $user;
 
         }catch(Exception $e){
@@ -113,6 +124,16 @@ class AuthService {
             $user->update($request->all());
             $user->save();
             DB::commit();
+
+            //Send profile update mail
+            $profileData = [
+                'customer_name' => $user->name,
+                'to_email' => $user->email,
+                'user_data' => $user,
+                '_blade' => 'profile-update',
+                'subject' => 'Profile Information Updated 🔐'
+            ];
+            SendMailJob::dispatch($profileData);
             return $user;
 
         }catch(Exception $e){

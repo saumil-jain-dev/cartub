@@ -4,6 +4,7 @@ namespace App\Services\Api\Cleaner;
 
 use App\Http\Resources\Api\Auth\LoginRegisterResource;
 use App\Http\Resources\Api\Auth\VerificationResource;
+use App\Jobs\Customer\SendMailJob;
 use App\Models\Booking;
 use App\Models\BookingCancellation;
 use App\Models\CleanerEarning;
@@ -101,6 +102,16 @@ class AuthService {
             $user->update($data);
             
             DB::commit();
+
+            //Send profile update mail
+            $profileData = [
+                'customer_name' => $user->name,
+                'to_email' => $user->email,
+                'user_data' => $user,
+                '_blade' => 'profile-update',
+                'subject' => 'Profile Information Updated 🔐'
+            ];
+            SendMailJob::dispatch($profileData);
             return $user;
 
         }catch(Exception $e){

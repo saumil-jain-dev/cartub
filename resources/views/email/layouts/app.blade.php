@@ -137,6 +137,20 @@
             margin: 8px 0;
         }
 
+        .photos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .photos img {
+            width: 100%;
+            max-width: 160px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
         .cta-button-wrapper {
             text-align: center;
             margin-top: 10px;
@@ -160,6 +174,18 @@
             color: #888888;
         }
 
+        .otp-box {
+            background: #f1f1f1;
+            border-radius: 6px;
+            text-align: center;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            margin: 20px 0;
+            color: #333;
+        }
+
         @media only screen and (max-width: 600px) {
             .content {
                 padding: 20px 15px;
@@ -167,6 +193,20 @@
 
             .header h1 {
                 font-size: 20px;
+            }
+
+            .otp-box {
+                font-size: 20px;
+            }
+
+            .photos {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .photos img {
+                max-width: 45%;
+                margin: 0 auto;
             }
         }
     </style>
@@ -187,4 +227,5 @@
         </div>
     </div>
 </body>
+
 </html>
