@@ -2,6 +2,7 @@
 
 namespace App\Services\Api;
 
+use App\Jobs\Customer\SendMailJob;
 use App\Models\Booking;
 use App\Models\CleanerEarning;
 use App\Models\Coupon;
@@ -82,6 +83,25 @@ class BookingService {
                     Coupon::where('id', $request->input('coupon_id'))->increment('used_count');
                 }
                 DB::commit();
+                //send payment mail
+                $paymentData = [
+                    'customer_name' => Auth::user()->name,
+                    'to_email' => Auth::user()->email,
+                    'booking_data' => $booking,
+                    'payment_data' => $payment,
+                    '_blade' => 'payment-confirm',
+                    'subject' => '💳 Payment Received'
+                ];
+                SendMailJob::dispatch($paymentData);
+                //send booking mail
+                $emailData = [
+                    'customer_name' => Auth::user()->name,
+                    'to_email' => Auth::user()->email,
+                    'booking_data' => $booking,
+                    '_blade' => 'booking',
+                    'subject' => '✅ Booking Confirmed!'
+                ];
+                SendMailJob::dispatch($emailData);
                 return $booking;
             } else {
                 DB::rollBack();

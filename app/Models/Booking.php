@@ -56,6 +56,7 @@ class Booking extends Model
         'latitude' => 'float',
         'longitude' => 'float',
         'total_amount' => 'decimal:2',
+        'service_name' => 'string'
         // 'scheduled_date' => 'date',
         // 'scheduled_time' => 'datetime:H:i:s',
     ];
@@ -116,5 +117,10 @@ class Booking extends Model
 
     public function cleaner_location(){
         return $this->hasOne(CleanerLocation::class, 'cleaner_id', 'cleaner_id');
+    }
+
+    public function getServiceNameAttribute(){
+        $service = Service::find($this->service_id);
+        return $service->name;
     }
 }
