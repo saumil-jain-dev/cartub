@@ -1,7 +1,7 @@
 @extends('email.layouts.app')
 @section('header')
     <h1>Booking Confirmed!</h1>
-    <p>Thank you for choosing Car Tub 😊</p>
+    <p>Thank you for choosing Car Tub 🚗</p>
 @endsection
 @section('content')
     <h2>Hello {{ $customer_name }},</h2>

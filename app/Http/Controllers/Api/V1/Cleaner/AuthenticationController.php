@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Cleaner;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Cleaner\AvailabilityRequest;
 use App\Http\Requests\Api\Cleaner\LoginRequest;
 use App\Http\Requests\Api\Cleaner\MarkNotificationReadRequest;
 use App\Http\Requests\Api\Cleaner\ProfileUpdateRequest;
@@ -143,6 +144,18 @@ class AuthenticationController extends Controller
                 );
             }
         } catch(Exception $e) {
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+    }
+
+    public function updateAvailability(AvailabilityRequest $request){
+        try {
+            $updateLocation = $this->authService->updateAvailability($request);
+            return success(
+                $updateLocation,trans('messages.update', ['attribute' => 'Availability']),
+                config('code.SUCCESS_CODE')
+            );
+        } catch (Exception $e) {
             return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
         }
     }

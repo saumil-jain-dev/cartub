@@ -278,4 +278,17 @@ class AuthService {
             throw new Exception('Failed to list payment history: ' . $e->getMessage());
         }
     }
+
+    public function updateAvailability($request){
+        DB::beginTransaction();
+        try {
+            $user = Auth::user();
+            $user->update(['is_available' => $request->input('is_available')]);
+
+            return $user;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception('Failed to update availability: ' . $e->getMessage());
+        }
+    }
 }

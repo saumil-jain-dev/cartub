@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\Rolepermission\RolePermissionController;
+use App\Models\Role;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,6 +19,12 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
 
     //Role Permission Management
     Route::controller(RolePermissionController::class)->group(function () {
-        Route::get('roles-permission','index')->name('roles-permission.index');
+        Route::prefix('roles-permission')->group(function () {
+
+            Route::get('/','index')->name('roles-permission.index');
+            Route::get('create','create')->name('roles-permission.create');
+            Route::post('store','store')->name('roles-permission.store');
+            Route::post('update','update')->name('roles-permission.update');
+        });
     });
 });

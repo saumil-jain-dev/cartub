@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             'role' => $this->getRoleNames()->first(),
             'is_active' => $this->is_active,
             'profile_picture' => getImage($this->profile_picture),
+            'is_available' => $this->is_available,
             'access_token' => $this->access_token,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
