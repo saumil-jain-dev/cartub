@@ -72,6 +72,7 @@ Route::prefix('v1')->group(function () {
             Route::controller(CleanerAuthenticationController::class)->group(function () {
 
                 Route::post('dashboard','getDashboardData');
+                Route::post('update-availability','updateAvailability');
                 Route::post('update-location','updateLocation');
                 Route::get('profile','profile');
                 Route::post('profile/update','updateProfile');

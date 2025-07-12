@@ -17,7 +17,7 @@
                         <div class="stat-content">
                             <div class="stat-square bg-light-primary">
                                 <svg class="fill-primary">
-                                    <use href="{{ asset('') }}assets/svg/icon-sprite.svg#stroke-package"></use>
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-package') }}"></use>
                                 </svg>
                             </div>
                             <div>
