@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\Rolepermission\RolePermissionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -16,5 +17,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
     //Role Permission Management
-    
+    Route::controller(RolePermissionController::class)->group(function () {
+        Route::get('roles-permission','index')->name('roles-permission.index');
+    });
 });

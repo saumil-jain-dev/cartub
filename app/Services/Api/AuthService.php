@@ -201,7 +201,7 @@ class AuthService {
         try {
             $perPage = $request->input('per_page', 10);
             $user = Auth::user();
-            $paymentHistory = Booking::where('user_id', $user->id)->with(['service', 'payment','vehicle'])
+            $paymentHistory = Booking::where('customer_id', $user->id)->with(['service', 'payment','vehicle'])
             ->orderBy('created_at', 'desc')
             ->paginate($perPage)->withQueryString();
             return $paymentHistory;
