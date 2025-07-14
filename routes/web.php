@@ -25,6 +25,8 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::get('create','create')->name('roles-permission.create');
             Route::post('store','store')->name('roles-permission.store');
             Route::post('update','update')->name('roles-permission.update');
+            Route::delete('{id}','destroy')->name('roles-permission.destroy');
+
         });
     });
 });

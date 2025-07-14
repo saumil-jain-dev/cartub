@@ -62,7 +62,7 @@
                                                             </use>
                                                         </svg>
                                                     </a>
-                                                    <a class="square-white trash-3" href="#!">
+                                                    <a class="square-white trash-3 delete-role" href="javascript:void(0);" data-id="{{ $role->id }}">
                                                         <svg>
                                                             <use href="{{ asset('assets/svg/icon-sprite.svg#trash1') }}">
                                                             </use>
@@ -271,6 +271,55 @@
             $('input[name="permissions[]"]').prop('checked', false);
         });
     });
+
+    //delete code
+    $(document).on('click', '.delete-role', function () {
+        const roleId = $(this).data('id');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will delete the role and all its permissions.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `${site_url}/admin/roles-permission/${roleId}`,
+                    type: 'DELETE',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire(
+                            'Error!',
+                            xhr.responseJSON.message || 'Something went wrong.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+
 
 </script>
 @endsection
