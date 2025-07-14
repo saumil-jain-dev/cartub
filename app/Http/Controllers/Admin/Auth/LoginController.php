@@ -44,7 +44,7 @@ class LoginController extends Controller
         }
         if (Auth::attempt($request->only('email', 'password'))) {
             Session::flash('success', 'Login successful.');
-            return redirect()->route('dashboard');
+            return redirect()->route('dashboard.dashboard');
         }
         Session::flash('error', 'Invalid credentials.');
         return redirect()->back()->withInput($request->only('email'))
