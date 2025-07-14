@@ -57,8 +57,8 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/custom.js') }}"></script>
 
 <!-- Flatpickr Date Picker -->
-<!-- <script src="{{ asset('assets/js/flat-pickr/flatpickr.js') }}"></script>
-<script src="{{ asset('assets/js/flat-pickr/custom-flatpickr.js') }}"></script> -->
+<script src="{{ asset('assets/js/flat-pickr/flatpickr.js') }}"></script>
+<script src="{{ asset('assets/js/flat-pickr/custom-flatpickr.js') }}"></script>
 <script src="{{ asset('assets/js/flat-pickr/moment.js') }}"></script>
 <script src="{{ asset('assets/js/flat-pickr/custom-range-btn.js') }}"></script>
 

@@ -73,10 +73,10 @@
                         <i class="fa-solid fa-thumbtack"> </i>
                         <a class="sidebar-link sidebar-title" href="#">
                             <svg class="stroke-icon">
-                                <use href="assets/svg/icon-sprite.svg#project-users"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#project-users') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="assets/svg/icon-sprite.svg#fill-project"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-project') }}"></use>
                             </svg>
                             <span> Cleaners / Staff </span>
                         </a>
@@ -100,7 +100,8 @@
                     </li>
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('roles-permission.index') }}">
+                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('roles-permission.*') ? 'active' : '' }}"
+                            href="{{ route('roles-permission.index') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#crm-user') }}"></use>
                             </svg>
@@ -119,10 +120,10 @@
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav" href="customer-vehicles-list">
                             <svg class="stroke-icon">
-                                <use href="assets/svg/icon-sprite.svg#stroke-api"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-api') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="assets/svg/icon-sprite.svg#fill-api"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-api') }}"></use>
                             </svg>
                             <span>Customer Vehicles list</span>
                         </a>
@@ -131,10 +132,10 @@
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title" href="#">
                             <svg class="stroke-icon">
-                                <use href="assets/svg/icon-sprite.svg#stroke-table"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="assets/svg/icon-sprite.svg#fill-table"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
                             </svg>
                             <span>Vehicle Service</span>
                         </a>
@@ -154,12 +155,12 @@
                     </li>
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav" href="booking-history">
+                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('bookings.index') }}">
                             <svg class="stroke-icon">
-                                <use href="assets/svg/icon-sprite.svg#stroke-api"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-api') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="assets/svg/icon-sprite.svg#fill-api"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-api') }}"></use>
                             </svg>
                             <span>All Bookings</span>
                         </a>
@@ -191,10 +192,10 @@
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav" href="payment-history">
                             <svg class="stroke-icon">
-                                <use href="assets/svg/icon-sprite.svg#stroke-knowledgebase"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-knowledgebase') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="assets/svg/icon-sprite.svg#fill-knowledgebase"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-knowledgebase') }}"></use>
                             </svg>
                             <span>Payment History</span>
                         </a>
@@ -209,10 +210,10 @@
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav" href="customer-feedback">
                             <svg class="stroke-icon">
-                                <use href="assets/svg/icon-sprite.svg#stroke-knowledgebase"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-knowledgebase') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="assets/svg/icon-sprite.svg#fill-knowledgebase"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-knowledgebase') }}"></use>
                             </svg>
                             <span>Customer feedback</span>
                         </a>
@@ -221,10 +222,10 @@
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav" href="chat-support">
                             <svg class="stroke-icon">
-                                <use href="assets/svg/icon-sprite.svg#stroke-support-tickets"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-support-tickets') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="assets/svg/icon-sprite.svg#fill-support-tickets"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-support-tickets') }}"></use>
                             </svg>
                             <span>Help Center (Chat/Call) </span>
                         </a>
@@ -238,10 +239,10 @@
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav" href="settings">
                             <svg class="stroke-icon">
-                                <use href="assets/svg/icon-sprite.svg#stroke-api"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-api') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="assets/svg/icon-sprite.svg#fill-api"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-api') }}"></use>
                             </svg>
                             <span>App Setting</span>
                         </a>
@@ -250,10 +251,10 @@
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title link-nav" href="faq">
                             <svg class="stroke-icon">
-                                <use href="assets/svg/icon-sprite.svg#stroke-support-tickets"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-support-tickets') }}"></use>
                             </svg>
                             <svg class="fill-icon">
-                                <use href="assets/svg/icon-sprite.svg#fill-support-tickets"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-support-tickets') }}"></use>
                             </svg>
                             <span>FAQ</span>
                         </a>

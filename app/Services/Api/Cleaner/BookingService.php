@@ -73,6 +73,9 @@ class BookingService {
                 case 'accept':
                     $booking->status = 'accepted';
                     break;
+                case 'in_route':
+                    $booking->status = 'in_route';
+                    break;
                 case 'mark_as_arrived':
                     $booking->status = 'mark_as_arrived';
                     break;

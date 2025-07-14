@@ -32,7 +32,7 @@ class UpdateBookingStatusRequest extends FormRequest
             'booking_id' => 'required|numeric|exists:bookings,id',
             'action' => [
                 'required',
-                Rule::in(['accept', 'start_job','finish_job', 'complete', 'cancel','mark_as_arrived']),
+                Rule::in(['accept', 'in_route','start_job','finish_job', 'complete', 'cancel','mark_as_arrived']),
             ],
             'before_image' => 'nullable|array|min:1',
             'before_image.*' => 'file|max:10240',
@@ -76,13 +76,23 @@ class UpdateBookingStatusRequest extends FormRequest
                 }
             }
 
-            if ($action == 'mark_as_arrived') {
+            if ($action == 'in_route') {
                 if ($booking->cleaner_id != $userId) {
                     $validator->errors()->add('booking_id', 'This booking is not assigned to you.');
                 }
     
                 if ($booking->status != 'accepted') {
-                    $validator->errors()->add('booking_id', 'Booking must be accepted before marking as arrived.');
+                    $validator->errors()->add('booking_id', 'Booking must be accepted before marking as is route.');
+                }
+            }
+
+            if ($action == 'mark_as_arrived') {
+                if ($booking->cleaner_id != $userId) {
+                    $validator->errors()->add('booking_id', 'This booking is not assigned to you.');
+                }
+    
+                if ($booking->status != 'in_route') {
+                    $validator->errors()->add('booking_id', 'Booking must be in route before marking as arrived.');
                 }
             }
 

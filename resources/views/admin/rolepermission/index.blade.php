@@ -14,10 +14,12 @@
             <div class="card">
                 <div class="card-header card-no-border text-end">
                     <div class="card-header-right-icon">
+                        @if(hasPermission('roles-permission.create'))
                         <a class="btn btn-primary f-w-500" href="{{ route('roles-permission.create') }}"
                             data-bs-toggle="modal" data-bs-target="#rolePermission" id="addRoleBtn"><i
                             class="fa-solid fa-plus pe-2"></i>Add Permission
                         </a>
+                        @endif
                     </div>
                 </div>
                 <div class="card-body pt-0 px-0">
@@ -56,18 +58,24 @@
                                             </td>
                                             <td>
                                                 <div class="common-align gap-2 justify-content-start">
-                                                    <a class="square-white edit-role" href="#!" data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}" data-role-status="{{ $role->status }}" data-permissions='@json($role->permissions->pluck("name"))'>
-                                                        <svg>
-                                                            <use href="{{ asset('assets/svg/icon-sprite.svg#edit-content') }}">
-                                                            </use>
-                                                        </svg>
-                                                    </a>
-                                                    <a class="square-white trash-3 delete-role" href="javascript:void(0);" data-id="{{ $role->id }}">
-                                                        <svg>
-                                                            <use href="{{ asset('assets/svg/icon-sprite.svg#trash1') }}">
-                                                            </use>
-                                                        </svg>
-                                                    </a>
+                                                    @if (hasPermission('roles-permission.edit'))
+                                                        
+                                                        <a class="square-white edit-role" href="#!" data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}" data-role-status="{{ $role->status }}" data-permissions='@json($role->permissions->pluck("name"))'>
+                                                            <svg>
+                                                                <use href="{{ asset('assets/svg/icon-sprite.svg#edit-content') }}">
+                                                                </use>
+                                                            </svg>
+                                                        </a>
+                                                    @endif
+                                                    @if (hasPermission('roles-permission.destroy'))
+                                                        
+                                                        <a class="square-white trash-3 delete-role" href="javascript:void(0);" data-id="{{ $role->id }}">
+                                                            <svg>
+                                                                <use href="{{ asset('assets/svg/icon-sprite.svg#trash1') }}">
+                                                                </use>
+                                                            </svg>
+                                                        </a>
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>

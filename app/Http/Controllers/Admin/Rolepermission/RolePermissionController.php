@@ -18,6 +18,9 @@ class RolePermissionController extends Controller
     //
     public function index(){
 
+        if(! hasPermission('roles-permission.index')){
+            abort(403);
+        }
         $this->data['pageTitle'] = 'Role Permission';
         $roleData = ModelsRole::with('permissions')->whereNotIn('name', ['super_admin'])->get();
         $this->data['roleData'] = $roleData;
@@ -39,7 +42,7 @@ class RolePermissionController extends Controller
 
         try {
             if ($request->id) {
-                // 📝 Update
+                //Update
                 $role = ModelsRole::findOrFail($request->id);
                 $role->name = $request->role_name;
                 $role->status = $request->status;
@@ -47,7 +50,7 @@ class RolePermissionController extends Controller
 
                 $message = 'Role updated successfully!';
             } else {
-                // 📝 Create
+                //Create
                 $role = ModelsRole::create([
                     'name' => $request->role_name,
                     'guard_name' => 'web',
@@ -57,7 +60,7 @@ class RolePermissionController extends Controller
                 $message = 'Role created successfully!';
             }
 
-            // 📝 Sync permissions
+            //Sync permissions
             $role->syncPermissions($request->permissions);
 
             DB::commit();
