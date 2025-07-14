@@ -4,7 +4,7 @@
 @include('admin.components.breadcrumb', [
     'title' => 'All Bookings',
     'breadcrumbs' => [
-        ['label' => 'Dashboard', 'url' => route('dashboard')],
+        ['label' => 'Dashboard', 'url' => route('dashboard.dashboard')],
         ['label' => 'Booking Management','url' => ''],
         ['label' => 'All Bookings'] // Last item, no URL
     ]
@@ -123,10 +123,13 @@
                                                         </a>
                                                         @endif
                                                         @if(hasPermission('bookings.destroy'))
-                                                            <a class="square-white trash-3"
-                                                            href="#!" data-bs-toggle="tooltip"
+                                                            <a class="square-white trash-3 delete-booking"
+                                                            href="javascript:void(0)" data-bs-toggle="tooltip"
                                                             data-bs-placement="top"
-                                                            data-bs-title="Delete"><svg>
+                                                            data-bs-title="Delete"
+                                                            data-id="{{ $booking->id }}"
+                                                            >
+                                                            <svg>
                                                                 <use
                                                                     href="{{ asset('assets/svg/icon-sprite.svg#trash1') }}">
                                                                 </use>
@@ -148,4 +151,54 @@
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+<script type="text/javascript">
+    $(document).on('click', '.delete-booking', function () {
+        const bookingId = $(this).data('id');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will delete the booking and all its details.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `${site_url}/admin/bookings/${bookingId}`,
+                    type: 'DELETE',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire(
+                            'Error!',
+                            xhr.responseJSON.message || 'Something went wrong.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+</script>
 @endsection

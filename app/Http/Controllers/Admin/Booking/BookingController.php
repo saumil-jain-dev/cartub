@@ -48,9 +48,23 @@ class BookingController extends Controller
     }
 
     public function show($id){
-     
+        $bookingDetails = Booking::with(['customer','payment','washType'])->where('id',$id)->first();
+        if(!$bookingDetails){
+            abort(404);
+        }
         $this->data['pageTitle'] = 'Bookings Details';
-        $this->data['bookingDetails'] = Booking::with(['customer','payment','washType'])->where('id',$id)->first();
+        $this->data['bookingDetails'] = $bookingDetails;
         return view('admin.bookings.show',$this->data);
+    }
+
+    public function destroy($id){
+        try {
+            $booking = Booking::findOrFail($id);
+            $booking->delete();
+
+            return response()->json(['success' => true, 'message' => 'Booking deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 }

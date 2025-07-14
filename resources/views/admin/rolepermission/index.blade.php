@@ -4,7 +4,7 @@
 @include('admin.components.breadcrumb', [
     'title' => 'Roles & Permission',
     'breadcrumbs' => [
-        ['label' => 'Dashboard', 'url' => route('dashboard')],
+        ['label' => 'Dashboard', 'url' => route('dashboard.dashboard')],
         ['label' => 'Roles & Permission'] // Last item, no URL
     ]
 ])

@@ -4,7 +4,7 @@
     @include('admin.components.breadcrumb', [
         'title' => 'Bookings Details',
         'breadcrumbs' => [
-            ['label' => 'Dashboard', 'url' => route('dashboard')],
+            ['label' => 'Dashboard', 'url' => route('dashboard.dashboard')],
             ['label' => 'Booking Management', 'url' => route('bookings.index')],
             ['label' => 'Bookings Details'] // Last item, no URL
         ]
@@ -40,7 +40,7 @@
                                         $steps = [
                                             1 => 'Pending',
                                             2 => 'Assigned',
-                                            3 => 'Enroute',
+                                            3 => 'In Route',
                                             4 => 'In Progress',
                                             5 => 'Completed',
                                         ];

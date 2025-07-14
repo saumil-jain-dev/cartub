@@ -43,7 +43,7 @@
                             <span class="lan-3">Dashboard</span>
                         </a>
                         <ul class="sidebar-submenu">
-                            <li><a href="{{ route('dashboard') }}">Overview </a></li>
+                            <li><a href="{{ route('dashboard.dashboard') }}">Overview </a></li>
                             <li><a href="live-wash-status">Live Wash Status </a></li>
                             <li><a href="today-booking">Today's Bookings</a></li>
                         </ul>
@@ -98,19 +98,21 @@
                             <span>Admin Users</span>
                         </a>
                     </li>
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('roles-permission.*') ? 'active' : '' }}"
-                            href="{{ route('roles-permission.index') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#crm-user') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-api') }}"></use>
-                            </svg>
-                            <span>Roles & Permission</span>
-                        </a>
-                    </li>
+                    @if(hasPermission('roles-permission.index'))
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav {{ request()->routeIs('roles-permission.*') ? 'active' : '' }}"
+                                href="{{ route('roles-permission.index') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#crm-user') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-api') }}"></use>
+                                </svg>
+                                <span>Roles & Permission</span>
+                            </a>
+                        </li>
+                    @endif
                     <li class="sidebar-main-title">
                         <div>
                             <h6>Vehicle Management</h6>
@@ -153,18 +155,20 @@
                             <h6>Booking Management</h6>
                         </div>
                     </li>
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title link-nav" href="{{ route('bookings.index') }}">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-api') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-api') }}"></use>
-                            </svg>
-                            <span>All Bookings</span>
-                        </a>
-                    </li>
+                    @if(hasPermission('bookings.index'))
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav" href="{{ route('bookings.index') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-api') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-api') }}"></use>
+                                </svg>
+                                <span>All Bookings</span>
+                            </a>
+                        </li>
+                    @endif
                     <!-- <li class="sidebar-main-title">
                         <div>
                             <h6>Customer Management</h6>

@@ -8,4 +8,8 @@ return [
         'name' => 'Bookings',
         'actions' => [ 'index', 'show', 'destroy']
     ],
+    'dashboard' => [
+        'name' => 'Dashboard',
+        'actions' => [ 'dashboard', 'live-wash-status', 'today-wash']
+    ],
 ];
