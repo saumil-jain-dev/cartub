@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -32,13 +33,22 @@ class LoginController extends Controller
         if ($validator->fails()) { 
             return back()->withErrors($validator->errors())->withInput();
         }
+
+        $user = User::where('email', $request->email)->first();
+        $role = $user->roles()->first(); // assuming 1 role per user
+        
+        if (! $role || ! $role->status) {
+            Session::flash('error', 'Your role is disabled. Please contact administrator.');
+            return redirect()->back()->withInput($request->only('email'))
+                ->withErrors(['email' => 'Your role is disabled.']);
+        }
         if (Auth::attempt($request->only('email', 'password'))) {
             Session::flash('success', 'Login successful.');
             return redirect()->route('dashboard');
         }
         Session::flash('error', 'Invalid credentials.');
         return redirect()->back()->withInput($request->only('email'))
-                                 ->withErrors(['email' => 'Invalid credentials.']);
+        ->withErrors(['email' => 'Invalid credentials.']);
     }
 
     /**

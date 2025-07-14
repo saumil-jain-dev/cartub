@@ -57,8 +57,8 @@
 <script src="{{ asset('assets/js/datatable/datatable-extension/custom.js') }}"></script>
 
 <!-- Flatpickr Date Picker -->
-<!-- <script src="{{ asset('assets/js/flat-pickr/flatpickr.js') }}"></script>
-<script src="{{ asset('assets/js/flat-pickr/custom-flatpickr.js') }}"></script> -->
+<script src="{{ asset('assets/js/flat-pickr/flatpickr.js') }}"></script>
+<script src="{{ asset('assets/js/flat-pickr/custom-flatpickr.js') }}"></script>
 <script src="{{ asset('assets/js/flat-pickr/moment.js') }}"></script>
 <script src="{{ asset('assets/js/flat-pickr/custom-range-btn.js') }}"></script>
 
@@ -70,13 +70,20 @@
 
 <!-- Dashboard Scripts -->
 <script src="{{ asset('assets/js/dashboard/dashboard.js') }}"></script>
+<script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
+{{--
+<script src="assets/js/trash_popup.js"></script> --}}
 
 <!-- Theme and Custom Scripts -->
 <script src="{{ asset('assets/js/script.js') }}"></script>
 <script src="{{ asset('assets/js/script1.js') }}"></script>
 <script src="{{ asset('assets/js/custom-project.js') }}"></script>
+<script>
+    const site_url = "{{ URL('/') }}"
+</script>
 @if (\Session::has('success') || \Session::has('error') || \Session::has('info') || \Session::has('warning') || !empty($errors->all()))
     <script>
+
         toastr.options = {
             closeButton: true,
             debug: false,

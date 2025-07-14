@@ -1,8 +1,11 @@
 <?php
 return [
-    'role-permission' => [
+    'roles-permission' => [
         'name' => 'Role & Permission Management',
-        'actions' => [ 'index', 'create', 'edit', 'delete']
+        'actions' => [ 'index', 'create', 'edit', 'destroy']
     ],
-    
+    'bookings' => [
+        'name' => 'Bookings',
+        'actions' => [ 'index', 'show', 'destroy']
+    ],
 ];

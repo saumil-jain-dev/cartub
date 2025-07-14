@@ -19,3 +19,4 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}" />
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/responsive.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/css/vendors/toastr.min.css') }}" type="text/css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">

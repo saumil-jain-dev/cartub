@@ -14,10 +14,12 @@
             <div class="card">
                 <div class="card-header card-no-border text-end">
                     <div class="card-header-right-icon">
+                        @if(hasPermission('roles-permission.create'))
                         <a class="btn btn-primary f-w-500" href="{{ route('roles-permission.create') }}"
                             data-bs-toggle="modal" data-bs-target="#rolePermission" id="addRoleBtn"><i
                             class="fa-solid fa-plus pe-2"></i>Add Permission
                         </a>
+                        @endif
                     </div>
                 </div>
                 <div class="card-body pt-0 px-0">
@@ -56,18 +58,24 @@
                                             </td>
                                             <td>
                                                 <div class="common-align gap-2 justify-content-start">
-                                                    <a class="square-white edit-role" href="#!" data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}" data-role-status="{{ $role->status }}" data-permissions='@json($role->permissions->pluck("name"))'>
-                                                        <svg>
-                                                            <use href="{{ asset('assets/svg/icon-sprite.svg#edit-content') }}">
-                                                            </use>
-                                                        </svg>
-                                                    </a>
-                                                    <a class="square-white trash-3" href="#!">
-                                                        <svg>
-                                                            <use href="{{ asset('assets/svg/icon-sprite.svg#trash1') }}">
-                                                            </use>
-                                                        </svg>
-                                                    </a>
+                                                    @if (hasPermission('roles-permission.edit'))
+                                                        
+                                                        <a class="square-white edit-role" href="#!" data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}" data-role-status="{{ $role->status }}" data-permissions='@json($role->permissions->pluck("name"))'>
+                                                            <svg>
+                                                                <use href="{{ asset('assets/svg/icon-sprite.svg#edit-content') }}">
+                                                                </use>
+                                                            </svg>
+                                                        </a>
+                                                    @endif
+                                                    @if (hasPermission('roles-permission.destroy'))
+                                                        
+                                                        <a class="square-white trash-3 delete-role" href="javascript:void(0);" data-id="{{ $role->id }}">
+                                                            <svg>
+                                                                <use href="{{ asset('assets/svg/icon-sprite.svg#trash1') }}">
+                                                                </use>
+                                                            </svg>
+                                                        </a>
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>
@@ -271,6 +279,55 @@
             $('input[name="permissions[]"]').prop('checked', false);
         });
     });
+
+    //delete code
+    $(document).on('click', '.delete-role', function () {
+        const roleId = $(this).data('id');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will delete the role and all its permissions.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `${site_url}/admin/roles-permission/${roleId}`,
+                    type: 'DELETE',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire(
+                            'Error!',
+                            xhr.responseJSON.message || 'Something went wrong.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+
 
 </script>
 @endsection
