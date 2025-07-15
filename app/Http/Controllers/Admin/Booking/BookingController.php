@@ -14,7 +14,7 @@ class BookingController extends Controller
 
     public function index(Request $request){
 
-        if(! hasPermission('roles-permission.index')){
+        if(! hasPermission('bookings.index')){
             abort(403);
         }
         $this->data['pageTitle'] = 'All Bookings';

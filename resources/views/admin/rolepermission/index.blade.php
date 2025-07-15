@@ -1,11 +1,11 @@
 @extends('admin.layouts.app')
-@section('pageTitle', 'Role Permission')
+@section('pageTitle', $pageTitle)
 @section('content')
 @include('admin.components.breadcrumb', [
-    'title' => 'Roles & Permission',
+    'title' => $pageTitle,
     'breadcrumbs' => [
         ['label' => 'Dashboard', 'url' => route('dashboard.dashboard')],
-        ['label' => 'Roles & Permission'] // Last item, no URL
+        ['label' => $pageTitle] // Last item, no URL
     ]
 ])
 <div class="container-fluid role-permission-wrapper">

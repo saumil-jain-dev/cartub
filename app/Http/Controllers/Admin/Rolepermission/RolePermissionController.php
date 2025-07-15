@@ -21,7 +21,7 @@ class RolePermissionController extends Controller
         if(! hasPermission('roles-permission.index')){
             abort(403);
         }
-        $this->data['pageTitle'] = 'Role Permission';
+        $this->data['pageTitle'] = 'Roles & Permission';
         $roleData = ModelsRole::with('permissions')->whereNotIn('name', ['super_admin'])->get();
         $this->data['roleData'] = $roleData;
         return view('admin.rolepermission.index',$this->data);

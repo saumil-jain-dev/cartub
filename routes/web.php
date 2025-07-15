@@ -22,6 +22,9 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
     Route::controller(DashboardController::class)->group(function () {
         Route::prefix('dashboard')->group(function () {
             Route::get('/', 'index')->name('dashboard.dashboard');
+            Route::get('live-wash-status', 'liveWashStatus')->name('dashboard.live-wash-status');
+            Route::get('/bookings/by-status',  'getByStatus')->name('dashboard.bookings.by-status');
+            Route::get('today-wash', 'todayWash')->name('dashboard.today-wash');
         });
     });
     //Role Permission Management

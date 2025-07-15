@@ -5,7 +5,6 @@
     'title' => $pageTitle,
     'breadcrumbs' => [
         ['label' => 'Dashboard', 'url' => route('dashboard.dashboard')],
-        ['label' => 'Booking Management','url' => ''],
         ['label' => $pageTitle] // Last item, no URL
     ]
 ])
@@ -16,16 +15,7 @@
                 <div class="card-body">
                     <form method="GET" action="{{ route('bookings.index') }}">
                         <div class="row g-3 custom-input">
-                            <div class="col-xl col-md-6"> <label class="form-label"
-                                    for="datetime-local">From: </label>
-                                <div class="input-group flatpicker-calender"><input class="form-control"
-                                        id="datetime-local" name="from_date" value="{{ request()->input('from_date') }}" placeholder="dd/mm/yyyy"></div>
-                            </div>
-                            <div class="col-xl col-md-6"> <label class="form-label"
-                                    for="datetime-local3">To: </label>
-                                <div class="input-group flatpicker-calender"><input class="form-control"
-                                        id="datetime-local3"  name="to_date" value="{{ request()->input('to_date') }}" placeholder="dd/mm/yyyy"></div>
-                            </div>
+                           
                             <div class="col-xl col-md-6"><label class="form-label">Payment
                                     Status</label><select class="form-select" name="payment_status">
                                     <option value="">Select Payment Status</option>
