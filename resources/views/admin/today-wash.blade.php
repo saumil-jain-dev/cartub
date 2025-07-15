@@ -66,6 +66,8 @@
                                                 </th>
                                                 <th> <span class="f-light f-w-600">Payment Method</span>
                                                 </th>
+                                                <th> <span class="f-light f-w-600">Booking Status</span>
+                                                </th>
                                                 <th> <span class="f-light f-w-600">Action</span></th>
                                             </tr>
                                         </thead>
@@ -96,6 +98,43 @@
                                                 </td>
                                                 <td>
                                                     <p class="c-o-light">{{ optional($booking->payment)->payment_type ?? '-' }}</p>
+                                                </td>
+                                                
+                                                <td>
+                                                    @php
+                                                        if ($booking->status === 'pending' && $booking->cleaner_id) {
+                                                            $badgeText = 'Assigned';
+                                                            $badgeClass = 'badge-info';
+                                                        } else {
+                                                            switch ($booking->status) {
+                                                                case 'pending':
+                                                                    $badgeText = 'Pending';
+                                                                    $badgeClass = 'badge-warning';
+                                                                    break;
+                                                                case 'in_route':
+                                                                    $badgeText = 'In Route';
+                                                                    $badgeClass = 'badge-primary';
+                                                                    break;
+                                                                case 'in_progress':
+                                                                    $badgeText = 'In Progress';
+                                                                    $badgeClass = 'badge-secondary';
+                                                                    break;
+                                                                case 'completed':
+                                                                    $badgeText = 'Completed';
+                                                                    $badgeClass = 'badge-success';
+                                                                    break;
+                                                                case 'cancelled':
+                                                                    $badgeText = 'Cancelled';
+                                                                    $badgeClass = 'badge-danger';
+                                                                    break;
+                                                                default:
+                                                                    $badgeText = ucfirst($booking->status);
+                                                                    $badgeClass = 'badge-dark';
+                                                            }
+                                                        }
+                                                    @endphp
+
+                                                    <span class="badge {{ $badgeClass }}">{{ $badgeText }}</span>
                                                 </td>
                                                 <td>
                                                     <div

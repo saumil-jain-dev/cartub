@@ -59,5 +59,15 @@ class User extends Authenticatable
         ];
     }
 
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'cleaner_id');
+    }
+
+    public function bookingCancellations()
+    {
+        return $this->hasMany(BookingCancellation::class, 'cleaner_id');
+    }
+
     
 }

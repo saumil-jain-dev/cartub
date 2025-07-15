@@ -6,7 +6,7 @@ return [
     ],
     'bookings' => [
         'name' => 'Bookings',
-        'actions' => [ 'index', 'show', 'destroy']
+        'actions' => [ 'index', 'show', 'destroy', 'assign-cleaner']
     ],
     'dashboard' => [
         'name' => 'Dashboard',

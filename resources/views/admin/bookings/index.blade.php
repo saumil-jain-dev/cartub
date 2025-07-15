@@ -76,6 +76,8 @@
                                                 </th>
                                                 <th> <span class="f-light f-w-600">Payment Method</span>
                                                 </th>
+                                                <th> <span class="f-light f-w-600">Booking Status</span>
+                                                </th>
                                                 <th> <span class="f-light f-w-600">Action</span></th>
                                             </tr>
                                         </thead>
@@ -108,6 +110,42 @@
                                                     <p class="c-o-light">{{ optional($booking->payment)->payment_type ?? '-' }}</p>
                                                 </td>
                                                 <td>
+                                                    @php
+                                                        if ($booking->status === 'pending' && $booking->cleaner_id) {
+                                                            $badgeText = 'Assigned';
+                                                            $badgeClass = 'badge-info';
+                                                        } else {
+                                                            switch ($booking->status) {
+                                                                case 'pending':
+                                                                    $badgeText = 'Pending';
+                                                                    $badgeClass = 'badge-warning';
+                                                                    break;
+                                                                case 'in_route':
+                                                                    $badgeText = 'In Route';
+                                                                    $badgeClass = 'badge-primary';
+                                                                    break;
+                                                                case 'in_progress':
+                                                                    $badgeText = 'In Progress';
+                                                                    $badgeClass = 'badge-secondary';
+                                                                    break;
+                                                                case 'completed':
+                                                                    $badgeText = 'Completed';
+                                                                    $badgeClass = 'badge-success';
+                                                                    break;
+                                                                case 'cancelled':
+                                                                    $badgeText = 'Cancelled';
+                                                                    $badgeClass = 'badge-danger';
+                                                                    break;
+                                                                default:
+                                                                    $badgeText = ucfirst($booking->status);
+                                                                    $badgeClass = 'badge-dark';
+                                                            }
+                                                        }
+                                                    @endphp
+
+                                                    <span class="badge {{ $badgeClass }}">{{ $badgeText }}</span>
+                                                </td>
+                                                <td>
                                                     <div
                                                         class="common-align gap-2 justify-content-start">
                                                         @if(hasPermission('bookings.show'))
@@ -121,6 +159,16 @@
                                                                 </use>
                                                             </svg>
                                                         </a>
+                                                        @endif
+                                                        @if (hasPermission('bookings.assign-cleaner'))
+                                                            @if($booking->status == "pending" && !$booking->cleaner_id)
+                                                                <a class="square-white assign-booking" href="javascript:void(0);" data-id="{{ $booking->id }}" data-number="{{ $booking->booking_number }}">
+                                                                    <svg>
+                                                                        <use href="{{ asset('assets/svg/icon-sprite.svg#edit-content') }}">
+                                                                        </use>
+                                                                    </svg>
+                                                                </a>
+                                                            @endif
                                                         @endif
                                                         @if(hasPermission('bookings.destroy'))
                                                             <a class="square-white trash-3 delete-booking"
@@ -147,6 +195,40 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="assignBookingModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('bookings.assign-cleaner') }}" method="POST" id="assignCleanerForm">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Assign Cleaner</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input type="hidden" name="booking_id" id="modalBookingId">
+
+                        <div class="mb-3">
+                            <label>Booking Number</label>
+                            <input type="text" class="form-control" id="modalBookingNumber" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Cleaner</label>
+                            <select name="cleaner_id" class="form-control" id="modalCleanerSelect" required>
+                                <option value="">Loading available cleaners...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Assign</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -197,6 +279,67 @@
                         );
                     }
                 });
+            }
+        });
+    });
+    $(document).ready(function () {
+        const modal = new bootstrap.Modal($('#assignBookingModal')[0]);
+
+        $('.assign-booking').on('click', function () {
+            const bookingId = $(this).data('id');
+            const bookingNumber = $(this).data('number');
+
+            $('#modalBookingId').val(bookingId);
+            $('#modalBookingNumber').val(bookingNumber);
+
+            const $select = $('#modalCleanerSelect');
+            $select.html('<option>Loading...</option>');
+
+            $.ajax({
+                
+                url: `${site_url}/admin/bookings/${bookingId}/available-cleaners`,
+                type: 'GET',
+                dataType: 'json',
+                success: function (cleaners) {
+                    $select.html('<option value="">Select Cleaner</option>');
+
+                    if (cleaners.length === 0) {
+                        $select.html('<option value="">No cleaner available</option>');
+                    } else {
+                        $.each(cleaners, function (i, cleaner) {
+                            $select.append(`<option value="${cleaner.id}">${cleaner.name}</option>`);
+                        });
+                    }
+                },
+                error: function () {
+                    $select.html('<option value="">Failed to load cleaners</option>');
+                }
+            });
+
+            modal.show();
+        });
+    });
+
+    //Assign cleaner
+    $(document).ready(function () {
+        $('#assignCleanerForm').validate({
+            rules: {
+                cleaner_id: {
+                    required: true
+                }
+            },
+            messages: {
+                cleaner_id: {
+                    required: "Please select a cleaner."
+                }
+            },
+            errorElement: 'span',
+            errorClass: 'text-danger',
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
             }
         });
     });

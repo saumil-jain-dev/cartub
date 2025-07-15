@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin\Booking;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Session;
 
 class BookingController extends Controller
 {
@@ -66,5 +68,33 @@ class BookingController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
+    }
+
+    public function availableCleaners(Booking $booking){
+        $slotDate = \Carbon\Carbon::parse($booking->scheduled_date)->format('Y-m-d');
+        $slotTime = \Carbon\Carbon::parse($booking->scheduled_time)->format('H:i:s');
+        $cleaners = User::role('cleaner')
+        ->whereDoesntHave('bookings', function ($q) use ($slotDate, $slotTime) {
+            $q->where('scheduled_date', $slotDate)
+            ->where('scheduled_time', $slotTime)
+            ->whereIn('status', ['in_progress', 'accepted', 'mark_as_arrived', 'in_route']);
+        })
+        ->whereDoesntHave('bookingCancellations', function ($q) use ($booking) {
+            $q->where('booking_id', $booking->id);
+        })
+        ->where('is_available',1)
+        ->get(['id', 'name']);
+        return response()->json($cleaners);
+    }
+
+    public function assignBooking(Request $request){
+        
+        $booking = Booking::findOrFail($request->booking_id);
+        $booking->cleaner_id = $request->cleaner_id;
+        $booking->save();
+
+        Session::flash('success', "Cleaner assigned successfully");
+        return redirect()->route('bookings.index');
+        
     }
 }
