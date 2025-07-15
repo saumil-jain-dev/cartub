@@ -5,7 +5,6 @@
     'title' => $pageTitle,
     'breadcrumbs' => [
         ['label' => 'Dashboard', 'url' => route('dashboard.dashboard')],
-        ['label' => 'Booking Management','url' => ''],
         ['label' => $pageTitle] // Last item, no URL
     ]
 ])
@@ -16,16 +15,7 @@
                 <div class="card-body">
                     <form method="GET" action="{{ route('bookings.index') }}">
                         <div class="row g-3 custom-input">
-                            <div class="col-xl col-md-6"> <label class="form-label"
-                                    for="datetime-local">From: </label>
-                                <div class="input-group flatpicker-calender"><input class="form-control"
-                                        id="datetime-local" name="from_date" value="{{ request()->input('from_date') }}" placeholder="dd/mm/yyyy"></div>
-                            </div>
-                            <div class="col-xl col-md-6"> <label class="form-label"
-                                    for="datetime-local3">To: </label>
-                                <div class="input-group flatpicker-calender"><input class="form-control"
-                                        id="datetime-local3"  name="to_date" value="{{ request()->input('to_date') }}" placeholder="dd/mm/yyyy"></div>
-                            </div>
+                           
                             <div class="col-xl col-md-6"><label class="form-label">Payment
                                     Status</label><select class="form-select" name="payment_status">
                                     <option value="">Select Payment Status</option>
@@ -109,6 +99,7 @@
                                                 <td>
                                                     <p class="c-o-light">{{ optional($booking->payment)->payment_type ?? '-' }}</p>
                                                 </td>
+                                                
                                                 <td>
                                                     @php
                                                         if ($booking->status === 'pending' && $booking->cleaner_id) {
@@ -160,16 +151,6 @@
                                                             </svg>
                                                         </a>
                                                         @endif
-                                                        @if (hasPermission('bookings.assign-cleaner'))
-                                                            @if($booking->status == "pending" && !$booking->cleaner_id)
-                                                                <a class="square-white assign-booking" href="javascript:void(0);" data-id="{{ $booking->id }}" data-number="{{ $booking->booking_number }}">
-                                                                    <svg>
-                                                                        <use href="{{ asset('assets/svg/icon-sprite.svg#edit-content') }}">
-                                                                        </use>
-                                                                    </svg>
-                                                                </a>
-                                                            @endif
-                                                        @endif
                                                         @if(hasPermission('bookings.destroy'))
                                                             <a class="square-white trash-3 delete-booking"
                                                             href="javascript:void(0)" data-bs-toggle="tooltip"
@@ -195,40 +176,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="assignBookingModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="{{ route('bookings.assign-cleaner') }}" method="POST" id="assignCleanerForm">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title">Assign Cleaner</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <input type="hidden" name="booking_id" id="modalBookingId">
-
-                        <div class="mb-3">
-                            <label>Booking Number</label>
-                            <input type="text" class="form-control" id="modalBookingNumber" readonly>
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Cleaner</label>
-                            <select name="cleaner_id" class="form-control" id="modalCleanerSelect" required>
-                                <option value="">Loading available cleaners...</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Assign</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
@@ -279,67 +226,6 @@
                         );
                     }
                 });
-            }
-        });
-    });
-    $(document).ready(function () {
-        const modal = new bootstrap.Modal($('#assignBookingModal')[0]);
-
-        $('.assign-booking').on('click', function () {
-            const bookingId = $(this).data('id');
-            const bookingNumber = $(this).data('number');
-
-            $('#modalBookingId').val(bookingId);
-            $('#modalBookingNumber').val(bookingNumber);
-
-            const $select = $('#modalCleanerSelect');
-            $select.html('<option>Loading...</option>');
-
-            $.ajax({
-                
-                url: `${site_url}/admin/bookings/${bookingId}/available-cleaners`,
-                type: 'GET',
-                dataType: 'json',
-                success: function (cleaners) {
-                    $select.html('<option value="">Select Cleaner</option>');
-
-                    if (cleaners.length === 0) {
-                        $select.html('<option value="">No cleaner available</option>');
-                    } else {
-                        $.each(cleaners, function (i, cleaner) {
-                            $select.append(`<option value="${cleaner.id}">${cleaner.name}</option>`);
-                        });
-                    }
-                },
-                error: function () {
-                    $select.html('<option value="">Failed to load cleaners</option>');
-                }
-            });
-
-            modal.show();
-        });
-    });
-
-    //Assign cleaner
-    $(document).ready(function () {
-        $('#assignCleanerForm').validate({
-            rules: {
-                cleaner_id: {
-                    required: true
-                }
-            },
-            messages: {
-                cleaner_id: {
-                    required: "Please select a cleaner."
-                }
-            },
-            errorElement: 'span',
-            errorClass: 'text-danger',
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
             }
         });
     });

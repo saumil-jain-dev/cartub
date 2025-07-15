@@ -45,7 +45,7 @@
                         <ul class="sidebar-submenu">
                             <li><a href="{{ route('dashboard.dashboard') }}">Overview </a></li>
                             <li><a href="live-wash-status">Live Wash Status </a></li>
-                            <li><a href="today-booking">Today's Bookings</a></li>
+                            @if(hasPermission('dashboard.today-wash'))<li><a href="{{ route('dashboard.today-wash') }}">Today's Bookings</a></li>@endif
                         </ul>
                     </li>
                     <li class="sidebar-main-title">

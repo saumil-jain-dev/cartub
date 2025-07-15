@@ -1,12 +1,12 @@
 @extends('admin.layouts.app')
-@section('pageTitle', 'Bookings Details')
+@section('pageTitle', $pageTitle)
 @section('content')
     @include('admin.components.breadcrumb', [
-        'title' => 'Bookings Details',
+        'title' => $pageTitle,
         'breadcrumbs' => [
             ['label' => 'Dashboard', 'url' => route('dashboard.dashboard')],
             ['label' => 'Booking Management', 'url' => route('bookings.index')],
-            ['label' => 'Bookings Details'] // Last item, no URL
+            ['label' => $pageTitle] // Last item, no URL
         ]
     ])
 <div class="container-fluid">

@@ -1,11 +1,11 @@
 @extends('admin.layouts.app')
-@section('pageTitle', 'Dashboard')
+@section('pageTitle', $pageTitle)
 @section('content')
 @include('admin.components.breadcrumb', [
-    'title' => 'Dashboard',
+    'title' => $pageTitle,
     'breadcrumbs' => [
         ['label' => 'Dashboard', 'url' => route('dashboard.dashboard')],
-        ['label' => 'Dashboard'] // Last item, no URL
+        ['label' => $pageTitle] // Last item, no URL
     ]
 ])
 <div class="container-fluid dashboard-13">
