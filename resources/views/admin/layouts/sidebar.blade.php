@@ -45,7 +45,8 @@
                         <ul class="sidebar-submenu">
                             <li><a href="{{ route('dashboard.dashboard') }}">Overview </a></li>
                             <li><a href="live-wash-status">Live Wash Status </a></li>
-                            @if(hasPermission('dashboard.today-wash'))<li><a href="{{ route('dashboard.today-wash') }}">Today's Bookings</a></li>@endif
+                            @if(hasPermission('dashboard.today-wash'))
+                            <li><a href="{{ route('dashboard.today-wash') }}">Today's Bookings</a></li>@endif
                         </ul>
                     </li>
                     <li class="sidebar-main-title">
@@ -53,22 +54,24 @@
                             <h6 class="lan-8">User Management</h6>
                         </div>
                     </li>
-                    <li class="sidebar-list">
-                        <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title" href="#">
-                            <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use>
-                            </svg>
-                            <svg class="fill-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"></use>
-                            </svg>
-                            <span>Users</span>
-                        </a>
-                        <ul class="sidebar-submenu">
-                            <li><a href="user-list">User List</a></li>
-                            <li><a href="user-profile">User Profile</a></li>
-                        </ul>
-                    </li>
+                    @if(hasPermission('users.index'))
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title" href="{{ route('users.index') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-user') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-user') }}"></use>
+                                </svg>
+                                <span>Users</span>
+                            </a>
+                            <ul class="sidebar-submenu">
+                                <li><a href="{{ route('users.index') }}">User List</a></li>
+
+                            </ul>
+                        </li>
+                    @endif
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"> </i>
                         <a class="sidebar-link sidebar-title" href="#">
