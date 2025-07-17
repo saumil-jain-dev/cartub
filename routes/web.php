@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Booking\BookingController;
+use App\Http\Controllers\Admin\Cleaner\CleanerController;
 use App\Http\Controllers\Admin\Dashboard\DashboardController;
 use App\Http\Controllers\Admin\Rolepermission\RolePermissionController;
+use App\Http\Controllers\Admin\User\UserController;
 use App\Models\Role;
 use Illuminate\Support\Facades\Route;
 
@@ -50,6 +52,26 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::delete('{id}','destroy')->name('bookings.destroy');
             Route::get('{booking}/available-cleaners', 'availableCleaners')->name('bookings.available-cleaners');
             Route::post('assign-booking','assignBooking')->name('bookings.assign-cleaner');
+        });
+    });
+
+    //Customer(User) Route
+    Route::controller(UserController::class)->group(function () {
+        Route::prefix('users')->group(function () {
+            Route::get('/','index')->name('users.index');
+            Route::get('/profile/{id}','getProfile')->name('users.profile');
+            Route::get('edit','edit')->name('users.edit');
+            Route::delete('{id}','destroy')->name('users.destroy');
+        });
+    });
+
+    //Cleaner Route
+       //Customer(User) Route
+    Route::controller(CleanerController::class)->group(function () {
+        Route::prefix('cleaners')->group(function () {
+            Route::get('/','index')->name('cleaners.index');
+            Route::get('edit','edit')->name('cleaners.edit');
+            Route::delete('{id}','destroy')->name('cleaners.destroy');
         });
     });
 });

@@ -12,4 +12,12 @@ return [
         'name' => 'Dashboard',
         'actions' => [ 'dashboard', 'live-wash-status', 'today-wash']
     ],
+    'users' => [
+        'name' => 'Users',
+        'actions' => [ 'index', 'edit', 'destroy']
+    ],
+    'cleaners' => [
+        'name' => 'Cleaners',
+        'actions' => [ 'index', 'edit', 'destroy']
+    ],
 ];
