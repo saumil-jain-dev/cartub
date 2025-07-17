@@ -80,7 +80,7 @@ class VehicleService {
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://api.checkcardetails.co.uk/vehicledata/ukvehicledata?apikey='.$apikey.'&vrm='.$vehicleNumber,
+        CURLOPT_URL => 'https://api.checkcardetails.co.uk/vehicledata/vehicleregistration?apikey='.$apikey.'&vrm='.$vehicleNumber,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => '',
         CURLOPT_MAXREDIRS => 10,
@@ -95,16 +95,16 @@ class VehicleService {
         curl_close($curl);
         $response = json_decode($apiResponse, true);
         $result = [];
-        if (isset($response['VehicleRegistration'])) {
+        if (isset($response['registrationNumber'])) {
             // Success case
-            $data = $response['VehicleRegistration'];
+            $data = $response;
         
             $result = [
-                'Colour' => $data['Colour'] ?? null,
-                'Vrm' => $data['Vrm'] ?? null,
-                'Make' => $data['Make'] ?? null,
-                'Model' => $data['Model'] ?? null,
-                'YearOfManufacture' => $data['YearOfManufacture'] ?? null,
+                'Colour' => $data['colour'] ?? null,
+                'Vrm' => $data['registrationNumber'] ?? null,
+                'Make' => $data['make'] ?? null,
+                'Model' => $data['model'] ?? null,
+                'YearOfManufacture' => $data['yearOfManufacture'] ?? null,
                 'VehicleClass' => $data['VehicleClass'] ?? null,
             ];
         
