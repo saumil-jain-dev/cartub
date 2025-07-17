@@ -5,6 +5,7 @@
     'title' => $pageTitle,
     'breadcrumbs' => [
         ['label' => 'Dashboard', 'url' => route('dashboard.dashboard')],
+        ['label' => 'User Management','url' => ''],
         ['label' => 'Users','url' => ''],
         ['label' => $pageTitle] // Last item, no URL
     ]
@@ -18,7 +19,7 @@
                         <div class="row g-3">
                             <div class="col-xl col-md-4 col-sm-6"><label class="form-label">Customer
                                     Vechile</label>
-                                <select class="form-select" aria-label="Select parent category" name="customer-vehicle">
+                                <select class="form-select" aria-label="Select parent category" name="vehicle_number">
                                     <option selected="">1</option>
                                     <option value="1">2</option>
                                     <option value="2">3</option>
@@ -58,37 +59,47 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @foreach($users as $user)
                                     <tr class="user-row">
                                         <td></td>
                                         
-                                        <td><a href="user-profile">Ravi Mehta</a></td>
+                                        <td><a href="{{ route('users.profile',$user->id) }}">{{ $user->name }}</a></td>
                                         <td>
-                                            <p>98765xxxxx</p>
+                                            <p>{{ $user->phone }}</p>
                                         </td>
                                         <td>
-                                            <p>ravi@email.com</p>
+                                            <p>{{ $user->email }}</p>
                                         </td>
                                         <td>
-                                            <p>12</p>
+                                            <p>{{ $user->booking_count }}</p>
                                         </td>
                                         <td>
-                                            <p>15 Feb 2024, 04:20 AM</p>
+                                            <p>{{ $user->created_at->format('d M Y, h:i A') }}</p>
                                         </td>
-                                        <td><span class="badge badge-light-success">Active</span></td>
+                                        <td><span class="badge {{ $user->is_active ? 'badge-light-success' : 'badge-light-danger' }}">
+                                                    {{ $user->is_active ? 'Active' : 'Inactive' }}
+                                                </span></td>
                                         <td>
                                             <div class="common-align gap-2 justify-content-start">
-                                                <a class="square-white" href="#"><svg>
+                                                @if(hasPermission('users.edit'))
+                                                <a class="square-white" href="javascript:void(0)"><svg>
                                                         <use
                                                             href="{{ asset('assets/svg/icon-sprite.svg#edit-content') }}">
                                                         </use>
-                                                    </svg></a>
-                                                <a class="square-white trash-7" href="#!"><svg>
+                                                    </svg>
+                                                </a>
+                                                @endif
+                                                @if(hasPermission('users.destroy'))
+                                                <a class="square-white trash-7" href="javascript:void(0)"><svg>
                                                         <use href="{{ asset('assets/svg/icon-sprite.svg#trash1') }}">
                                                         </use>
-                                                    </svg></a>
+                                                    </svg>
+                                                </a>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

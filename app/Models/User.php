@@ -69,5 +69,24 @@ class User extends Authenticatable
         return $this->hasMany(BookingCancellation::class, 'cleaner_id');
     }
 
+    public function vehicles()
+    {
+        return $this->hasMany(Vehicle::class, 'customer_id');
+    }
+
+    public function booking()
+    {
+        return $this->hasMany(Booking::class, 'customer_id');
+    }
+
+    public function completed_job(){
+        return $this->hasMany(Booking::class, 'cleaner_id')->where('status','completed');
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'cleaner_id');
+    }
+
     
 }

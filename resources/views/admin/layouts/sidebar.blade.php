@@ -74,7 +74,8 @@
                     @endif
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"> </i>
-                        <a class="sidebar-link sidebar-title" href="#">
+                        
+                        <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#project-users') }}"></use>
                             </svg>
@@ -83,9 +84,12 @@
                             </svg>
                             <span> Cleaners / Staff </span>
                         </a>
+                        
                         <ul class="sidebar-submenu">
                             <li><a href="add-cleaners">Add Cleaners</a></li>
-                            <li><a href="cleaners-list">Cleaners List</a></li>
+                            @if(hasPermission('cleaners.index'))
+                            <li><a href="{{ route('cleaners.index') }}">Cleaners List</a></li>
+                            @endif
                             <li><a href="cleaners-performance-reports">Performance Reports</a></li>
                         </ul>
                     </li>
