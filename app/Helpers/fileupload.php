@@ -59,6 +59,15 @@ function    getImage($file)
     }
 }
 
+function    getImageAdmin($file)
+{
+    if (file_exists(public_path($file)) && $file) {
+        return asset('/' . $file);
+    } else {
+        return asset('/images/no-image.jpg');
+    }
+}
+
 function deleteImage($file)
 {
     if (file_exists(public_path($file))) {

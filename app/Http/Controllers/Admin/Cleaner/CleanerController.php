@@ -20,7 +20,7 @@ class CleanerController extends Controller
     }])->withCount('completed_job');
 
         $users = $query->get()->map(function ($user) {
-            $user->profile_image_url = getImage($user->profile_picture);
+            $user->profile_image_url = getImageAdmin($user->profile_picture);
             return $user;
         });
         $this->data['pageTitle'] = 'Cleaners List';

@@ -19,12 +19,13 @@
                         <div class="row g-3">
                             <div class="col-xl col-md-4 col-sm-6"><label class="form-label">Customer
                                     Vechile</label>
-                                <select class="form-select" aria-label="Select parent category" name="vehicle_number">
-                                    <option selected="">1</option>
-                                    <option value="1">2</option>
-                                    <option value="2">3</option>
-                                    <option value="3">4</option>
-                                    <option value="4">5</option>
+                                <select class="form-select" aria-label="Select parent category" name="vehicle_count">
+                                    <option value="">Select Count</option>
+                                    <option value="1" {{ request()->input('vehicle_count') == '1' ? 'selected' : '' }}>1</option>
+                                    <option value="2" {{ request()->input('vehicle_count') == '2' ? 'selected' : '' }}>2</option>
+                                    <option value="3" {{ request()->input('vehicle_count') == '3' ? 'selected' : '' }}>3</option>
+                                    <option value="4" {{ request()->input('vehicle_count') == '4' ? 'selected' : '' }}>4</option>
+                                    <option value="5" {{ request()->input('vehicle_count') == '5' ? 'selected' : '' }}>5</option>
                                 </select>
                             </div>
                             <div class="col d-flex justify-content-start align-items-center m-t-40">
@@ -82,7 +83,11 @@
                                         <td>
                                             <div class="common-align gap-2 justify-content-start">
                                                 @if(hasPermission('users.edit'))
-                                                <a class="square-white" href="javascript:void(0)"><svg>
+                                                <a class="square-white edit-user" href="javascript:void(0)"data-id="{{ $user->id }}"
+                                                    data-name="{{ $user->name }}"
+                                                    data-email="{{ $user->email }}"
+                                                    data-phone="{{ $user->phone }}"
+                                                    data-status="{{ $user->is_active }}"><svg>
                                                         <use
                                                             href="{{ asset('assets/svg/icon-sprite.svg#edit-content') }}">
                                                         </use>
@@ -90,7 +95,7 @@
                                                 </a>
                                                 @endif
                                                 @if(hasPermission('users.destroy'))
-                                                <a class="square-white trash-7" href="javascript:void(0)"><svg>
+                                                <a class="square-white trash-7 delete-user" href="javascript:void(0)" data-bs-title="Delete" data-id="{{ $user->id }}"><svg>
                                                         <use href="{{ asset('assets/svg/icon-sprite.svg#trash1') }}">
                                                         </use>
                                                     </svg>
@@ -108,5 +113,153 @@
             </div>
         </div>
     </div>
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" action="{{ route('users.update') }}" id="editUserForm">
+                @csrf
+                <input type="hidden" name="id" id="editUserId">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Name</label>
+                        <input type="text" name="name" id="editUserName" class="form-control" >
+                    </div>
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <input type="email" name="email" id="editUserEmail" class="form-control" >
+                    </div>
+                    <div class="mb-3">
+                        <label>Phone</label>
+                        <input type="text" name="phone" id="editUserPhone" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label>Status</label>
+                        <select name="status" id="editUserStatus" class="form-select">
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                        </select>
+                    </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+@endsection
+@section('scripts')
+<script>
+    $(document).on('click', '.delete-user', function () {
+        const bookingId = $(this).data('id');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will delete the user and all its details.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `${site_url}/admin/users/${bookingId}`,
+                    type: 'DELETE',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire(
+                            'Error!',
+                            xhr.responseJSON.message || 'Something went wrong.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        const modal = new bootstrap.Modal($('#editUserModal')[0]);
+
+        $('.edit-user').on('click', function () {
+            $('#editUserId').val($(this).data('id'));
+            $('#editUserName').val($(this).data('name'));
+            $('#editUserEmail').val($(this).data('email'));
+            $('#editUserPhone').val($(this).data('phone'));
+            $('#editUserStatus').val($(this).data('status'));
+
+            modal.show();
+        });
+
+        $('#editUserForm').validate({
+            rules: {
+                name: {
+                    required: true,
+                    maxlength: 255
+                },
+                email: {
+                    required: true,
+                    email: true,
+                    maxlength: 255
+                },
+                phone: {
+                    required: true,
+                    maxlength: 10
+                },
+                status: {
+                    required: true
+                }
+            },
+            messages: {
+                name: {
+                    required: "Name is required"
+                },
+                email: {
+                    required: "Email is required",
+                    email: "Enter a valid email"
+                },
+                status: {
+                    required: "Status is required"
+                },
+                phone: {
+                    required: "Phone is required"
+                },
+            },
+            errorClass: 'text-danger',
+            errorElement: 'small',
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+    });
+</script>
 @endsection
