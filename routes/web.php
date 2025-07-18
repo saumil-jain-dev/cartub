@@ -61,6 +61,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::get('/','index')->name('users.index');
             Route::get('/profile/{id}','getProfile')->name('users.profile');
             Route::get('edit','edit')->name('users.edit');
+            Route::post('update','update')->name('users.update');
             Route::delete('{id}','destroy')->name('users.destroy');
         });
     });
