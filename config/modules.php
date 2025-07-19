@@ -18,6 +18,6 @@ return [
     ],
     'cleaners' => [
         'name' => 'Cleaners',
-        'actions' => [ 'index', 'edit', 'destroy']
+        'actions' => [ 'index','create', 'edit', 'destroy','performance-reports']
     ],
 ];

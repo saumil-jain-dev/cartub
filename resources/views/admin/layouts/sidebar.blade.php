@@ -86,11 +86,14 @@
                         </a>
                         
                         <ul class="sidebar-submenu">
-                            <li><a href="add-cleaners">Add Cleaners</a></li>
+                            @if(hasPermission('cleaners.create'))
+                            <li><a href="{{ route('cleaners.create') }}">Add Cleaners</a></li>
+                            @endif
                             @if(hasPermission('cleaners.index'))
                             <li><a href="{{ route('cleaners.index') }}">Cleaners List</a></li>
                             @endif
-                            <li><a href="cleaners-performance-reports">Performance Reports</a></li>
+
+                            @if(hasPermission('cleaners.performance-reports'))<li><a href="{{ route('cleaners.performance-reports') }}">Performance Reports</a></li>@endif
                         </ul>
                     </li>
                     <li class="sidebar-list">
@@ -141,7 +144,7 @@
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title" href="#">
                             <svg class="stroke-icon">
-                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
+                                <use href="assets/svg/icon-sprite.svg#stroke-table"></use>
                             </svg>
                             <svg class="fill-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
@@ -241,7 +244,7 @@
                             <span>Help Center (Chat/Call) </span>
                         </a>
                     </li>
-                    <li class="sidebar-main-title">
+                    {{-- <li class="sidebar-main-title">
                         <div>
                             <h6>Booking Management</h6>
                         </div>
@@ -269,7 +272,7 @@
                             </svg>
                             <span>FAQ</span>
                         </a>
-                    </li>
+                    </li> --}}
                 </ul>
             </div>
             <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>

@@ -71,8 +71,12 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
     Route::controller(CleanerController::class)->group(function () {
         Route::prefix('cleaners')->group(function () {
             Route::get('/','index')->name('cleaners.index');
-            Route::get('edit','edit')->name('cleaners.edit');
+            Route::get('create','create')->name('cleaners.create');
+            Route::post('store','store')->name('cleaners.store');
+            Route::get('edit/{id}','edit')->name('cleaners.edit');
+            Route::post('update','update')->name('cleaners.update');
             Route::delete('{id}','destroy')->name('cleaners.destroy');
+            Route::get('performance-reports','performanceReports')->name('cleaners.performance-reports');
         });
     });
 });

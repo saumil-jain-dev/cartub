@@ -15,39 +15,36 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row g-3">
-                        
-                        <div class="col-xl col-md-4 col-sm-6"><label
-                                class="form-label">Availability</label><select class="form-select"
-                                aria-label="Select parent category">
-                                <option selected="">Available</option>
-                                <option value="1">Busy</option>
-                                <option value="2">Onboarding</option>
-                                <option value="3">Offline</option>
-                                <option value="4">UI/UX Designer</option>
-                            </select></div>
-                        <div class="col-xl col-md-4 col-sm-6"><label
-                                class="form-label">Rating</label><select class="form-select"
-                                aria-label="Select parent category">
-                                <option selected="" value="5">5 <i
-                                        class="fa-solid fa-star txt-warning"></i></option>
-                                <option value="4">4 <i class="fa-solid fa-star txt-warning"></i> and
-                                    above</option>
-                                <option value="3">3 <i class="fa-solid fa-star txt-warning"></i> and
-                                    above</option>
-                                <option value="2">2 <i class="fa-solid fa-star txt-warning"></i> and
-                                    above</option>
-                            </select></div>
-                        <div class="col-xl col-md-4 col-sm-6"><label class="form-label">Jobs
-                                Completed</label><select class="form-select"
-                                aria-label="Select your experience">
-                                <option selected=""> 0-50</option>
-                                <option value="1">51-100</option>
-                                <option value="2">100-200</option>
-                            </select></div>
-                        <div class="col common-f-start"><a class="btn btn-primary f-w-500"
-                                href="#!">Filter</a></div>
-                    </div>
+                    <form method="GET" action="{{ route('cleaners.index') }}">
+                        <div class="row g-3">
+                            <div class="col-xl col-md-4 col-sm-6"><label
+                                    class="form-label">Availability</label><select class="form-select"
+                                    aria-label="Select parent category" name="availability">
+                                    <option value="">Select Availability</option>
+                                    <option value="1" {{ request()->input('availability') == '1' ? 'selected' : '' }}>Available</option>
+                                    <option value="0" {{ request()->input('availability') == '0' ? 'selected' : '' }}>Not Available</option>
+                                </select></div>
+                            {{-- <div class="col-xl col-md-4 col-sm-6"><label
+                                    class="form-label">Rating</label><select class="form-select"
+                                    aria-label="Select parent category" name="ratting">
+                                    <option value="">Select Rating</option>
+                                    <option value="5">5</option>
+                                    <option value="4">4</option>
+                                    <option value="3">3</option>
+                                    <option value="2">2</option>
+                                    <option value="1">1</option>
+                                </select></div> --}}
+                            <div class="col-xl col-md-4 col-sm-6"><label class="form-label">Jobs
+                                    Completed</label><select class="form-select"
+                                    aria-label="Select your experience" name="jobs_completed">
+                                    <option value="">Select Jobs Completed</option>
+                                    <option value="1" {{ request()->input('jobs_completed') == '1' ? 'selected' : '' }}> 0-50</option>
+                                    <option value="2" {{ request()->input('jobs_completed') == '2' ? 'selected' : '' }}>51-100</option>
+                                    <option value="3" {{ request()->input('jobs_completed') == '3' ? 'selected' : '' }}>100-200</option>
+                                </select></div>
+                            <div class="col common-f-start"><button type="submit" class="btn btn-primary f-w-500">Filter</button></div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -62,8 +59,6 @@
                                     <th> Photo / Name</th>
                                     <th> Phone</th>
                                     <th> Email</th>
-                                    <th> Completed Jobs</th>
-                                    <th> Rating</th>
                                     <th> Availability</th>
                                     <th> Status</th>
                                     <th> Action</th>
@@ -95,8 +90,8 @@
                                         
                                         <td>{{ $cleaner->phone }}</td>
                                         <td>{{ $cleaner->email }}</td>
-                                        <td>{{ $cleaner->completed_job_count }}</td>
-                                        <td>
+                                        
+                                        {{-- <td>
                                             <div class="rating">
                                                 @for ($i = 1; $i <= 5; $i++)
                                                     @if ($i <= round($cleaner->average_rating))
@@ -106,7 +101,7 @@
                                                     @endif
                                                 @endfor
                                             </div>
-                                        </td>
+                                        </td> --}}
                                         <td>{{ $cleaner->is_available ? "Available" : "Not Available" }}</td>
                                         <td>
                                             <span class="badge {{ $cleaner->is_active ? 'badge-light-success' : 'badge-light-danger' }}">
@@ -114,24 +109,21 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <div class="common-align gap-2 justify-content-start">
+                                            <div class="d-flex">
+                                                
                                                 @if(hasPermission('cleaners.edit'))
-                                                <a class="square-white" href="javascript:void(0)"><svg>
-                                                        <use
-                                                            href="{{ asset('assets/svg/icon-sprite.svg#edit-content') }}">
-                                                        </use>
-                                                    </svg>
-                                                </a>
+                                                    <a href="{{ route('cleaners.edit', $cleaner->id) }}" 
+                                                    class="btn btn-success" 
+                                                    data-bs-toggle="tooltip" 
+                                                    data-bs-placement="top" 
+                                                    data-bs-title="Approve">
+                                                        <i class="fa-solid fa-pen"></i>
+                                                    </a>
                                                 @endif
-                                                @if(hasPermission('cleaners.destroy'))
-                                                <a class="square-white trash-7" href="javascript:void(0)"><svg>
-                                                        <use href="{{ asset('assets/svg/icon-sprite.svg#trash1') }}">
-                                                        </use>
-                                                    </svg>
-                                                </a>
-                                                @endif
+                                                @if(hasPermission('cleaners.destroy')) <button class="btn btn-danger delete-user" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Reject" data-id="{{ $cleaner->id }}"><i class="fa-solid fa-circle-xmark"> </i></button>@endif
                                             </div>
                                         </td>
+                                       
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -142,4 +134,54 @@
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+<script>
+    $(document).on('click', '.delete-user', function () {
+        const bookingId = $(this).data('id');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will delete the cleaner and all its details.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `${site_url}/admin/cleaners/${bookingId}`,
+                    type: 'DELETE',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire(
+                            'Error!',
+                            xhr.responseJSON.message || 'Something went wrong.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+</script>
 @endsection
