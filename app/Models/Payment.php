@@ -31,6 +31,11 @@ class Payment extends Model
         return $this->belongsTo(Booking::class, 'id', 'booking_id');
     }
 
+    public function bookings()
+    {
+        return $this->belongsTo(Booking::class, 'booking_id', 'id');
+    }
+
     public function getPaymentTypeAttribute(){
         $paymentMethods = [
             'google_pay' => 'Google Pay',

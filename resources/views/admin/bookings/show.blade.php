@@ -95,7 +95,7 @@
                                                     </li>
                                                 </ul>
                                             </td>
-                                            <td>{{ optional($bookingDetails->washType)->name ?? '-' }}</td>
+                                            <td>{{ $bookingDetails->service_name ?? '-' }}</td>
                                             <td>${{ number_format($bookingDetails->gross_amount,2) }}</td>
                                             <td>${{ number_format($bookingDetails->gross_amount,2) }}</td>
                                         </tr>

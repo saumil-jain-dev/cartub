@@ -160,7 +160,7 @@
                                                                                     <th scope="row">{{ $recent_booking->booking_number }}</th>
                                                                                     <td> {{ $recent_booking->vehicle?->model }} ({{ $recent_booking->vehicle?->license_plate }})</td>
                                                                                     <td>{{ $recent_booking->address }}</td>
-                                                                                    <td>₹{{ $recent_booking->total_amount }} via {{ $recent_booking->payment?->payment_type ?? "-" }}</td>
+                                                                                    <td>${{ $recent_booking->total_amount }} via {{ $recent_booking->payment?->payment_type ?? "-" }}</td>
                                                                                     <td> @php
                                                                                             if ($recent_booking->status === 'pending' && $recent_booking->cleaner_id) {
                                                                                                 $badgeText = 'Assigned';
@@ -252,7 +252,7 @@
                                                                         {{ Carbon::parse($recent_booking->scheduled_time)->format('h:i A') }}</td>
                                                                             <td>{{ $booking->service_name }}</td>
                                                                             <td>{{ $booking->vehicle?->model ?? "-" }}</td>
-                                                                            <td>₹{{ $booking->total_amount }}</td>
+                                                                            <td>${{ $booking->total_amount }}</td>
                                                                             <td>
                                                                                 @php
                                                                                     if ($booking->status === 'pending' && $booking->cleaner_id) {
@@ -379,7 +379,7 @@
                                                                         <tr>
                                                                             <th scope="row">{{ $booking->payment?->transaction_id }}</th>
                                                                             <td>{{ Carbon::parse($booking->payment?->created_at)->format('d M Y, H:i A') }}</td>
-                                                                            <td>₹{{ $booking->total_amount }}</td>
+                                                                            <td>${{ $booking->total_amount }}</td>
                                                                             <td>{{ $booking->payment?->payment_type }}</td>
                                                                             <td><span
                                                                                     class="badge badge-light-success">{{ ucfirst($booking->payment_status) }}</span>
