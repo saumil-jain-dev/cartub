@@ -34,12 +34,6 @@ class BookingListResource extends JsonResource
                     'license_plate' => $this->vehicle->license_plate,
                 ];
             }),
-            'wash_type' => $this->whenLoaded('washType', function () {
-                return [
-                    'id' => $this->washType->id,
-                    'name' => $this->washType->name,
-                ];
-            }),
             'service' => $this->whenLoaded('service', function () {
                 return [
                     'id' => $this->service->id,
@@ -48,6 +42,7 @@ class BookingListResource extends JsonResource
                     'type' => $this->service->type,
                 ];
             }),
+            'add_ons' => $this->addOnsNames,
             'created_at' => $this->created_at,
         ];
     }

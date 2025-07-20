@@ -51,7 +51,7 @@ class BookingService {
             $booking->customer_id = $request->input('customer_id');
             $booking->cleaner_id = $request->input('cleaner_id');
             $booking->vehicle_id = $request->input('vehicle_id');
-            $booking->wash_type_id = $request->input('wash_type_id');
+            $booking->add_ons_id = $request->input('add_ons_id',null);
             $booking->service_id = $request->input('service_id');
             $booking->address = $request->input('address');
             $booking->latitude = $request->input('latitude');

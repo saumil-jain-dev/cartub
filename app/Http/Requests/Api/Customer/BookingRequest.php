@@ -34,7 +34,7 @@ class BookingRequest extends FormRequest
                 }),
             ],
             'vehicle_id' => 'required|numeric|exists:vehicles,id',
-            'wash_type_id' => 'required|numeric|exists:wash_types,id',
+            'add_ons_id' => 'nullable|string', // Assuming add_ons_id can be a string or null
             'service_id' => 'required|numeric|exists:services,id',
             'address' => 'required',
             'latitude' => 'required',

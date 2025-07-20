@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class Booking extends Model
@@ -49,6 +51,7 @@ class Booking extends Model
         'gross_amount',
         'discount_amount',
         'total_amount',
+        'add_ons_id',
         'notes',
     ];
 
@@ -122,5 +125,26 @@ class Booking extends Model
     public function getServiceNameAttribute(){
         $service = Service::find($this->service_id);
         return $service->name;
+    }
+
+    public function addOnsNames(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if (empty($this->add_ons_id)) {
+                    return null;
+                }
+
+                $ids = explode(',', $this->add_ons_id);
+
+                $names = DB::table('services')
+                    ->whereIn('id', $ids)
+                    ->where('type', 'package')
+                    ->pluck('name')
+                    ->toArray();
+
+                return implode(', ', $names);
+            }
+        );
     }
 }
