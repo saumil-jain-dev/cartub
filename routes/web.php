@@ -4,8 +4,11 @@ use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Booking\BookingController;
 use App\Http\Controllers\Admin\Cleaner\CleanerController;
 use App\Http\Controllers\Admin\Dashboard\DashboardController;
+use App\Http\Controllers\Admin\Feedback\FeedbackController;
+use App\Http\Controllers\Admin\Payment\PaymentController;
 use App\Http\Controllers\Admin\Rolepermission\RolePermissionController;
 use App\Http\Controllers\Admin\User\UserController;
+use App\Http\Controllers\Admin\Vehicle\VehicleController;
 use App\Models\Role;
 use Illuminate\Support\Facades\Route;
 
@@ -67,7 +70,6 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
     });
 
     //Cleaner Route
-       //Customer(User) Route
     Route::controller(CleanerController::class)->group(function () {
         Route::prefix('cleaners')->group(function () {
             Route::get('/','index')->name('cleaners.index');
@@ -79,4 +81,28 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::get('performance-reports','performanceReports')->name('cleaners.performance-reports');
         });
     });
+
+    //Vehicle Route
+    Route::controller(VehicleController::class)->group(function () {
+        Route::prefix('vehicle')->group(function () {
+            Route::get('customer-vehicles-list','index')->name('vehicle.index');
+            Route::get('wash-types','washType')->name('vehicle.wash-type');
+            Route::get('wash-type/create','washTypeAdd')->name('vehicle.wash-type-create');
+            Route::post('wash-type/store','washTypeStore')->name('vehicle.wash-types-store');
+            Route::post('wash-type/update','washTypeUpdate')->name('vehicle.wash-types-edit');
+            Route::get('wash-type/destroy/{id}','washTypeDestroy')->name('vehicle.wash-types-destroy');
+
+            Route::get('wash-packages','washPackage')->name('vehicle.wash-packages');
+            Route::get('wash-package/create','washPackageAdd')->name('vehicle.wash-packages-create');
+            Route::post('wash-package/store','washPackageStore')->name('vehicle.wash-packages-store');
+            Route::post('wash-package/update','washPackageUpdate')->name('vehicle.wash-packages-edit');
+            Route::get('wash-package/destroy/{id}','washPackageDestroy')->name('vehicle.wash-packages-destroy');
+        });
+    });
+
+    //Payment Route
+    Route::get('payment-history',[PaymentController::class,'index'])->name('payment.index');
+
+    //Customer Feedback Route
+    Route::get('customer-feedback', [FeedbackController::class,'index'])->name('customer-feedback.index');
 });

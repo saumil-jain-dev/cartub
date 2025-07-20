@@ -787,9 +787,6 @@
         {
           data: "status",
         },
-        {
-          data: "action",
-        },
       ],
       order: [[2, "asc"]],
       scrollCollapse: true,
