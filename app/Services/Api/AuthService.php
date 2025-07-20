@@ -145,7 +145,7 @@ class AuthService {
     public function listServices($request){
         try {
             $perPage = $request->input('per_page', 10);
-            $services = Service::where('is_active',true)->orderBy('id', 'desc') // Order by latest
+            $services = Service::where('is_active',true)->where('type','package')->orderBy('id', 'desc') // Order by latest
             ->paginate($perPage)->withQueryString();
             return $services;
 
@@ -157,7 +157,7 @@ class AuthService {
     public function listWashTypes($request){
         try {
             $perPage = $request->input('per_page', 10);
-            $wash_types = WashType::where('is_active',true)->orderBy('id', 'desc') // Order by latest
+            $wash_types = Service::where('is_active',true)->where('type','service')->orderBy('id', 'desc') // Order by latest
             ->paginate($perPage)->withQueryString();
             return $wash_types;
 

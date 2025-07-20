@@ -226,18 +226,26 @@ class AuthService {
         $totalTip     = $allEarnings->sum('tip');
         $avgPayment   = $allEarnings->count() ? round($totalEarning / $allEarnings->count(), 2) : 0;
 
-        $washType = $bookingsQuery->get()->groupBy('wash_type_id')
-            ->sortByDesc(fn ($g) => $g->count())
-            ->keys()
-            ->first();
+        $topWashType = $bookingsQuery
+        ->select('service_id', DB::raw('COUNT(*) as total'))
+        ->groupBy('service_id')
+        ->orderByDesc('total')
+        ->first();
 
-        $topWashType = optional(optional($bookingsQuery->get()->firstWhere('wash_type_id', $washType))->washType)->name ?? null;
+        
+        $topWashTypeName = null;
+
+        if ($topWashType && $topWashType->service_id) {
+            $topWashTypeName = DB::table('services')
+                ->where('id', $topWashType->service_id)
+                ->value('name');
+        }
 
         return [
             'total_earning' => $totalEarning,
             'total_tip' => $totalTip,
             'average_payment_per_wash' => $avgPayment,
-            'top_wash_type' => $topWashType,
+            'top_wash_type' => $topWashTypeName,
         ];
     }
 
