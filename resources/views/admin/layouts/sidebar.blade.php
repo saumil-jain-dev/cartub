@@ -33,7 +33,7 @@
                     </li>
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"></i>
-                        <a class="sidebar-link sidebar-title" href="#">
+                        <a class="sidebar-link sidebar-title" href="{{ route('dashboard.dashboard') }}">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                             </svg>
@@ -42,12 +42,12 @@
                             </svg>
                             <span class="lan-3">Dashboard</span>
                         </a>
-                        <ul class="sidebar-submenu">
+                        {{-- <ul class="sidebar-submenu">
                             <li><a href="{{ route('dashboard.dashboard') }}">Overview </a></li>
                             <li><a href="live-wash-status">Live Wash Status </a></li>
                             @if(hasPermission('dashboard.today-wash'))
                             <li><a href="{{ route('dashboard.today-wash') }}">Today's Bookings</a></li>@endif
-                        </ul>
+                        </ul> --}}
                     </li>
                     <li class="sidebar-main-title">
                         <div>

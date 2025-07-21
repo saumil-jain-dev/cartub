@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\Service;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -16,8 +18,36 @@ class DashboardController extends Controller
      */
     
     public function index(){
+        $washTypes = Service::where('type', 'service')
+        ->withCount('bookings')   // assumes you have bookings() relationship
+        ->orderByDesc('bookings_count')
+        ->get();
+
         $this->data['pageTitle'] = 'Dashboard';
+        $this->data['total_booking_count'] = Booking::get()->count();
+        $this->data['total_revenue'] = Booking::get()->sum('total_amount');
+        $this->data['total_active_customer'] = User::where('is_active',1)->where('role','customer')->count();
+        $this->data['total_active_cleaner'] = User::where('is_active',1)->where('role','cleaner')->count();
+        $this->data['live_wash_data'] = Booking::with('vehicle')->orderBy('id','desc')->get();
+        $this->data['washTypes'] = $washTypes;
         return view('admin.dashboard',$this->data); // Ensure this view exists
+    }
+
+    public function bookingTrend(Request $request)
+    {
+        $filter = $request->get('filter', 'week');
+
+        $data = match ($filter) {
+            'week' => $this->getWeeklyData(),
+            'month' => $this->getMonthlyData(),
+            'prev_month' => $this->getPreviousMonthData(),
+            'last_3_months' => $this->getLast3MonthsData(),
+            default => $this->getWeeklyData(),
+        };
+
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 
     public function todayWash(Request $request){

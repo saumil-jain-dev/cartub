@@ -23,6 +23,8 @@ class BookingService {
         try {
             // Assuming you have a Coupon model and logic to validate the coupon
             $couponCode = $request->input('coupon_code');
+            $user = Auth::user();
+            $userZip = $request->input('zipcode');
             $coupon = Coupon::where('code', $couponCode)
             ->where('is_active', true)
             ->whereDate('valid_from', '<=', Carbon::now())
@@ -31,10 +33,22 @@ class BookingService {
             if (!$coupon) {
                 return null;
             }
-            if ($coupon->usage_limit !== null && $coupon->used_count >= $coupon->usage_limit) {
-                return null;
+            // if ($coupon->usage_limit !== null && $coupon->used_count >= $coupon->usage_limit) {
+            //     return null;
+            // }
+            if (!is_null($coupon->user_ids)) {
+                $userIds = json_decode($coupon->user_ids, true) ?? [];
+                if (!in_array($user->id, $userIds)) {
+                    return null;
+                }
             }
 
+            elseif (!is_null($coupon->zipcodes)) {
+                $zipcodes = json_decode($coupon->zipcodes, true) ?? [];
+                if (!in_array($userZip, $zipcodes)) {
+                    return null; // invalid: area not allowed
+                }
+            }
             return $coupon; // Invalid coupon
         } catch (Exception $e) {
             throw new Exception('Error applying coupon: ' . $e->getMessage());
@@ -78,10 +92,10 @@ class BookingService {
                 $payment->paid_at = $request->input('payment_status') === 'paid' ? Carbon::now() : null;
                 $payment->save();
 
-                // Increment the used count for the coupon if it exists
-                if (!empty($request->input('coupon_id'))) {
-                    Coupon::where('id', $request->input('coupon_id'))->increment('used_count');
-                }
+                // // Increment the used count for the coupon if it exists
+                // if (!empty($request->input('coupon_id'))) {
+                //     Coupon::where('id', $request->input('coupon_id'))->increment('used_count');
+                // }
                 DB::commit();
                 //send payment mail
                 $paymentData = [
