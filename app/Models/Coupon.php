@@ -20,6 +20,8 @@ class Coupon extends Model
         'valid_from',
         'valid_until',
         'is_active',
+        'user_ids',
+        'zipcodes',
     ];
 
     protected $casts = [

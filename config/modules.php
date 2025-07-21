@@ -20,4 +20,8 @@ return [
         'name' => 'Cleaners',
         'actions' => [ 'index','create', 'edit', 'destroy','performance-reports']
     ],
+    'vehicle' => [
+        'name'=> 'Vehicle',
+        'actions' => ['index','wash-type','wash-type-create','wash-types-edit','wash-types-destroy','wash-packages','wash-packages-create','wash-packages-edit','wash-packages-destroy']
+    ],
 ];
