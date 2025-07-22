@@ -18,6 +18,16 @@ Route::get('/', function () {
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('guest')->name('login');
 Route::post('/login', [LoginController::class, 'login'])->middleware('guest')->name('login.post');
+Route::get('test-notification', function () {
+    $to = 'fnRYEkQKQKypKuvqBETHaA:APA91bH8oCPfS7Dsfc-pBRbFTVT2Momav3VEDlr7urWFdAmO4Hg1utvOVI4XSezp64v42QVhm7vHxwynGjyMtFJFxWnBluSIKXZMM8Dh2mYNcWX2b0iHHsI'; // Replace with actual device token
+    $title = 'Test Notification';
+    $message = 'This is a test notification message.';
+    $extra = ['key' => 'value']; // Optional extra data
+
+    $result = \App\Traits\NotificationTrait::push_notification($to, $title, $message, $extra);
+    
+    return response()->json(['success' => $result]);
+})->name('test.notification');
 
 Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(function () {
     
