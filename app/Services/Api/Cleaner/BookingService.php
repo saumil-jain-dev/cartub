@@ -3,6 +3,7 @@
 namespace App\Services\Api\Cleaner;
 
 use App\Jobs\Customer\SendMailJob;
+use App\Jobs\SendSMSJob;
 use App\Models\Booking;
 use App\Models\BookingCancellation;
 use App\Models\BookingPhoto;
@@ -78,6 +79,12 @@ class BookingService {
                     break;
                 case 'mark_as_arrived':
                     $booking->status = 'mark_as_arrived';
+                    $message = "Your CarTub driver has arrived! " .
+                    "Booking #: #{$booking->booking_number}. " .
+                    "Driver: {$booking->cleaner->name} ({$booking->cleaner->phone}). " .
+                    "Please connect with the driver if needed. Thank you for choosing CarTub!";
+                    $phone = $booking->customer->country_code.$booking->customer->phone;
+                    SendSMSJob::dispatch($phone, $message);
                     break;
                 case 'start_job':
                     $booking->status = 'in_progress';

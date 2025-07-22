@@ -3,6 +3,7 @@
 namespace App\Services\Api;
 
 use App\Jobs\Customer\SendMailJob;
+use App\Jobs\SendSMSJob;
 use App\Models\Booking;
 use App\Models\CleanerEarning;
 use App\Models\Coupon;
@@ -49,7 +50,7 @@ class BookingService {
                     return null; // invalid: area not allowed
                 }
             }
-            return $coupon; // Invalid coupon
+            return $coupon;
         } catch (Exception $e) {
             throw new Exception('Error applying coupon: ' . $e->getMessage());
         }
@@ -59,10 +60,10 @@ class BookingService {
     {
         try {
             DB::beginTransaction();
-
+            $user = Auth::user();
             $booking = new Booking();
             $booking->booking_number = Booking::generateUniqueOrderNumber();
-            $booking->customer_id = $request->input('customer_id');
+            $booking->customer_id = $user->id;
             $booking->cleaner_id = $request->input('cleaner_id');
             $booking->vehicle_id = $request->input('vehicle_id');
             $booking->add_ons_id = $request->input('add_ons_id',null);
@@ -97,6 +98,28 @@ class BookingService {
                 //     Coupon::where('id', $request->input('coupon_id'))->increment('used_count');
                 // }
                 DB::commit();
+
+                //Send Booking SMS
+                $phone = $user->country_code.$user->phone;
+                $message = "Your CarTub booking #{$booking->booking_number} is confirmed for " .
+                    Carbon::parse($booking->scheduled_date)->format('d M Y') . ', ' .
+                    Carbon::parse($booking->scheduled_time)->format('h:i A') .
+                    ". Thank you for choosing CarTub.";
+                SendSMSJob::dispatch($phone,$message);
+
+                //Send Booking SMS to SuperAdmin
+                $adminMessage = "New booking alert! " .
+                "Booking #: #{$booking->booking_number}. " .
+                "Customer: {$booking->customer->name} ({$booking->customer->phone}). " .
+                "Address: {$booking->address}. " .
+                "Scheduled for: " .
+                Carbon::parse($booking->scheduled_date)->format('d M Y') . " at " .
+                Carbon::parse($booking->scheduled_time)->format('h:i A') . 
+                ". Please check the admin panel for details.";
+                $adminUser = User::where('role','super_admin')->first();
+                $admin_phone = $adminUser->country_code.$adminUser->phone;
+                SendSMSJob::dispatch($admin_phone,$adminMessage);
+
                 //send payment mail
                 $paymentData = [
                     'customer_name' => Auth::user()->name,

@@ -42,6 +42,7 @@ class User extends Authenticatable
         'country',
         'zipcode',
         'dob',
+        'country_code',
     ];
 
     /**
