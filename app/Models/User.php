@@ -146,5 +146,10 @@ class User extends Authenticatable
         );
     }
 
+    public function devices()
+    {
+        return $this->hasOne(UserDevice::class, 'user_id', 'id');
+    }
+
     
 }
