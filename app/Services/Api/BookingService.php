@@ -17,6 +17,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\Catch_;
 use App\Traits\NotificationTrait;
+use Stripe\Stripe;
+use Stripe\PaymentIntent;
+use Stripe\Customer;
+use Stripe\EphemeralKey;
+
+
 
 class BookingService {
     use NotificationTrait;
@@ -305,4 +311,57 @@ class BookingService {
         }
     }
 
+    public function createIntent($request)
+    {
+        try {
+            $amount = $request->input('amount');
+            if ($amount <= 0) {
+                throw new Exception('Invalid amount for payment intent.');
+            }
+
+            Stripe::setApiKey(config('constants.STRIPE_SECRET'));
+            $currency = 'gbp';
+            
+
+            $customer_id = Auth::user()->customer_stripe_id;
+            if(!$customer_id) {
+                $customer = Customer::create([
+                    'name' => Auth::user()->name,
+                    'email' => Auth::user()->email,
+                ]);
+
+                $customer_id = $customer->id;
+                Auth::user()->update(['customer_stripe_id' => $customer_id]);
+            }
+
+            $ephemeralKey = EphemeralKey::create(
+                ['customer' => $customer_id],
+                ['stripe_version' => '2024-04-10'] // must set Stripe version here
+            );
+
+            $intent = PaymentIntent::create([
+                'amount' => intval($amount * 100),
+                'currency' => $currency,
+                'customer' => $customer_id,
+                'payment_method_types' => ['card'],
+            ]);
+
+
+            return [
+                'client_secret' => $intent->client_secret, // Replace with actual client secret from payment gateway
+                'customer_id' => $customer_id,
+                'ephemeral_key' => $ephemeralKey->secret, // Return the ephemeral key ID
+                'amount' => $amount,
+            ];
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            // Stripe-specific error
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        } catch (Exception $e) {
+            // General error
+            throw new Exception($e->getMessage());
+            
+        }
+    }
 }

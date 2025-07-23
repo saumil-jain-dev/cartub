@@ -43,6 +43,7 @@ class User extends Authenticatable
         'zipcode',
         'dob',
         'country_code',
+        'customer_stripe_id',
     ];
 
     /**

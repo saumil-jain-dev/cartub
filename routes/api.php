@@ -49,6 +49,7 @@ Route::prefix('v1')->group(function () {
             Route::controller(BookingController::class)->group(function () {
                 Route::post('apply-coupon', 'applyCoupon');
                 Route::prefix('booking')->group(function () {
+                    Route::post('create-payment-intent','createIntent');
                     Route::post('create', 'createBooking');
                     Route::post('list', 'listBookings');
                     Route::post('details', 'bookingDetails');
