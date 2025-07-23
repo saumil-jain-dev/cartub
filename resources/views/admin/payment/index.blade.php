@@ -86,12 +86,12 @@
                                             @foreach($payments as $payment)
                                             <tr class="inbox-data">
                                                 <td></td>
-                                                <td> <a href="{{ route('bookings.show',$payment->bookings->id) }}">{{ $payment->bookings?->booking_number }}</a></td>
+                                                <td> <a href="{{ route('bookings.show',$payment->booking_id) }}">{{ $payment->bookings?->booking_number }}</a></td>
                                                 <td>
                                                     <p class="c-o-light">{{ Carbon::parse($payment->created_at)->format('d M Y, H:i A') }}</p>
                                                 </td>
                                                 <td>
-                                                    <p class="c-o-light">{{ $payment->bookings->customer?->name }}</p>
+                                                    <p class="c-o-light">{{ $payment->bookings?->customer?->name }}</p>
                                                 </td>
                                                 <td>
                                                     <p class="c-o-light">${{ $payment->amount }} </p>
@@ -114,7 +114,7 @@
                                                     <div
                                                         class="common-align gap-2 justify-content-start">
                                                         <a class="square-white"
-                                                            href="{{ route('bookings.show',$payment->bookings->id) }}"
+                                                            href="{{ route('bookings.show',$payment->booking_id) }}"
                                                             data-bs-toggle="tooltip"
                                                             data-bs-placement="top"
                                                             data-bs-title="View"><svg>

@@ -136,6 +136,10 @@
                                                                     $badgeText = 'Cancelled';
                                                                     $badgeClass = 'badge-danger';
                                                                     break;
+                                                                case 'mark_as_arrived':
+                                                                    $badgeText = 'Mark As Arrived';
+                                                                    $badgeClass = 'badge-dark';
+                                                                    break;
                                                                 default:
                                                                     $badgeText = ucfirst($booking->status);
                                                                     $badgeClass = 'badge-dark';
@@ -167,6 +171,18 @@
                                                                         <use href="{{ asset('assets/svg/icon-sprite.svg#edit-content') }}">
                                                                         </use>
                                                                     </svg>
+                                                                </a>
+                                                            @endif
+                                                        @endif
+                                                        @if(hasPermission('bookings.cancel'))
+                                                            @if($booking->status == "pending" || $booking->status == "accepted" || $booking->status == "in_route" || $booking->status == "mark_as_arrived")
+                                                                <a class="square-white trash-3 cancel-booking"
+                                                                    href="javascript:void(0)" data-bs-toggle="tooltip"
+                                                                    data-bs-placement="top"
+                                                                    data-bs-title="Cancel Booking"
+                                                                    data-id="{{ $booking->id }}"
+                                                                    >
+                                                                    <i class="fa-solid fa-circle-xmark"> </i>
                                                                 </a>
                                                             @endif
                                                         @endif
@@ -282,6 +298,55 @@
             }
         });
     });
+
+    //Cancel booking 
+    $(document).on('click', '.cancel-booking', function () {
+        const bookingId = $(this).data('id');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will cancel the booking",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `${site_url}/admin/bookings/cancel-booking/${bookingId}`,
+                    type: 'GET',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                response.message,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire(
+                            'Error!',
+                            xhr.responseJSON.message || 'Something went wrong.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+
     $(document).ready(function () {
         const modal = new bootstrap.Modal($('#assignBookingModal')[0]);
 

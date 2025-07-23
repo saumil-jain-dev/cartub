@@ -66,6 +66,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::delete('{id}','destroy')->name('bookings.destroy');
             Route::get('{booking}/available-cleaners', 'availableCleaners')->name('bookings.available-cleaners');
             Route::post('assign-booking','assignBooking')->name('bookings.assign-cleaner');
+            Route::get('cancel-booking/{id}','cancelBooking')->name('bookings.cancel');
         });
     });
 
