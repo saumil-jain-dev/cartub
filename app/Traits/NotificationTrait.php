@@ -132,9 +132,14 @@ trait NotificationTrait
         return false;
     }
 
-    public static function save_notification($data, $senderId, $receiverId, $notification)
+    public static function save_notification($receiverId, $notification)
     {
-        if ($receiverId) {
+        $user = User::find($receiverId);
+        $send_notification = false;
+        if ($user && $user->devices && $user->devices->device_token) {
+            $send_notification = self::push_notification($user->devices->device_token, $notification['title'], $notification['message'], $notification['payload']);
+        }
+        if ($send_notification) {
             $notificationModel = new Notification();
             $notificationModel->user_id = $receiverId;
             $notificationModel->title = $notification['title'];
@@ -142,13 +147,6 @@ trait NotificationTrait
             $notificationModel->type = $notification['type'];
             $notificationModel->payload = json_encode($notification)['payload'] ?? null;
             $notificationModel->save();
-
-            
-
-            $user = User::find($receiverId);
-            if ($user && $user->devices && $user->devices->device_token) {
-                self::push_notification($user->devices->device_token, $notification['title'], $notification['message'], $notification['payload']);
-            }
         }
     }
 }

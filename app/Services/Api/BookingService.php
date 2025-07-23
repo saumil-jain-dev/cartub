@@ -16,8 +16,10 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\Catch_;
+use App\Traits\NotificationTrait;
 
 class BookingService {
+    use NotificationTrait;
 
     public function applyCoupon($request)
     {
@@ -50,6 +52,18 @@ class BookingService {
                     return null; // invalid: area not allowed
                 }
             }
+            //Send notification for coupon applied
+            $notificationData = [
+                'title' => "Promo Code Applied!",
+                "message" =>  "Coupon code ".$coupon->code." applied successfully! Discount added to your booking",
+                'type' => 'booking',
+                'payload' => [
+                    'coupon_id' => $coupon->id,
+                    'customer_id' => $user->id,
+                ],
+
+            ];
+            // $this->save_notification($user->id,$notificationData);
             return $coupon;
         } catch (Exception $e) {
             throw new Exception('Error applying coupon: ' . $e->getMessage());
@@ -120,6 +134,31 @@ class BookingService {
                 $admin_phone = $adminUser->country_code.$adminUser->phone;
                 SendSMSJob::dispatch($admin_phone,$adminMessage);
 
+                //Send booking notification
+                $notificationData = [
+                    'title' => "Booking Confirmed!",
+                    "message" =>  "Your car wash has been successfully booked for ".Carbon::parse($booking->scheduled_date)->format('d M Y')." at ".Carbon::parse($booking->scheduled_time)->format('d M Y').". Cleaner details will be shared shortly.",
+                    'type' => 'booking',
+                    'payload' => [
+                        'booking_id' => $booking->id,
+                        'booking_number' => $booking->booking_number,
+                        'customer_id' => $booking->customer_id,
+                    ],
+
+                ];
+                // $this->save_notification($booking->customer_id,$notificationData);
+
+                $paymentNotification = [
+                    'title' => "Payment Received!",
+                    "message" =>  "We've received your payment of $".$booking->total_amount." for your recent car wash. Thank you!",
+                    'type' => 'payment',
+                    'payload' => [
+                        'booking_id' => $booking->id,
+                        'booking_number' => $booking->booking_number,
+                        'customer_id' => $booking->customer_id,
+                    ],
+                ];
+                // $this->save_notification($booking->customer_id,$paymentNotification);
                 //send payment mail
                 $paymentData = [
                     'customer_name' => Auth::user()->name,
@@ -213,6 +252,19 @@ class BookingService {
                 ]
             );
             DB::commit();
+            
+            //Send notification to cleaner
+            $notificationData = [
+                'title' => "Customer Feedback Received",
+                "message" =>  "You received a rating of ".$rating."⭐ from your last customer. View details in your profile.",
+                'type' => 'booking',
+                'payload' => [
+                    'booking_id' => $booking->id,
+                    'cleaner_id' => $request->input('cleaner_id'),
+                ],
+
+            ];
+            // $this->save_notification($request->input('cleaner_id'),$notificationData);
             return $booking;
         } catch (Exception $e) {
             DB::rollBack();

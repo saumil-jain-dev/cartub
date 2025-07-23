@@ -8,10 +8,12 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Session;
+use App\Traits\NotificationTrait;
 
 class BookingController extends Controller
 {
     //
+    use NotificationTrait;
     protected $data;
 
     public function index(Request $request){
@@ -93,6 +95,19 @@ class BookingController extends Controller
         $booking->cleaner_id = $request->cleaner_id;
         $booking->save();
 
+        //Send notification to cleaner
+        $notificationData = [
+            'title' => "New Car Wash Assigned",
+            "message" =>  "A new car wash job has been assigned. Check your app for location and time.",
+            'type' => 'booking',
+            'payload' => [
+                'booking_id' => $booking->id,
+                'cleaner_id' => $request->cleaner_id,
+            ],
+
+        ];
+        // $this->save_notification($request->cleaner_id,$notificationData);
+        
         Session::flash('success', "Cleaner assigned successfully");
         return redirect()->route('bookings.index');
         
