@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Booking\BookingController;
 use App\Http\Controllers\Admin\Cleaner\CleanerController;
+use App\Http\Controllers\Admin\Coupons\CouponController;
 use App\Http\Controllers\Admin\Dashboard\DashboardController;
 use App\Http\Controllers\Admin\Feedback\FeedbackController;
 use App\Http\Controllers\Admin\Payment\PaymentController;
@@ -107,6 +108,18 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::post('wash-package/store','washPackageStore')->name('vehicle.wash-packages-store');
             Route::post('wash-package/update','washPackageUpdate')->name('vehicle.wash-packages-edit');
             Route::get('wash-package/destroy/{id}','washPackageDestroy')->name('vehicle.wash-packages-destroy');
+        });
+    });
+
+    //Coupons Route
+    Route::controller(CouponController::class)->group(function () {
+        Route::prefix('coupons')->group(function () {
+            Route::get('/','index')->name('coupons.index');
+            Route::get('create','create')->name('coupons.create');
+            Route::post('store','store')->name('coupons.store');
+            Route::post('check-coupon-code','checkCode')->name('coupons.checkCode');
+            Route::get('edit/{id}','edit')->name('coupons.edit');
+            Route::delete('{id}','destroy')->name('coupons.destroy');
         });
     });
 

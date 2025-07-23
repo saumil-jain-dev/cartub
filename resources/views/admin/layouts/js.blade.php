@@ -68,6 +68,7 @@
 
 <!-- Select Picker -->
 <script src="{{ asset('assets/js/select/bootstrap-select.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <!-- Dashboard Scripts -->
 <script src="{{ asset('assets/js/dashboard/dashboard.js') }}"></script>

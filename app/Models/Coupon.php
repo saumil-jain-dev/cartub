@@ -29,8 +29,6 @@ class Coupon extends Model
         'min_amount' => 'decimal:2',
         'used_count' => 'integer',
         'usage_limit' => 'integer',
-        'valid_from' => 'date',
-        'valid_until' => 'date',
-        'is_active' => 'boolean',
+        
     ];
 }

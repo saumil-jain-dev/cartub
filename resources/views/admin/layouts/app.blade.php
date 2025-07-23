@@ -16,6 +16,9 @@
         .header-breadcrumb{
             color: #000;
         }
+        .code-error{
+            color: red;
+        }
     </style>
     @yield('styles')
 </head>
