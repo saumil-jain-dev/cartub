@@ -19,8 +19,11 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\Catch_;
+use App\Traits\NotificationTrait;
 
 class BookingService {
+
+    use NotificationTrait;
     public function assignBookingList($request)
     {
         try {
@@ -76,6 +79,20 @@ class BookingService {
                     break;
                 case 'in_route':
                     $booking->status = 'in_route';
+                    //Send notification to customer cleaner start ride
+                    $notificationData = [
+                        'title' => "Cleaner On the Way",
+                        "message" =>  "Your car cleaner ".$booking->cleaner->name." is on the way and will arrive shortly. Track live status in the app.",
+                        'type' => 'booking',
+                        'payload' => [
+                            'booking_id' => $booking->id,
+                            'booking_number' => $booking->booking_number,
+                            'cleaner_id' => $booking->cleaner_id,
+                            'customer_id' => $booking->customer_id,
+                        ],
+
+                    ];
+                    // $this->save_notification($booking->customer_id,$notificationData);
                     break;
                 case 'mark_as_arrived':
                     $booking->status = 'mark_as_arrived';
@@ -104,6 +121,21 @@ class BookingService {
                             ]);
                         }
                     }
+
+                    //Send notification to customer cleaner start job
+                    $notificationData = [
+                        'title' => "Car Wash in Progress",
+                        "message" =>  "Your car wash has started. Sit back and relax while we shine your ride.",
+                        'type' => 'booking',
+                        'payload' => [
+                            'booking_id' => $booking->id,
+                            'booking_number' => $booking->booking_number,
+                            'cleaner_id' => $booking->cleaner_id,
+                            'customer_id' => $booking->customer_id,
+                        ],
+
+                    ];
+                    // $this->save_notification($booking->customer_id,$notificationData);
                     break;
                 case 'finish_job':
                     
@@ -137,6 +169,37 @@ class BookingService {
                     $cleanerEarnings->save();
 
                     $bookingData = Booking::with(['cleaner','customer','afterPhoto'])->where('id', $bookingId)->first();
+
+                    //Send notification to customer cleaner complete job
+                    $notificationData = [
+                        'title' => "Car Wash Complete",
+                        "message" =>  "Your car wash is complete. Hope you loved it! Check your dashboard for details.",
+                        'type' => 'booking',
+                        'payload' => [
+                            'booking_id' => $booking->id,
+                            'booking_number' => $booking->booking_number,
+                            'cleaner_id' => $booking->cleaner_id,
+                            'customer_id' => $booking->customer_id,
+                        ],
+
+                    ];
+                    // $this->save_notification($booking->customer_id,$notificationData);
+
+                    //Send notification to customer Feedback
+                    $notificationData = [
+                        'title' => "How Did We Do?",
+                        "message" =>  "We'd love to hear from you! Please rate your recent car wash experience.",
+                        'type' => 'booking',
+                        'payload' => [
+                            'booking_id' => $booking->id,
+                            'booking_number' => $booking->booking_number,
+                            'cleaner_id' => $booking->cleaner_id,
+                            'customer_id' => $booking->customer_id,
+                        ],
+
+                    ];
+                    // $this->save_notification($booking->customer_id,$notificationData);
+
                     //send booking complete mail
                     $paymentData = [
                         'customer_name' => $bookingData->customer->name ?? "",
