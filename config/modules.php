@@ -24,4 +24,8 @@ return [
         'name'=> 'Vehicle',
         'actions' => ['index','wash-type','wash-type-create','wash-types-edit','wash-types-destroy','wash-packages','wash-packages-create','wash-packages-edit','wash-packages-destroy']
     ],
+    'coupons' => [
+        'name'=> 'Coupons',
+        'actions' => ['index','create','edit','destroy']
+    ],
 ];
