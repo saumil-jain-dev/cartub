@@ -112,4 +112,43 @@ class BookingController extends Controller
         return redirect()->route('bookings.index');
         
     }
+
+    public function cancelBooking($id){
+
+        $booking = Booking::findOrFail($id );
+        $booking->update(['status' => 'cancelled']);
+
+        //Send notification to customer
+        $notificationData = [
+            'title' => "Booking Cancelled",
+            "message" =>  "Your booking on ".$booking->scheduled_date." has been cancelled. You can rebook anytime from the app.",
+            'type' => 'booking',
+            'payload' => [
+                'booking_id' => $booking->id,
+                'cleaner_id' => $booking->cleaner_id ?? null,
+                'customer_id' => $booking->customer_id,
+            ],
+
+        ];
+        // $this->save_notification($booking->customer_id,$notificationData);
+
+        if($booking->cleaner_id){
+
+            //Send notification to cleaner
+            $notificationData = [
+                'title' => "Job Canceled",
+                "message" =>  "Your scheduled job on ".$booking->scheduled_date." has been canceled by the customer.",
+                'type' => 'booking',
+                'payload' => [
+                    'booking_id' => $booking->id,
+                    'cleaner_id' => $booking->cleaner_id,
+                    'customer_id' => $booking->customer_id,
+                ],
+    
+            ];
+            // $this->save_notification($booking->cleaner_id,$notificationData);
+        }
+        Session::flash('success', "Booking canceled successfully");
+        return response()->json(['success' => true, 'message' => 'Booking canceled successfully.']);
+    }
 }

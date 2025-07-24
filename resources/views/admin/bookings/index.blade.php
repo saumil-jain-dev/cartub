@@ -309,19 +309,16 @@
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonText: 'Yes, cancel it!'
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
                     url: `${site_url}/admin/bookings/cancel-booking/${bookingId}`,
                     type: 'GET',
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr('content')
-                    },
                     success: function (response) {
                         if (response.success) {
                             Swal.fire(
-                                'Deleted!',
+                                'Cancelled!',
                                 response.message,
                                 'success'
                             ).then(() => {
