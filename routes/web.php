@@ -33,6 +33,9 @@ Route::get('test-notification', function () {
 Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(function () {
     
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/profile', [LoginController::class, 'getProfile'])->name('profile');
+    Route::post('/profile/update', [LoginController::class, 'updateProfile'])->name('profile.update');
+    Route::post('change-password', [LoginController::class, 'changePassword'])->name('profile.change-password');
 
     //Dashboard Route
     Route::controller(DashboardController::class)->group(function () {
@@ -66,7 +69,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::delete('{id}','destroy')->name('bookings.destroy');
             Route::get('{booking}/available-cleaners', 'availableCleaners')->name('bookings.available-cleaners');
             Route::post('assign-booking','assignBooking')->name('bookings.assign-cleaner');
-            Route::get('cancel-booking/{id}','cancelBooking')->name('bookings.cancel');
+            Route::get('/cancel-booking/{id}','cancelBooking')->name('bookings.cancel');
         });
     });
 

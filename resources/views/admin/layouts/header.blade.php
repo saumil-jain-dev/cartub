@@ -30,15 +30,15 @@
             <ul class="nav-menus">
                 <li class="profile-nav onhover-dropdown pe-0 py-0">
                     <div class="d-flex profile-media">
-                        <img class="b-r-10" src="{{ asset('assets/images/profile.png') }}" alt="" />
+                        <img class="b-r-10" src="{{ getImageAdmin(Auth::user()->profile_picture) }}" alt="" height="35px" width="35px" />
                         <div class="flex-grow-1">
-                            <span>Emay Walter</span>
+                            <span>{{ Auth::user()->name }}</span>
                             <p class="mb-0">Admin <i class="middle fa-solid fa-angle-down"></i></p>
                         </div>
                     </div>
                     <ul class="profile-dropdown onhover-show-div">
                         <li>
-                            <a href="#"><i data-feather="settings"></i><span>Settings</span></a>
+                            <a href="{{ route('profile') }}"><i data-feather="settings"></i><span>Settings</span></a>
                         </li>
                         <li>
                             <a href="{{ route('logout') }}"><i data-feather="log-in"> </i><span>Log out</span></a>
