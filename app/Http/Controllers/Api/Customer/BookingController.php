@@ -9,6 +9,7 @@ use App\Http\Requests\Api\Customer\BookingRattingRequest;
 use App\Http\Requests\Api\Customer\BookingRequest;
 use App\Http\Requests\Api\Customer\BookingTipRequest;
 use App\Http\Requests\Api\Customer\PaymentIntentRequest;
+use App\Http\Requests\Api\Customer\PaymentPaymentStatusRequest;
 use App\Http\Requests\Api\Customer\ValidateCouponRequest;
 use App\Http\Resources\Api\Customer\BookingDetailsResource;
 use App\Http\Resources\Api\Customer\BookingListResource;
@@ -124,6 +125,18 @@ class BookingController extends Controller
             $intent = $this->bookingService->createIntent($request);
             return success(
                 $intent,trans('messages.create', ['attribute' => 'Payment Intent']),
+                config('code.SUCCESS_CODE')
+            );
+        } catch (Exception $e) {
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+    }
+
+    public function checkPaymentStatus(PaymentPaymentStatusRequest $request){
+        try {
+            $paymentDetails = $this->bookingService->checkPaymentStatus($request);
+            return success(
+                $paymentDetails,trans('messages.view', ['attribute' => 'Payment Details']),
                 config('code.SUCCESS_CODE')
             );
         } catch (Exception $e) {

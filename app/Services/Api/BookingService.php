@@ -352,7 +352,26 @@ class BookingService {
                 'customer_id' => $customer_id,
                 'ephemeral_key' => $ephemeralKey->secret, // Return the ephemeral key ID
                 'amount' => $amount,
+                'intent_id' => $intent->id,
             ];
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            // Stripe-specific error
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        } catch (Exception $e) {
+            // General error
+            throw new Exception($e->getMessage());
+            
+        }
+    }
+
+    public function checkPaymentStatus($request){
+        try {
+            $paymentIntentId = $request->payment_intent_id;
+            Stripe::setApiKey(config('constants.STRIPE_SECRET'));
+            $intent = PaymentIntent::retrieve($paymentIntentId);
+            return $intent;
         } catch (\Stripe\Exception\ApiErrorException $e) {
             // Stripe-specific error
             return response()->json([
