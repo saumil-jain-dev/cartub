@@ -206,7 +206,7 @@ class BookingService {
                         'to_email' => $bookingData->customer->email ?? "",
                         'booking_data' => $bookingData,
                         '_blade' => 'booking-complete',
-                        'subject' => 'Car Wash Completed 🎉'
+                        'subject' => '🎉 Car Wash Completed'
                     ];
                     SendMailJob::dispatch($paymentData);
 

@@ -185,6 +185,20 @@
                             </a>
                         </li>
                     @endif
+                    @if(hasPermission('bookings.create'))
+                        <li class="sidebar-list">
+                            <i class="fa-solid fa-thumbtack"></i>
+                            <a class="sidebar-link sidebar-title link-nav" href="{{ route('bookings.create') }}">
+                                <svg class="stroke-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-api') }}"></use>
+                                </svg>
+                                <svg class="fill-icon">
+                                    <use href="{{ asset('assets/svg/icon-sprite.svg#fill-api') }}"></use>
+                                </svg>
+                                <span>Manual Booking</span>
+                            </a>
+                        </li>
+                    @endif
                     <li class="sidebar-main-title">
                         <div>
                             <h6>Coupons Management</h6>

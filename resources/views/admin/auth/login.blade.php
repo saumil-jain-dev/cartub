@@ -65,7 +65,7 @@
                                     <div class="form-check"><input class="checkbox-primary form-check-input"
                                             id="checkbox1" type="checkbox"><label class="text-muted form-check-label"
                                             for="checkbox1">Remember
-                                            password</label></div><a class="link" href="forgot-password">Forgot
+                                            password</label></div><a class="link" href="{{ route('admin.password.request') }}">Forgot
                                         password?</a>
                                     <div class="text-end"><button class="btn btn-primary btn-block w-100 mt-3"
                                             type="submit">Sign

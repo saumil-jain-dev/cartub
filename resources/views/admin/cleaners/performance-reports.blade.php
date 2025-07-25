@@ -59,8 +59,8 @@
                                                 <td>{{ $cleaner->completed_job_count }}</td>
                                                 <td>{{ $cleaner->monthly_average_completed_bookings }}</td>
                                                 <td><i class="fa-solid fa-star txt-warning"></i> {{ number_format($cleaner->average_rating, 2) }} / 5</td>
-                                                <td>${{ $cleaner->total_earned }}</td>
-                                                <td>${{ $cleaner->total_tip_earned }}</td>
+                                                <td>£{{ $cleaner->total_earned }}</td>
+                                                <td>£{{ $cleaner->total_tip_earned }}</td>
                                             </tr>
                                     @endforeach
                                     </tbody>
