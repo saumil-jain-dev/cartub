@@ -105,6 +105,178 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-xl-12 ord-xxl-1 box-ord-1">
+                                    <div class="row review-box">
+                                        <div class="col-6">
+                                            <div class="md-sidebar"><a class="btn btn-primary md-sidebar-toggle"
+                                                    href="#!">seller profile</a>
+                                                <div class="md-sidebar-aside job-left-aside custom-scrollbar">
+                                                    <div class="email-left-aside">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                <div class="accordion seller-profile"
+                                                                    id="accordionPanelsStayOpenExample">
+                                                                    <div class="accordion-item">
+                                                                        <div class="accordion-header"><button
+                                                                                class="accordion-button" type="button"
+                                                                                data-bs-toggle="collapse"
+                                                                                data-bs-target="#panelsStayOpen-collapseOne"
+                                                                                aria-expanded="true"
+                                                                                aria-controls="panelsStayOpen-collapseOne">Cleaner
+                                                                                Details
+                                                                                Details</button></div>
+                                                                        <div class="accordion-collapse collapse show"
+                                                                            id="panelsStayOpen-collapseOne">
+                                                                            <div class="accordion-body">
+                                                                                <div class="common-f-start">
+                                                                                    <img class="img-40 b-r-8"
+                                                                                        src="{{ getImageAdmin($bookingDetails->cleaner?->profile_picture) }}"
+                                                                                        alt="#">
+                                                                                    <div>
+                                                                                        <h5>{{ $bookingDetails->cleaner?->name }}</h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <ul class="seller-details">
+                                                                                   
+                                                                                    <li>
+                                                                                        <div><i
+                                                                                                class="fa-solid fa-phone"></i>
+                                                                                            <h6>Phone Number </h6>
+                                                                                        </div><span>+{{ $bookingDetails->cleaner?->country_code }}
+                                                                                            {{ $bookingDetails->cleaner?->phone }}</span>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <div><i
+                                                                                                class="fa-solid fa-envelope"></i>
+                                                                                            <h6>Email</h6>
+                                                                                        </div>
+                                                                                        <span>{{ $bookingDetails->cleaner?->email }}</span>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <div><i
+                                                                                                class="fa-solid fa-euro-sign"></i>
+                                                                                            <h6>Order Tips</h6>
+                                                                                        </div>
+                                                                                        <span><strong>{{ $bookingDetails->tip?->tip }}</strong></span>
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="accordion-item">
+                                                                        <div class="accordion-header"><button
+                                                                                class="accordion-button" type="button"
+                                                                                data-bs-toggle="collapse"
+                                                                                data-bs-target="#panelsStayOpen-collapseFour"
+                                                                                aria-expanded="false"
+                                                                                aria-controls="panelsStayOpen-collapseFour">Cleaner
+                                                                                Rating &amp; Reviews</button></div>
+                                                                        <div class="accordion-collapse collapse show"
+                                                                            id="panelsStayOpen-collapseFour">
+                                                                            <div class="accordion-body">
+                                                                                <div class="review-people">
+                                                                                    <ul
+                                                                                        class="review-list custom-scrollbar">
+                                                                                        <li>
+                                                                                            <div class="people-box"><img
+                                                                                                    class="img-fluid"
+                                                                                                    src="assets/images/14.png"
+                                                                                                    alt="">
+                                                                                                <div
+                                                                                                    class="people-comment">
+                                                                                                    <div
+                                                                                                        class="people-name">
+                                                                                                        <a class="name"
+                                                                                                            href="javascript:void(0)">{{ $bookingDetails->customer->name }}</a>
+                                                                                                        <div
+                                                                                                            class="date-time">
+                                                                                                            <h6
+                                                                                                                class="text-content">
+                                                                                                                {{ $bookingDetails->service->name }}
+                                                                                                            </h6>
+                                                                                                            <div
+                                                                                                                class="product-rating">
+                                                                                                                <div
+                                                                                                                    class="common-flex">
+                                                                                                                    @for ($i = 1; $i <= 5; $i++)
+                                                                                                                        @if ($i <= round($bookingDetails->rating?->rating))
+                                                                                                                            <i class="fa-solid fa-star txt-warning"></i>
+                                                                                                                        @else
+                                                                                                                            <i class="fa-regular fa-star txt-warning"></i>
+                                                                                                                        @endif
+                                                                                                                    @endfor
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <p>{{ $bookingDetails->rating?->comment }}
+                                                                                            </p>
+                                                                                        </li>
+
+                                                                                    </ul>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="card">
+                                                <div class="card-body pt-0">
+                                                    <div class="recent-activity notification">
+                                                        <h5>Car wash Photos</h5>
+                                                        <ul>
+                                                            <li class="d-flex">
+                                                                <div class="activity-dot-primary"></div>
+                                                                <div class="w-100 ms-3">
+                                                                    <p class="d-flex justify-content-between mb-2"><span
+                                                                            class="date-content light-background">Before
+                                                                            Wash
+                                                                        </span></p>
+                                                                    <div class="recent-images">
+                                                                        <div class="avatars">
+                                                                            @foreach($bookingDetails->beforePhoto as $image)
+                                                                            <div class="avatar"><img
+                                                                                    class="b-r-8 img-100" src="{{ getImageAdmin($image->photo_path) }}" alt="#">
+                                                                            </div>
+                                                                            @endforeach
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li class="d-flex">
+                                                                <div class="activity-dot-primary"></div>
+                                                                <div class="w-100 ms-3">
+                                                                    <p class="d-flex justify-content-between mb-2"><span
+                                                                            class="date-content light-background">After
+                                                                            Wash
+                                                                        </span></p>
+                                                                    <div class="recent-images">
+                                                                        <div class="avatars">
+                                                                            
+                                                                            @foreach($bookingDetails->afterPhoto as $image)
+                                                                            <div class="avatar"><img
+                                                                                    class="b-r-8 img-100" src="{{ getImageAdmin($image->photo_path) }}" alt="#">
+                                                                            </div>
+                                                                            @endforeach
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
             </div>
         </div>
         <div class="col-xxl-3 col-xl-4 box-col-4">
