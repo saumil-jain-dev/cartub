@@ -42,6 +42,7 @@ class Payment extends Model
             'card' => 'Card',
             'apple_pay' => 'Apple Pay',
             'paypal' => 'PayPal',
+            'cod' => 'COD',
             // Add other mappings here
         ];
     
