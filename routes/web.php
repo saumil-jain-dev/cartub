@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Booking\BookingController;
 use App\Http\Controllers\Admin\Cleaner\CleanerController;
@@ -19,6 +20,7 @@ Route::get('/', function () {
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('guest')->name('login');
 Route::post('/login', [LoginController::class, 'login'])->middleware('guest')->name('login.post');
+Route::get('admin/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('admin.password.request');
 Route::get('test-notification', function () {
     $to = 'fnRYEkQKQKypKuvqBETHaA:APA91bH8oCPfS7Dsfc-pBRbFTVT2Momav3VEDlr7urWFdAmO4Hg1utvOVI4XSezp64v42QVhm7vHxwynGjyMtFJFxWnBluSIKXZMM8Dh2mYNcWX2b0iHHsI'; // Replace with actual device token
     $title = 'Test Notification';
@@ -65,11 +67,15 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
         Route::prefix('bookings')->group(function () {
 
             Route::get('/','index')->name('bookings.index');
+            Route::get('create','create')->name('bookings.create');
+            Route::post('store','store')->name('bookings.store');
             Route::get('details/{id}','show')->name('bookings.show');
             Route::delete('{id}','destroy')->name('bookings.destroy');
             Route::get('{booking}/available-cleaners', 'availableCleaners')->name('bookings.available-cleaners');
             Route::post('assign-booking','assignBooking')->name('bookings.assign-cleaner');
             Route::get('/cancel-booking/{id}','cancelBooking')->name('bookings.cancel');
+            Route::get('get-customer-vehicles/{customerId}','getCustomerVehicles')->name('bookings.get-customer-vehicle');
+            Route::post('validate-coupon','validateCoupon')->name('bookings.validate-coupon');
         });
     });
 

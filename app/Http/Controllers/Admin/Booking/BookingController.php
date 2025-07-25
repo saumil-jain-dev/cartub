@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin\Booking;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\Coupon;
+use App\Models\Service;
 use App\Models\User;
+use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Session;
@@ -51,6 +54,46 @@ class BookingController extends Controller
         return view('admin.bookings.index',$this->data);
     }
 
+    public function create(){
+        $this->data['pageTitle'] = 'Manual Booking';
+        $this->data['users'] = User::where('role','customer')->where('is_active',1)->get();
+        $this->data['wash_types'] = Service::where('is_active',true)->where('type','service')->orderBy('id', 'desc')->get();
+        $this->data['services'] = Service::where('is_active',true)->where('type','package')->orderBy('id', 'desc')->get();
+        $this->data['coupons'] = Coupon::where('is_active',true)->where('valid_until','>',now())->orderBy('id','desc')->get();
+        return view('admin.bookings.create',$this->data);
+    }
+
+    public function getCustomerVehicles($id){
+        $vehicles = Vehicle::where('customer_id', $id)->get(['id', 'model', 'license_plate']); // Adjust fields as needed
+        return response()->json($vehicles);
+    }
+
+    public function validateCoupon(Request $request) {
+        $coupon = Coupon::find($request->coupon_id);
+        if (!is_null($coupon->user_ids)) {
+            $userIds = json_decode($coupon->user_ids, true) ?? [];
+            if (!in_array($request->customer_id, $userIds)) {
+                return response()->json(['success' => false, 'message' => 'Coupon is not active or expired.']);
+            }
+        }
+
+        elseif (!is_null($coupon->zipcodes)) {
+            $zipcodes = json_decode($coupon->zipcodes, true) ?? [];
+            if (!in_array($request->zipcode, $zipcodes)) {
+                return response()->json(['success' => false, 'message' => 'Coupon is not active or expired.']);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'type' => $coupon->discount_type,     // 'fixed' or 'percentage'
+                'value' => $coupon->discount_value,
+                'id' => $coupon->id,
+                'code' => $coupon->code
+            ]
+        ]);
+    }
     public function show($id){
         $bookingDetails = Booking::with(['customer','payment','washType'])->where('id',$id)->first();
         if(!$bookingDetails){
