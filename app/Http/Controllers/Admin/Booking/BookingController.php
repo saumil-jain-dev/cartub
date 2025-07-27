@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Coupon;
 use App\Models\Service;
+use App\Models\Payment;
 use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Session;
 use App\Traits\NotificationTrait;
+use DB;
+use Log;
 
 class BookingController extends Controller
 {
@@ -24,6 +27,7 @@ class BookingController extends Controller
         if(! hasPermission('bookings.index')){
             abort(403);
         }
+        
         $this->data['pageTitle'] = 'All Bookings';
         
         $bookings = Booking::with(['customer', 'payment']);
@@ -62,6 +66,240 @@ class BookingController extends Controller
         $this->data['coupons'] = Coupon::where('is_active',true)->where('valid_until','>',now())->orderBy('id','desc')->get();
         return view('admin.bookings.create',$this->data);
     }
+    
+    public function store(Request $request)
+    {
+        try {
+        
+        // Add debugging for lat/lng before validation
+        Log::info('Raw latitude/longitude data:', [
+            'latitude' => $request->input('latitude'),
+            'longitude' => $request->input('longitude'),
+            'latitude_type' => gettype($request->input('latitude')),
+            'longitude_type' => gettype($request->input('longitude')),
+        ]);
+        
+            // Validate the request
+            $validated = $request->validate([
+                'customer_id' => 'required|exists:users,id',
+                'vehicle_id' => 'required|exists:vehicles,id',
+                'contact' => 'required|string|max:20',
+                'email' => 'required|email|max:255',
+                'address' => 'required|string|max:500',
+                'country' => 'required|string|max:100',
+                'state' => 'required|string|max:100',
+                'postal_code' => 'required|string|max:20',
+                'latitude' => 'nullable|numeric|between:-90,90',
+                'longitude' => 'nullable|numeric|between:-180,180',
+                'service_id' => 'required|exists:services,id',
+                'add_ons_id' => 'nullable|array',
+                'add_ons_id.*' => 'exists:services,id',
+                'payment_method' => 'required|in:cod,card,online',
+                'coupon_id' => 'nullable|exists:coupons,id',
+                'coupon_code' => 'nullable|string|max:50',
+                'subtotal' => 'required|numeric|min:0',
+                'discount_amount' => 'nullable|numeric|min:0',
+                'total_amount' => 'required|numeric|min:0',
+            ]);
+
+            // Check if customer exists and is active
+            $customer = User::where('id', $validated['customer_id'])
+                          ->where('role', 'customer')
+                          ->where('is_active', 1)
+                          ->first();
+            
+            if (!$customer) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Selected customer is not found or inactive'
+                ], 400);
+            }
+
+            // Check if vehicle belongs to customer
+            $vehicle = Vehicle::where('id', $validated['vehicle_id'])
+                             ->where('customer_id', $validated['customer_id'])
+                             ->first();
+            
+            if (!$vehicle) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Selected vehicle does not belong to this customer'
+                ], 400);
+            }
+
+            DB::beginTransaction();
+
+            // Create the booking
+            $booking = new Booking();
+            $booking->booking_number = $this->generateUniqueOrderNumber();
+            $booking->customer_id = $validated['customer_id'];
+            $booking->cleaner_id = null; // Will be assigned later
+            $booking->vehicle_id = $validated['vehicle_id'];
+            $booking->add_ons_id = !empty($validated['add_ons_id']) ? json_encode($validated['add_ons_id']) : null;
+            $booking->service_id = $validated['service_id'];
+            $booking->address = $validated['address'];
+            $booking->latitude = $validated['latitude'] ?? null;
+            $booking->longitude = $validated['longitude'] ?? null;
+            $booking->notes = '';
+            $booking->scheduled_date = now()->addDay(); // Default to tomorrow
+            $booking->scheduled_time = now()->setTime(10, 0); // Default to 10 AM
+            $booking->coupon_id = $validated['coupon_id'] ?? null;
+            $booking->gross_amount = $validated['subtotal'];
+            $booking->discount_amount = $validated['discount_amount'] ?? 0;
+            $booking->total_amount = $validated['total_amount'];
+            $booking->payment_status = 'pending';
+
+            // Save the booking
+            if ($booking->save()) {
+
+                // Save the payment method and transaction ID
+                $payment = new Payment();
+                $payment->booking_id = $booking->id;
+                $payment->amount = $booking->total_amount;
+                $payment->payment_method = $validated['payment_method'];
+                $payment->transaction_id = null; // No transaction ID for manual bookings
+                $payment->status = 'pending';
+                $payment->paid_at = null;
+                $payment->save();
+
+                // Handle coupon usage if applied
+                if (!empty($validated['coupon_id'])) {
+                    $coupon = Coupon::where('id', $validated['coupon_id'])
+                                   ->where('is_active', true)
+                                   ->first();
+                    
+                    // if ($coupon) {
+                    //     CouponUsage::create([
+                    //         'coupon_id' => $validated['coupon_id'],
+                    //         'user_id' => $validated['customer_id'],
+                    //         'booking_id' => $booking->id,
+                    //         'used_at' => now(),
+                    //     ]);
+                    // }
+                }
+
+                DB::commit();
+
+                // Send Booking SMS
+                $phone = $customer->country_code . $customer->phone;
+                $message = "Your CarTub booking #{$booking->booking_number} is confirmed for " .
+                    Carbon::parse($booking->scheduled_date)->format('d M Y') . ', ' .
+                    Carbon::parse($booking->scheduled_time)->format('h:i A') .
+                    ". Thank you for choosing CarTub.";
+                // \App\Jobs\SendSMSJob::dispatch($phone, $message);
+
+                // Send Booking SMS to SuperAdmin
+                $adminMessage = "New booking alert! " .
+                    "Booking #: #{$booking->booking_number}. " .
+                    "Customer: {$customer->name} ({$customer->phone}). " .
+                    "Address: {$booking->address}. " .
+                    "Scheduled for: " .
+                    Carbon::parse($booking->scheduled_date)->format('d M Y') . " at " .
+                    Carbon::parse($booking->scheduled_time)->format('h:i A') .
+                    ". Please check the admin panel for details.";
+                $adminUser = User::where('role', 'super_admin')->first();
+                if ($adminUser) {
+                    $admin_phone = $adminUser->country_code . $adminUser->phone;
+                    // \App\Jobs\SendSMSJob::dispatch($admin_phone, $adminMessage);
+                }
+
+                // Send booking notification
+                $notificationData = [
+                    'title' => "Booking Confirmed!",
+                    'message' => "Your car wash has been successfully booked for " . Carbon::parse($booking->scheduled_date)->format('d M Y') . " at " . Carbon::parse($booking->scheduled_time)->format('h:i A') . ". Cleaner details will be shared shortly.",
+                    'type' => 'booking',
+                    'payload' => [
+                        'booking_id' => $booking->id,
+                        'booking_number' => $booking->booking_number,
+                        'customer_id' => $booking->customer_id,
+                    ],
+                ];
+                // $this->save_notification($booking->customer_id, $notificationData);
+
+                $paymentNotification = [
+                    'title' => "Payment Received!",
+                    'message' => "We've received your payment of £" . $booking->total_amount . " for your recent car wash. Thank you!",
+                    'type' => 'payment',
+                    'payload' => [
+                        'booking_id' => $booking->id,
+                        'booking_number' => $booking->booking_number,
+                        'customer_id' => $booking->customer_id,
+                    ],
+                ];
+                // $this->save_notification($booking->customer_id, $paymentNotification);
+
+                // Send payment mail
+                $paymentData = [
+                    'customer_name' => $customer->name,
+                    'to_email' => $customer->email,
+                    'booking_data' => $booking,
+                    'payment_data' => $payment,
+                    '_blade' => 'payment-confirm',
+                    'subject' => '💳 Payment Received'
+                ];
+                // \App\Jobs\SendMailJob::dispatch($paymentData);
+
+                // Send booking mail
+                $emailData = [
+                    'customer_name' => $customer->name,
+                    'to_email' => $customer->email,
+                    'booking_data' => $booking,
+                    '_blade' => 'booking',
+                    'subject' => '✅ Booking Confirmed!'
+                ];
+                // \App\Jobs\SendMailJob::dispatch($emailData);
+
+                Session::flash('success', 'Booking created successfully!');
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Booking created successfully!',
+                    'booking_id' => $booking->id,
+                    'redirect_url' => route('bookings.index')
+                ]);
+
+            } else {
+                DB::rollBack();
+                throw new Exception('Failed to create booking.');
+            }
+
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            
+            Log::error('Booking creation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while creating the booking. Please try again.'
+            ], 500);
+        }
+    }
+    
+    /**
+     * Generate a unique booking number
+    */
+    private function generateUniqueOrderNumber()
+    {
+        do {
+            // Generate booking number format: BK + YYYYMMDD + XXXX (4 random digits)
+            $bookingNumber = 'BK' . date('Ymd') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        } while (Booking::where('booking_number', $bookingNumber)->exists());
+
+        return $bookingNumber;
+    }
+
 
     public function getCustomerVehicles($id){
         $vehicles = Vehicle::where('customer_id', $id)->get(['id', 'model', 'license_plate']); // Adjust fields as needed
