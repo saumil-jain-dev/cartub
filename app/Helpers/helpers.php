@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Setting;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -71,5 +72,13 @@ function sendSMS(string $phone, string $message): bool{
         Log::error($e->getMessage());
         return false;
     }
+
+}
+function getSettingsData($key){
+    $settingData = Setting::where("key","=",$key)->first();
+    if(isset($settingData)){
+        return $settingData->value;
+    }
+    return false;
 }
 

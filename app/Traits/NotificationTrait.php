@@ -9,51 +9,7 @@ use Google\Client as GoogleClient;
 
 trait NotificationTrait
 {
-    # Send Push Notification (Android & Ios)
-//     public static function push_notification($to, $title, $message, $extra = null)
-//     {
-// Log::info("message",[is_array($to)]);
-
-//         $firebaseUrl = config('app.FIREBASE_URL');
-//         $fcmKey = config('app.FIREBASE_SERVER_KEY');
-
-//         $headers = array(
-//             'Authorization: key=' . $fcmKey,
-//             'Content-Type: application/json'
-//         );
-
-//         $fields = array(
-//             'to' => $to,
-//             'notification' => [
-//                 'title' => $title,
-//                 'body' => $message,
-//             ],
-//             'data' => $extra ?? null
-//         );
-
-//         $ch = curl_init();
-//         curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_0);
-//         curl_setopt($ch, CURLOPT_URL, $firebaseUrl);
-//         curl_setopt($ch, CURLOPT_POST, true);
-//         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-//         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-//         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
-//         $result = curl_exec($ch);
-//         curl_close($ch);
-
-//         $resultArr = json_decode($result, true);
-        
-//         if (empty($resultArr)) {
-//             return false;
-//         }
-
-//         if ($resultArr['success'] == 1 && $resultArr['success'] && isset($resultArr) && isset($resultArr['success']))  {
-//             return true;
-//         }
-
-//         return false;
-//     }
+    
     public static function push_notification($to, $title, $message, $extra = null)
     {
         Log::info('Sending notification', ['to' => is_array($to) ? implode(', ', $to) : $to]);
@@ -61,7 +17,7 @@ trait NotificationTrait
         $firebaseUrl = config('constants.FIREBASE_URL');
         $fcmKey = config('constants.FIREBASE_SERVER_KEY');
         $projectId = config('constants.FCM_PROJECT_ID');
-        $credentialsFilePath = public_path('cartub-ee854-firebase-adminsdk-fbsvc-d11b60de14.json');
+        $credentialsFilePath = public_path('notification/cartub-79bd7-firebase-adminsdk-fbsvc-81a84ce79e.json');
         $client = new GoogleClient();
         $client->setAuthConfig($credentialsFilePath);
         $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
