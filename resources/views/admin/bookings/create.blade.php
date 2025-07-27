@@ -72,17 +72,20 @@
                                             for="customSelectCustomerName">Customer
                                             Name</label><select class="form-select select2"
                                             id="customSelectCustomerName" >
-                                            <option selected="" disabled="" value="1">Select
+                                            <option selected="" disabled="" value="">Select
                                                 Customer Name</option>
                                             @foreach ($users as $user)
                                                 <option value="{{ $user->id }}" data-name="{{ $user->name }}" data-email="{{ $user->email }}" data-phone="{{ $user->phone }}"> {{ $user->name }} </option>
                                             @endforeach
                                             
                                         </select></div>
-                                    <div class="col-sm-6"><label class="form-label"
-                                            for="customName">Full Name</label><input
-                                            class="form-control" id="customName" type="text"
-                                            placeholder="Enter full name"></div>
+                                     <div class="col-md-6">
+                                        <label class="form-label" for="customSelectCustomerVehicle">Customer Vehicle</label>
+                                        <select class="form-select" id="customSelectCustomerVehicle">
+                                            <option selected disabled>Select Vehicle</option>
+                                            <!-- Options will be populated dynamically -->
+                                        </select>
+                                    </div>
                                     <div class="col-sm-6"><label class="form-label"
                                             for="customContact">Contact Number</label><input
                                             class="form-control" id="customContact" type="number"
@@ -91,13 +94,7 @@
                                             for="customEmail">Email</label><input
                                             class="form-control" id="customEmail" type="email"
                                             placeholder="pixelstrap@example.com"></div>
-                                    <div class="col-md-6">
-                                        <label class="form-label" for="customSelectCustomerVehicle">Customer Vehicle</label>
-                                        <select class="form-select" id="customSelectCustomerVehicle">
-                                            <option selected disabled>Select Vehicle</option>
-                                            <!-- Options will be populated dynamically -->
-                                        </select>
-                                    </div>
+                                   
                                     <div class="col-12"> <label class="form-label"
                                             for="currentAddress1">Customer Booking Address
                                         </label><textarea class="form-control" id="currentAddress1"
@@ -316,71 +313,80 @@
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAFmrV-jN6567bNi-hsWYUN5tPpNqg8-Q&libraries=places"
     async defer></script>
 <script type="text/javascript">
-$(document).ready(function () {
-    $('#packageSelect').select2({
-        placeholder: "Select packages",
-        allowClear: true,
-        width: '100%' // ensure it respects container
-    });
-    $('#customSelectCustomerName').on('change', function () {
-        var selected = $(this).find('option:selected');
-        var customerId = selected.val();
-
-        // Fill name, email, phone
-        $('#customName').val(selected.data('name'));
-        $('#customContact').val(selected.data('phone'));
-        $('#customEmail').val(selected.data('email'));
-
-        // Clear vehicle dropdown
-        $('#customSelectCustomerVehicle').html('<option selected disabled>Loading...</option>');
-
-        // Fetch vehicle data
-        $.ajax({
-            url: `${site_url}/admin/bookings/get-customer-vehicles/${customerId}`,
-            method: 'GET',
-            success: function (response) {
-                var options = '<option selected disabled>Select Vehicle</option>';
-                if (response.length > 0) {
-                    $.each(response, function (index, vehicle) {
-                        options += `<option value="${vehicle.id}" data-model="${vehicle.model}">
-                                        ${vehicle.model} ( ${vehicle.license_plate} )
-                                    </option>`;
-                    });
-                } else {
-                    options = '<option disabled>No vehicles found</option>';
+    
+    $(document).ready(function () {
+        $('#packageSelect').select2({
+            placeholder: "Select packages",
+            allowClear: true,
+            width: '100%'
+        });
+        
+        $('#customSelectCustomerName').on('change', function () {
+            var selected = $(this).find('option:selected');
+            var customerId = selected.val();
+    
+            // Fill name, email, phone
+            $('#customName').val(selected.data('name'));
+            $('#customContact').val(selected.data('phone'));
+            $('#customEmail').val(selected.data('email'));
+    
+            // Clear vehicle dropdown
+            $('#customSelectCustomerVehicle').html('<option selected disabled>Loading...</option>');
+    
+            // Fetch vehicle data
+            $.ajax({
+                url: `${site_url}/admin/bookings/get-customer-vehicles/${customerId}`,
+                method: 'GET',
+                success: function (response) {
+                    var options = '<option selected disabled>Select Vehicle</option>';
+                    if (response.length > 0) {
+                        $.each(response, function (index, vehicle) {
+                            options += `<option value="${vehicle.id}" data-model="${vehicle.model}">
+                                            ${vehicle.model} ( ${vehicle.license_plate} )
+                                        </option>`;
+                        });
+                    } else {
+                        options = '<option disabled>No vehicles found</option>';
+                    }
+                    $('#customSelectCustomerVehicle').html(options);
+                },
+                error: function () {
+                    $('#customSelectCustomerVehicle').html('<option disabled>Error loading vehicles</option>');
                 }
-                $('#customSelectCustomerVehicle').html(options);
-            },
-            error: function () {
-                $('#customSelectCustomerVehicle').html('<option disabled>Error loading vehicles</option>');
-            }
+            });
         });
     });
-});
-</script>
-<script>
+
     let autocomplete;
-
+    
     function initAutocomplete() {
-        autocomplete = new google.maps.places.Autocomplete(
-            $('#currentAddress1')[0],
-            { types: ['geocode'] }
-        );
-
+        const addressInput = document.getElementById('currentAddress1');
+    
+        if (!addressInput) return;
+    
+        autocomplete = new google.maps.places.Autocomplete(addressInput, {
+            types: ['geocode']
+        });
+    
         autocomplete.setFields(['address_component', 'geometry']);
-
+    
         autocomplete.addListener('place_changed', function () {
             const place = autocomplete.getPlace();
-
+    
+            if (!place.geometry || !place.geometry.location) {
+                toastr.error("Location not found. Please select a valid address.");
+                return;
+            }
+    
             let addressComponents = {
                 country: '',
                 state: '',
                 postal_code: ''
             };
-
-            $.each(place.address_components, function (i, component) {
+    
+            place.address_components.forEach(component => {
                 const types = component.types;
-
+    
                 if (types.includes('country')) {
                     addressComponents.country = component.long_name;
                 }
@@ -391,178 +397,297 @@ $(document).ready(function () {
                     addressComponents.postal_code = component.long_name;
                 }
             });
-
+    
             // Fill form fields
             $('#customSelectCountry').val(addressComponents.country);
             $('#customstate').val(addressComponents.state);
             $('#customPostalCode').val(addressComponents.postal_code);
-
-            // Latitude & Longitude
-            if (place.geometry) {
-                $('#latitude').val(place.geometry.location.lat());
-                $('#longitude').val(place.geometry.location.lng());
-            }
+    
+            // Set coordinates
+            $('#latitude').val(place.geometry.location.lat());
+            $('#longitude').val(place.geometry.location.lng());
+    
+            console.log("Latitude:", place.geometry.location.lat());
+            console.log("Longitude:", place.geometry.location.lng());
         });
     }
 
-    // Initialize on page load
-    $(window).on('load', function () {
-        initAutocomplete();
-    });
-    function proceedNextButtonClick(targetTabId) {
-        const currentTabId = $('.nav-link.active').attr('id');
 
-        // Step 1: Validate customer info
-        if (currentTabId === 'bill-wizard-tab') {
-            const vehicle = $('#customSelectCustomerVehicle').val();
-            const address = $('#currentAddress1').val();
+// Initialize on page load
+$(window).on('load', function () {
+    initAutocomplete();
+});
 
-            if (!vehicle) {
-                toastr.error("Please select a customer vehicle.");
-                return;
-            }
+function proceedNextButtonClick(targetTabId) {
+    const currentTabId = $('.nav-link.active').attr('id');
 
-            if (!address || address.trim().length === 0) {
-                toastr.error("Please enter the customer address.");
-                return;
-            }
+    // Step 1: Validate customer info
+    if (currentTabId === 'bill-wizard-tab') {
+        const customerId = $('#customSelectCustomerName').val();
+        const vehicle = $('#customSelectCustomerVehicle').val();
+        const address = $('#currentAddress1').val();
+
+        if (!customerId) {
+            toastr.error("Please select a customer.");
+            return;
         }
 
-        // Step 2: Validate Wash Type
-        if (currentTabId === 'ship-wizard-tab') {
-            const washType = $('#washTypeSelect').val();
-            if (!washType) {
-                toastr.error("Please select a wash type.");
-                return;
-            }
+        if (!vehicle) {
+            toastr.error("Please select a customer vehicle.");
+            return;
         }
 
-        // Proceed to next tab
-        $(`#${targetTabId}`).tab('show');
+        if (!address || address.trim().length === 0) {
+            toastr.error("Please enter the customer address.");
+            return;
+        }
     }
 
-    function proceedPrevButtonClick(targetTabId) {
-        // Simply show the previous tab
-        $(`#${targetTabId}`).tab('show');
+    // Step 2: Validate Wash Type
+    if (currentTabId === 'ship-wizard-tab') {
+        const washType = $('#washTypeSelect').val();
+        if (!washType) {
+            toastr.error("Please select a wash type.");
+            return;
+        }
     }
 
-    let selectedCoupon = {
-        type: null,
-        value: 0,
-        id: null,
-        code: null,
+    // Step 3: Handle Payment to Finish (Submit Form)
+    if (currentTabId === 'payment-wizard-tab' && targetTabId === 'finish-wizard-tab') {
+        submitBookingForm();
+        return;
+    }
+
+    // Proceed to next tab for other steps
+    $(`#${targetTabId}`).tab('show');
+}
+
+function submitBookingForm() {
+    // Show loading state
+    const submitButton = $('button[onclick*="finish-wizard-tab"]');
+    const originalText = submitButton.html();
+    submitButton.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Processing...');
+
+    // Collect all form data
+    const formData = {
+        customer_id: $('#customSelectCustomerName').val(),
+        vehicle_id: $('#customSelectCustomerVehicle').val(),
+        contact: $('#customContact').val(),
+        email: $('#customEmail').val(),
+        address: $('#currentAddress1').val(),
+        country: $('#customSelectCountry').val(),
+        state: $('#customstate').val(),
+        postal_code: $('#customPostalCode').val(),
+        latitude: $('#latitude').val(),
+        longitude: $('#longitude').val(),
+        service_id: $('#washTypeSelect').val(),
+        add_ons_id: $('#packageSelect').val(),
+        payment_method: $('input[name="paymentMethod"]:checked').val(),
+        coupon_id: $('#discount_id').val(),
+        coupon_code: $('#discount_code').val(),
+        subtotal: $('#subtotal_amount').val(),
+        discount_amount: $('#discount_amount').val(),
+        total_amount: $('#total_amount').val(),
+        _token: $('meta[name="csrf-token"]').attr('content')
     };
 
-    function updateCart() {
-        let cartItemsHtml = '';
-        let subTotal = 0;
-
-        // Wash Type
-        const washOption = $('#washTypeSelect option:selected');
-        if (washOption.val()) {
-            const washPrice = parseFloat(washOption.data('price'));
-            subTotal += washPrice;
-            cartItemsHtml += `
-                <tr>
-                    <td><h6>${washOption.text()}</h6></td>
-                    <td><p>£${washPrice.toFixed(2)}</p></td>
-                </tr>
-            `;
-        }
-
-        // Packages
-        $('#packageSelect option:selected').each(function () {
-            const pkgName = $(this).text();
-            const pkgPrice = parseFloat($(this).data('price'));
-            subTotal += pkgPrice;
-            cartItemsHtml += `
-                <tr>
-                    <td><h6>${pkgName}</h6></td>
-                    <td><p>£${pkgPrice.toFixed(2)}</p></td>
-                </tr>
-            `;
-        });
-
-        // Apply Coupon
-        let discountAmount = 0;
-        if (selectedCoupon.type === 'fixed') {
-            discountAmount = parseFloat(selectedCoupon.value) || 0;
-        } else if (selectedCoupon.type === 'percentage') {
-            discountAmount = subTotal * (selectedCoupon.value / 100);
-        }
-
-        // Tax Calculation
-        const subAfterDiscount = Math.max(0, subTotal - discountAmount);
-        const taxAmount = 0;
-        const total = subAfterDiscount + taxAmount;
-
-        // Update HTML
-        $('#cartItems').html(cartItemsHtml);
-        $('#subTotal').text(`£${subTotal.toFixed(2)}`);
-        $('#discount').text(`- £${discountAmount.toFixed(2)}`);
-        $('#tax').text(`£${taxAmount.toFixed(2)}`);
-        $('#total').text(`£${total.toFixed(2)}`);
-
-        // Update hidden inputs
-        $('#discount_code').val(selectedCoupon.code || '');
-        $('#discount_id').val(selectedCoupon.id || '');
-        $('#subtotal_amount').val(subtotal.toFixed(2));
-        $('#discount_amount').val(discountAmount.toFixed(2));
-        $('#total_amount').val(total.toFixed(2));
-
+    // Validate required fields before submission
+    if (!formData.customer_id) {
+        toastr.error('Please select a customer');
+        resetSubmitButton(submitButton, originalText);
+        return;
     }
 
-    // Event Listeners
-    $(document).ready(function () {
-        $('#washTypeSelect, #packageSelect').on('change', updateCart);
-    });
+    if (!formData.vehicle_id) {
+        toastr.error('Please select a vehicle');
+        resetSubmitButton(submitButton, originalText);
+        return;
+    }
 
-    $(document).on('change', '#couponSelect', function () {
-        const couponId = $(this).val();
-        const customerId = $('#customSelectCustomerName').val();
-        const zipCode = $('#customPostalCode').val();
-        // If user selects "none" or blank, remove coupon
-        if (!couponId) {
-            selectedCoupon = { type: null, value: 0 };
-            updateCart(); // Recalculate totals without discount
-            toastr.info("Coupon removed.");
-            return;
-        }
-        if (!couponId || !customerId || !zipCode) {
-            toastr.error("Please ensure customer and address are selected before applying coupon.");
-            $(this).val('');
-            return;
-        }
+    if (!formData.service_id) {
+        toastr.error('Please select a wash type');
+        resetSubmitButton(submitButton, originalText);
+        return;
+    }
 
-        $.ajax({
-            url: `${site_url}/admin/bookings/validate-coupon`,
-            method: 'POST',
-            data: {
-                coupon_id: couponId,
-                customer_id: customerId,
-                zipcode: zipCode,
-                _token: $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function (res) {
-                if (res.success) {
-                    selectedCoupon.type = res.data.type;     // fixed / percentage
-                    selectedCoupon.value = res.data.value;
-                    selectedCoupon.code = res.data.code;
+    if (!formData.total_amount || parseFloat(formData.total_amount) <= 0) {
+        toastr.error('Invalid total amount');
+        resetSubmitButton(submitButton, originalText);
+        return;
+    }
 
-                    updateCart();
-                    toastr.success("Coupon applied successfully!");
-                } else {
-                    selectedCoupon = { type: null, value: 0 };
-                    $('#couponSelect').val('');
-                    updateCart();
-                    toastr.error(res.message);
+    // Submit via AJAX
+    $.ajax({
+        url: "{{ route('bookings.store') }}",
+        method: 'POST',
+        data: formData,
+        success: function(response) {
+            if(response.success) {
+                // Move to finish tab
+                $('#finish-wizard-tab').tab('show');
+                
+                // Update success message with booking details if available
+                if(response.booking_id) {
+                    $('.finish-shipping h5').text(`Booking #${response.booking_id} Created Successfully`);
                 }
-            },
-            error: function () {
-                toastr.error("Server error while applying coupon.");
+                
+                toastr.success(response.message || 'Booking created successfully!');
+                
+                // Optionally redirect after a delay
+                setTimeout(function() {
+                    if(response.redirect_url) {
+                        window.location.href = response.redirect_url;
+                    } else {
+                        // Default redirect to dashboard
+                        window.location.href = "{{ route('dashboard.dashboard') }}";
+                    }
+                }, 3000);
+                
+            } else {
+                toastr.error(response.message || 'Error creating booking');
+                resetSubmitButton(submitButton, originalText);
             }
-        });
+        },
+        error: function(xhr) {
+            let errorMessage = 'Error creating booking';
+            
+            if(xhr.responseJSON) {
+                if(xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                } else if(xhr.responseJSON.errors) {
+                    // Handle validation errors
+                    const errors = xhr.responseJSON.errors;
+                    errorMessage = Object.values(errors).flat().join('<br>');
+                }
+            }
+            
+            toastr.error(errorMessage);
+            resetSubmitButton(submitButton, originalText);
+        }
     });
+}
+
+function resetSubmitButton(button, originalText) {
+    button.prop('disabled', false).html(originalText);
+}
+
+let selectedCoupon = {
+    type: null,
+    value: 0,
+    id: null,
+    code: null,
+};
+
+function updateCart() {
+    let cartItemsHtml = '';
+    let subTotal = 0;
+
+    // Wash Type
+    const washOption = $('#washTypeSelect option:selected');
+    if (washOption.val()) {
+        const washPrice = parseFloat(washOption.data('price'));
+        subTotal += washPrice;
+        cartItemsHtml += `
+            <tr>
+                <td><h6>${washOption.text()}</h6></td>
+                <td><p>£${washPrice.toFixed(2)}</p></td>
+            </tr>
+        `;
+    }
+
+    // Packages
+    $('#packageSelect option:selected').each(function () {
+        const pkgName = $(this).text();
+        const pkgPrice = parseFloat($(this).data('price'));
+        subTotal += pkgPrice;
+        cartItemsHtml += `
+            <tr>
+                <td><h6>${pkgName}</h6></td>
+                <td><p>£${pkgPrice.toFixed(2)}</p></td>
+            </tr>
+        `;
+    });
+
+    // Apply Coupon
+    let discountAmount = 0;
+    if (selectedCoupon.type === 'fixed') {
+        discountAmount = parseFloat(selectedCoupon.value) || 0;
+    } else if (selectedCoupon.type === 'percentage') {
+        discountAmount = subTotal * (selectedCoupon.value / 100);
+    }
+
+    // Calculate final totals
+    const subAfterDiscount = Math.max(0, subTotal - discountAmount);
+    const total = subAfterDiscount;
+
+    // Update HTML
+    $('#cartItems').html(cartItemsHtml);
+    $('#subTotal').text(`£${subTotal.toFixed(2)}`);
+    $('#discount').text(`- £${discountAmount.toFixed(2)}`);
+    $('#total').text(`£${total.toFixed(2)}`);
+
+    // Update hidden inputs with correct values
+    $('#discount_code').val(selectedCoupon.code || '');
+    $('#discount_id').val(selectedCoupon.id || '');
+    $('#subtotal_amount').val(subTotal.toFixed(2));
+    $('#discount_amount').val(discountAmount.toFixed(2));
+    $('#total_amount').val(total.toFixed(2));
+}
+
+// Event Listeners
+$(document).ready(function () {
+    $('#washTypeSelect, #packageSelect').on('change', updateCart);
+});
+
+$(document).on('change', '#couponSelect', function () {
+    const couponId = $(this).val();
+    const customerId = $('#customSelectCustomerName').val();
+    const zipCode = $('#customPostalCode').val();
+    
+    // If user selects "none" or blank, remove coupon
+    if (!couponId) {
+        selectedCoupon = { type: null, value: 0, id: null, code: null };
+        updateCart();
+        toastr.info("Coupon removed.");
+        return;
+    }
+    
+    if (!couponId || !customerId || !zipCode) {
+        toastr.error("Please ensure customer and address are selected before applying coupon.");
+        $(this).val('');
+        return;
+    }
+
+    $.ajax({
+        url: `${site_url}/admin/bookings/validate-coupon`,
+        method: 'POST',
+        data: {
+            coupon_id: couponId,
+            customer_id: customerId,
+            zipcode: zipCode,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (res) {
+            if (res.success) {
+                selectedCoupon.type = res.data.type;
+                selectedCoupon.value = res.data.value;
+                selectedCoupon.code = res.data.code;
+                selectedCoupon.id = couponId;
+
+                updateCart();
+                toastr.success("Coupon applied successfully!");
+            } else {
+                selectedCoupon = { type: null, value: 0, id: null, code: null };
+                $('#couponSelect').val('');
+                updateCart();
+                toastr.error(res.message);
+            }
+        },
+        error: function () {
+            toastr.error("Server error while applying coupon.");
+        }
+    });
+});
 </script>
 
 @endsection
