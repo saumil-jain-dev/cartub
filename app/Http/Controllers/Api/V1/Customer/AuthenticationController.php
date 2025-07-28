@@ -15,10 +15,12 @@ use App\Http\Resources\Api\Customer\RegisterResource;
 use App\Http\Resources\Api\Customer\ServiceListResource;
 use App\Http\Resources\Api\Customer\WashTypeListResource;
 use App\Http\Resources\Api\Customer\UserResource;
+use App\Models\Booking;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\Api\AuthService;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class AuthenticationController extends Controller
 {
@@ -170,6 +172,29 @@ class AuthenticationController extends Controller
                     trans('messages.list', ['attribute' => 'Payment History']),
                     config('code.SUCCESS_CODE')
                 );
+            }
+        } catch(Exception $e) {
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+    }
+
+    public function ongoing(Request $request)
+    {
+        try {
+            $query = Booking::whereIn('status', ['in_progress', 'mark_as_arrived', 'in_route']);
+            if (Auth::user()) {
+                $query->where('customer_id', Auth::user()->id);
+            } elseif ($request->has('device_id')) {
+                $query->where('device_id', $request->device_id);
+            } else {
+                return fail([], 'No identifier provided.', config('code.NO_RECORD_CODE'));
+                
+            }
+            $ongoingBooking = $query->latest()->first();
+            if ($ongoingBooking) {
+                return success($ongoingBooking, trans('messages.view', ['attribute' => 'Ongoing Booking']), config('code.SUCCESS_CODE'));
+            } else {
+                return fail([], 'No ongoing bookings.', config('code.NO_RECORD_CODE'));
             }
         } catch(Exception $e) {
             return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));

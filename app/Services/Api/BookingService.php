@@ -99,6 +99,7 @@ class BookingService {
             $booking->discount_amount = $request->input('discount_amount', 0);
             $booking->total_amount = $request->input('total_amount');
             $booking->payment_status = $request->input('payment_status');
+            $booking->device_id  = $request->input('device_id', null);
 
             // Save the booking
             if ($booking->save()) {
