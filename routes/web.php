@@ -70,6 +70,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::get('create','create')->name('bookings.create');
             Route::post('store','store')->name('bookings.store');
             Route::get('details/{id}','show')->name('bookings.show');
+            Route::get('{booking}/invoice', 'invoice')->name('bookings.invoice');
             Route::delete('{id}','destroy')->name('bookings.destroy');
             Route::get('{booking}/available-cleaners', 'availableCleaners')->name('bookings.available-cleaners');
             Route::post('assign-booking','assignBooking')->name('bookings.assign-cleaner');

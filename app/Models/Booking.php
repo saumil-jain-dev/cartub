@@ -53,6 +53,8 @@ class Booking extends Model
         'total_amount',
         'add_ons_id',
         'notes',
+        'device_id',
+        'invoice_url',
     ];
 
     protected $casts = [

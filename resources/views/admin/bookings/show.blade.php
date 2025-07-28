@@ -287,7 +287,7 @@
                             <div class="header-top summary-header">
                                 <h5>Summary</h5>
                                 <div class="card-header-right-icon"><a class="btn btn-primary"
-                                        href="order-invoice" target="_blank"><i
+                                        href="{{ route('bookings.invoice',$bookingDetails->id) }}" target="_blank"><i
                                             class="fa-regular fa-file-lines pe-2 f-14"></i>Invoice</a>
                                 </div>
                             </div>

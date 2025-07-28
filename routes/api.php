@@ -16,6 +16,7 @@ Route::prefix('v1')->group(function () {
             Route::post('register', 'register');
             Route::post('/otp/send', 'sendOtp');
             Route::post('/otp/verify', 'verifyOtp');
+            Route::post('ongoing-booking', 'ongoing');
 
         });
         Route::middleware(['auth:sanctum','role:customer'])->group( function (): void {
