@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\Auth\SettingsController;
 use App\Http\Controllers\Admin\Booking\BookingController;
 use App\Http\Controllers\Admin\Cleaner\CleanerController;
 use App\Http\Controllers\Admin\Coupons\CouponController;
@@ -22,7 +23,7 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('gue
 Route::post('/login', [LoginController::class, 'login'])->middleware('guest')->name('login.post');
 Route::get('admin/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('admin.password.request');
 Route::get('test-notification', function () {
-    $to = 'fnRYEkQKQKypKuvqBETHaA:APA91bH8oCPfS7Dsfc-pBRbFTVT2Momav3VEDlr7urWFdAmO4Hg1utvOVI4XSezp64v42QVhm7vHxwynGjyMtFJFxWnBluSIKXZMM8Dh2mYNcWX2b0iHHsI'; // Replace with actual device token
+    $to = 'fPO4cPbqS-eiJSYPkjUeb9:APA91bHRiJCDZlZAwEQgS-J3iiCJNcSmSXkbxo73I2l72AlO__Y2MfiXZvcQjscdqsVCp-xmVEdYIJhcZDCKaWijbkX6nuzBVWX-VHdT0DVviPtrmLWGAHY'; // Replace with actual device token
     $title = 'Test Notification';
     $message = 'This is a test notification message.';
     $extra = ['key' => 'value']; // Optional extra data
@@ -38,7 +39,8 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
     Route::get('/profile', [LoginController::class, 'getProfile'])->name('profile');
     Route::post('/profile/update', [LoginController::class, 'updateProfile'])->name('profile.update');
     Route::post('change-password', [LoginController::class, 'changePassword'])->name('profile.change-password');
-
+    Route::get('settings', [SettingsController::class,'settings'])->name('settings');
+    Route::post('settings/store', [SettingsController::class,'store'])->name('settings.store');
     //Dashboard Route
     Route::controller(DashboardController::class)->group(function () {
         Route::prefix('dashboard')->group(function () {
