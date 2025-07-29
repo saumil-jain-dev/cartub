@@ -21,6 +21,8 @@ use Stripe\Stripe;
 use Stripe\PaymentIntent;
 use Stripe\Customer;
 use Stripe\EphemeralKey;
+use Kreait\Firebase\Factory;
+
 
 
 
@@ -175,7 +177,9 @@ class BookingService {
                     '_blade' => 'payment-confirm',
                     'subject' => '💳 Payment Received'
                 ];
+                
                 SendMailJob::dispatch($paymentData);
+                
                 //send booking mail
                 $emailData = [
                     'customer_name' => Auth::user()->name,
@@ -186,10 +190,30 @@ class BookingService {
                 ];
                 SendMailJob::dispatch($emailData);
                 return $booking;
+           
+            // At the end of createBooking(), just before "return $booking"
+            $firebase = (new Factory)
+                ->withServiceAccount(storage_path('app/firebase/firebase.json'))
+                ->createDatabase();
+            
+            $firebase->getReference('bookings/'.$booking->id)->set([
+                'id' => $booking->id,
+                'booking_number' => $booking->booking_number,
+                'customer_id' => $booking->customer_id,
+                'customer_name' => $booking->customer->name,
+                'address' => $booking->address,
+                'scheduled_date' => $booking->scheduled_date->format('Y-m-d'),
+                'scheduled_time' => $booking->scheduled_time->format('H:i:s'),
+                'status' => $booking->status,
+                'total_amount' => $booking->total_amount,
+                'created_at' => $booking->created_at->toDateTimeString()
+            ]);
+    
             } else {
                 DB::rollBack();
                 throw new Exception('Failed to create booking.');
             }
+            
         } catch (Exception $e) {
             DB::rollBack();
             throw new Exception('Error creating booking: ' . $e->getMessage());

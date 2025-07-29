@@ -79,6 +79,9 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::get('/cancel-booking/{id}','cancelBooking')->name('bookings.cancel');
             Route::get('get-customer-vehicles/{customerId}','getCustomerVehicles')->name('bookings.get-customer-vehicle');
             Route::post('validate-coupon','validateCoupon')->name('bookings.validate-coupon');
+            // routes/web.php or routes/admin.php
+            Route::get('/admin/bookings/ajax-table', [BookingController::class, 'ajaxTable'])->name('admin.bookings.ajaxTable');
+
         });
     });
 

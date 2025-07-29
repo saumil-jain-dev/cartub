@@ -9,6 +9,45 @@
         ['label' => $pageTitle] // Last item, no URL
     ]
 ])
+<!-- FIREBASE CONFIG -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "YOUR_FIREBASE_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  const db = firebase.database();
+
+  // Listen for new bookings and refresh table
+  db.ref("bookings").on("child_added", function(snapshot) {
+    console.log("New Booking Added:", snapshot.val());
+    refreshBookingTable();
+  });
+
+  function refreshBookingTable() {
+    $.ajax({
+      url: "{{ route('admin.bookings.ajaxTable') }}",
+      method: 'GET',
+      success: function(response) {
+        $('#order-history-table tbody').html(response);
+      },
+      error: function(err) {
+        console.error("Booking table reload error", err);
+      }
+    });
+  }
+</script>
+
 <div class="container-fluid common-order-history">
     <div class="row">
         <div class="col-12">

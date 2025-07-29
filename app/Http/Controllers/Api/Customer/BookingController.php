@@ -17,6 +17,7 @@ use App\Http\Resources\Api\Customer\BookingResource;
 use Illuminate\Http\Request;
 use App\Services\Api\BookingService;
 use Exception;
+use Kreait\Firebase\Factory;
 
 class BookingController extends Controller
 {

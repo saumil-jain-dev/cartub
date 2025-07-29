@@ -299,6 +299,13 @@ class BookingController extends Controller
 
         return $bookingNumber;
     }
+    
+    public function ajaxTable()
+    {
+        $bookingData = Booking::with(['customer', 'payment'])->latest()->take(20)->get();
+        return view('admin.bookings.partials.table-rows', compact('bookingData'));
+    }
+
 
 
     public function getCustomerVehicles($id){
