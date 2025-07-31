@@ -23,7 +23,7 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->middleware('gue
 Route::post('/login', [LoginController::class, 'login'])->middleware('guest')->name('login.post');
 Route::get('admin/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('admin.password.request');
 Route::get('test-notification', function () {
-    $to = 'fPO4cPbqS-eiJSYPkjUeb9:APA91bHRiJCDZlZAwEQgS-J3iiCJNcSmSXkbxo73I2l72AlO__Y2MfiXZvcQjscdqsVCp-xmVEdYIJhcZDCKaWijbkX6nuzBVWX-VHdT0DVviPtrmLWGAHY'; // Replace with actual device token
+    $to = 'c_5A5wzaRlSjhM2ehDGzGL:APA91bFWN9QQFFgv6k5los_ODUXD1--Ohf9rAL4hfoJmNrBhhzW0voQOnktA_MgMZTD2SuwpqPgeLYk86b4lOs39rU1c8Sun1PO9m1dusRTLpJL7DmYN3oo'; // Replace with actual device token
     $title = 'Test Notification';
     $message = 'This is a test notification message.';
     $extra = ['key' => 'value']; // Optional extra data
