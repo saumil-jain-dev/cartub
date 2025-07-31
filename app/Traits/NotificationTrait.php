@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Log;
 use Google\Client as GoogleClient;
+use Google\Auth\Credentials\ServiceAccountCredentials;
 
 trait NotificationTrait
 {
@@ -17,22 +18,25 @@ trait NotificationTrait
         $firebaseUrl = config('constants.FIREBASE_URL');
         $fcmKey = config('constants.FIREBASE_SERVER_KEY');
         $projectId = config('constants.FCM_PROJECT_ID');
-        $credentialsFilePath = public_path('notification/cartub-79bd7-firebase-adminsdk-fbsvc-81a84ce79e.json');
-        $client = new GoogleClient();
-        $client->setAuthConfig($credentialsFilePath);
-        $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
-        $client->refreshTokenWithAssertion();
-        $token = $client->getAccessToken();
-
-        $access_token = $token['access_token'];
+        $credentialsFilePath = public_path('notification/cartub-7a7b5-firebase-adminsdk-fbsvc-59277d53fc.json');
+        $scopes = ['https://www.googleapis.com/auth/firebase.messaging'];
+        $googleCreds = new ServiceAccountCredentials($scopes, $credentialsFilePath);
+        $access_token = $googleCreds->fetchAuthToken()['access_token'] ?? null;
         
-    
+        // dd($access_token);
+        // $client = new GoogleClient();
+        // $client->setAuthConfig($credentialsFilePath);
+        // $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
+        // $client->refreshTokenWithAssertion();
+        // $token = $client->getAccessToken();
+
+        // $access_token = $token['access_token'];
+        
         $headers = [
             "Authorization: Bearer $access_token",
             'Content-Type: application/json'
         ];
-    
-    
+
         $fields = [
             'message' => [
                 'token' => $to,
@@ -67,7 +71,6 @@ trait NotificationTrait
         
         
         $resultArr = json_decode($result, true);
-        
         Log::info('FCM Response', ['response' => $resultArr]);
         
         
