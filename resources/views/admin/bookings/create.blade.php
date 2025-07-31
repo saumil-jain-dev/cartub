@@ -892,7 +892,7 @@ $(document).ready(function () {
                 }
             },
             error: function() {
-                toastr.error("Error contacting server.");
+                toastr.error("Something went wrong.");
             }
         });
     });

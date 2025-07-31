@@ -471,6 +471,7 @@ class BookingController extends Controller
 
         curl_close($curl);
         $response = json_decode($apiResponse, true);
+        // dd($response);
         $result = [];
         if (isset($response['registrationNumber'])) {
             // Success case
@@ -486,6 +487,9 @@ class BookingController extends Controller
             ];
         
         }
-        return response()->json(['success' => true, 'data' => $vehicle]);
+        if(empty($result)){
+            return response()->json(['data' => [],'error'=> ''],404);
+        }
+        return response()->json(['success' => true, 'data' => $result]);
     }
 }

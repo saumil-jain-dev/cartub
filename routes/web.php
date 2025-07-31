@@ -79,7 +79,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::get('/cancel-booking/{id}','cancelBooking')->name('bookings.cancel');
             Route::get('get-customer-vehicles/{customerId}','getCustomerVehicles')->name('bookings.get-customer-vehicle');
             Route::post('validate-coupon','validateCoupon')->name('bookings.validate-coupon');
-            Route::post('search-vehicle','searchVehicle')->name('bookings.search-vehicle');
+            Route::get('search-vehicle','searchVehicle')->name('bookings.search-vehicle');
         });
     });
 
