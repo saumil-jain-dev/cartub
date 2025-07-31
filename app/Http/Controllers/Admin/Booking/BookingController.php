@@ -13,8 +13,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Session;
 use App\Traits\NotificationTrait;
-use DB;
-use Log;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class BookingController extends Controller
 {
@@ -441,5 +443,49 @@ class BookingController extends Controller
         }
         Session::flash('success', "Booking canceled successfully");
         return response()->json(['success' => true, 'message' => 'Booking canceled successfully.']);
+    }
+
+    public function searchVehicle(Request $request)
+    {
+        $vehicleNumber = $request->input('number');
+        if (empty($vehicleNumber)) {
+            return response()->json(['success' => false, 'message' => 'Vehicle number is required'], 400);
+        }
+
+        $vehicleNumber = $request->vehicle_number;
+        $apikey = env('APP_ENV') == "local" ? config('constants.CAR_CHECK_TEST_API_KEY') : config('constants.CAR_CHECK_LIVE_API_KEY');
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://api.checkcardetails.co.uk/vehicledata/vehicleregistration?apikey='.$apikey.'&vrm='.$vehicleNumber,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
+
+        $apiResponse = curl_exec($curl);
+
+        curl_close($curl);
+        $response = json_decode($apiResponse, true);
+        $result = [];
+        if (isset($response['registrationNumber'])) {
+            // Success case
+            $data = $response;
+        
+            $result = [
+                'Colour' => $data['colour'] ?? null,
+                'Vrm' => $data['registrationNumber'] ?? null,
+                'Make' => $data['make'] ?? null,
+                'Model' => $data['model'] ?? null,
+                'YearOfManufacture' => $data['yearOfManufacture'] ?? null,
+                'VehicleClass' => $data['VehicleClass'] ?? null,
+            ];
+        
+        }
+        return response()->json(['success' => true, 'data' => $vehicle]);
     }
 }
