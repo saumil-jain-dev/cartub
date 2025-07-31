@@ -9,6 +9,22 @@
         ['label' => $pageTitle] // Last item, no URL
     ]
 ])
+@section('styles')
+<style>
+  label.error {
+    color: #e74c3c;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 5px;
+    display: block;
+}
+
+input.error, select.error {
+    border: 1px solid #e74c3c;
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.4);
+}
+</style>
+@endsection
 <div class="container-fluid dashboard-13">
 <div class="card">
     <div class="card-header">
@@ -75,16 +91,23 @@
                                             <option selected="" disabled="" value="">Select
                                                 Customer Name</option>
                                             @foreach ($users as $user)
-                                                <option value="{{ $user->id }}" data-name="{{ $user->name }}" data-email="{{ $user->email }}" data-phone="{{ $user->phone }}"> {{ $user->name }} </option>
+                                                <option value="{{ $user->id }}" data-name="{{ $user->name }}" data-email="{{ $user->email }}" data-phone="{{ $user->phone }}"> {{ $user->name }} ({{ $user->phone }}) </option>
                                             @endforeach
                                             
-                                        </select></div>
+                                        </select>
+                                        <div class="d-flex align-items-center mt-2">
+                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+                                                + Add Customer
+                                            </button>
+                                        </div>
+                                    </div>
                                      <div class="col-md-6">
                                         <label class="form-label" for="customSelectCustomerVehicle">Customer Vehicle</label>
                                         <select class="form-select" id="customSelectCustomerVehicle">
-                                            <option selected disabled>Select Vehicle</option>
+                                            <option selected disabled value="">Select Vehicle</option>
                                             <!-- Options will be populated dynamically -->
                                         </select>
+                                        <button type="button" class="btn btn-sm btn-primary mt-2" id="addVehicleBtn">+ Add Vehicle</button>
                                     </div>
                                     <div class="col-sm-6"><label class="form-label"
                                             for="customContact">Contact Number</label><input
@@ -304,7 +327,61 @@
         </div>
     </div>
 </div>
+    <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="addCustomerForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="addCustomerModalLabel">Add Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <div class="mb-3">
+                    <label for="customerName" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="customerName" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="customerEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="customerEmail" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="customerPhone" class="form-label">Phone</label>
+                    <input type="text" class="form-control" id="customerPhone" name="phone" required>
+                </div>
+                </div>
+                <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Add Customer</button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
 
+    <div class="modal fade" id="vehicleModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Vehicle</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="vehicleNumber">Vehicle Number</label>
+                <input type="text" class="form-control" id="vehicleNumber">
+                <button type="button" class="btn btn-primary mt-2" id="searchVehicleBtn">Search</button>
+
+                <div id="vehicleDetails" class="mt-3" style="display: none;">
+                <p><strong>Model:</strong> <span id="vModel"></span></p>
+                <p><strong>Make:</strong> <span id="vMake"></span></p>
+                <p><strong>Color:</strong> <span id="vColor"></span></p>
+                <p><strong>Year:</strong> <span id="vYear"></span></p>
+                <button type="button" class="btn btn-success" id="addThisVehicle">Add</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 @endsection
@@ -317,6 +394,16 @@
     $(document).ready(function () {
         $('#packageSelect').select2({
             placeholder: "Select packages",
+            allowClear: true,
+            width: '100%'
+        });
+        $('#customSelectCustomerName').select2({
+            placeholder: "Select Customer Name",
+            allowClear: true,
+            width: '100%'
+        });
+        $('#customSelectCustomerVehicle').select2({
+            placeholder: "Select Vehicle",
             allowClear: true,
             width: '100%'
         });
@@ -686,6 +773,128 @@ $(document).on('change', '#couponSelect', function () {
         error: function () {
             toastr.error("Server error while applying coupon.");
         }
+    });
+});
+$(document).ready(function () {
+    $('#addCustomerForm').validate({
+        rules: {
+            name: {
+                required: true,
+                minlength: 2
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            phone: {
+                required: true,
+                minlength: 9,
+                maxlength: 10,
+                digits: true
+            }
+        },
+        messages: {
+            name: {
+                required: "Please enter the customer's name",
+                minlength: "Name must be at least 2 characters"
+            },
+            email: {
+                required: "Please enter an email address",
+                email: "Please enter a valid email"
+            },
+            phone: {
+                required: "Please enter a phone number",
+                minlength: "Phone number too short",
+                maxlength: "Phone number too long",
+                digits: "Only numbers are allowed"
+            }
+        },
+        errorPlacement: function(error, element) {
+            error.insertAfter(element); // or use `.appendTo()` for custom wrappers
+        },
+        submitHandler: function (form, event) {
+            event.preventDefault(); // prevent default submit
+
+            // Perform your AJAX as before
+            let formData = {
+                name: $('#customerName').val(),
+                email: $('#customerEmail').val(),
+                phone: $('#customerPhone').val(),
+                _token: $('meta[name="csrf-token"]').attr('content')
+            };
+
+            $.ajax({
+                url: `${site_url}/admin/users/store`,
+                method: 'POST',
+                data: formData,
+                success: function (res) {
+                    if (res.success) {
+                        const customer = res.data;
+
+                        $('#customSelectCustomerName').append(`<option value="${customer.id}" data-name="${ customer.name }" data-email="${ customer.email }" data-phone="${ customer.phone }" selected>${customer.name} (${customer.phone})</option>`).trigger('change');
+                        
+                        $('#addCustomerModal').modal('hide');
+                        $('#addCustomerForm')[0].reset();
+                        toastr.success("Customer added successfully!");
+                    } else {
+                        toastr.error(res.message || "Failed to add customer.");
+                    }
+                },
+                error: function (xhr) {
+                    let errors = xhr.responseJSON?.errors;
+                    if (errors) {
+                        let messages = Object.values(errors).flat().join('<br>');
+                        toastr.error(messages);
+                    } else {
+                        toastr.error("An error occurred.");
+                    }
+                }
+            });
+        }
+    });
+
+    $('#addVehicleBtn').on('click', function() {
+        const customerId = $('#customSelectCustomerName').val();
+        
+        if (!customerId) {
+            toastr.error("Please select a customer before adding a vehicle.");
+            return;
+        }
+
+        $('#vehicleModal').modal('show');
+    });
+
+    $('#searchVehicleBtn').on('click', function() {
+        const vehicleNumber = $('#vehicleNumber').val();
+
+        if (!vehicleNumber) {
+            toastr.error("Please enter a vehicle number.");
+            return;
+        }
+
+        $.ajax({
+            url: `${site_url}/admin/bookings/search-vehicle`, // Replace with actual API
+            method: 'GET',
+            data: { number: vehicleNumber },
+            success: function(response) {
+                if (response.success) {
+                    const vehicle = response.data;
+
+                    $('#vModel').text(vehicle.model);
+                    $('#vMake').text(vehicle.make);
+                    $('#vColor').text(vehicle.color);
+                    $('#vYear').text(vehicle.year);
+
+                    $('#vehicleDetails').data('vehicle', vehicle).slideDown();
+                } else {
+                    toastr.error("Vehicle not found.");
+                    $('#vehicleDetails').hide();
+                }
+            },
+            error: function() {
+                toastr.error("Error contacting server.");
+            }
+        });
     });
 });
 </script>
