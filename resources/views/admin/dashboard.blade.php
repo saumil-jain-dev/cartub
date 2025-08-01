@@ -22,7 +22,7 @@
                             </div>
                             <div>
                                 <p class="c-o-light mb-1">Total Bookings</p>
-                                <h4><span class="counter" data-target="{{ $total_booking_count }}">{{ $total_booking_count }}</span></h4>
+                                <h4><span id="totalBookings" class="counter" data-target="{{ $total_booking_count }}">{{ $total_booking_count }}</span></h4>
                             </div>
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                             </div>
                             <div>
                                 <p class="c-o-light mb-1">Total Revenue</p>
-                                <h4><span class="counter" data-target="{{ $total_revenue }}">{{ $total_revenue }}</span></h4>
+                                <h4><span id="totalRevenue" class="counter" data-target="{{ $total_revenue }}">{{ $total_revenue }}</span></h4>
                             </div>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                             </div>
                             <div>
                                 <p class="c-o-light mb-1">Active Customers</p>
-                                <h4><span class="counter" data-target="{{ $total_active_customer }}">{{ $total_active_customer }}</span></h4>
+                                <h4><span id="activeCustomers" class="counter" data-target="{{ $total_active_customer }}">{{ $total_active_customer }}</span></h4>
                             </div>
                         </div>
                     </div>
@@ -103,7 +103,7 @@
                             </div>
                             <div>
                                 <p class="c-o-light mb-1">Active Cleaners</p>
-                                <h4><span class="counter" data-target="{{ $total_active_cleaner }}">{{ $total_active_cleaner }}</span></h4>
+                                <h4><span id="activeCleaners" class="counter" data-target="{{ $total_active_cleaner }}">{{ $total_active_cleaner }}</span></h4>
                             </div>
                         </div>
                     </div>
@@ -140,7 +140,7 @@
                 </div>
                 <div class="card-body px-0 pt-0 shipment-tracking-table">
                     <div class="recent-table table-responsive custom-scrollbar">
-                        <table class="table" id="shipment-tracking-table">
+                        <table class="table" id="shipment-tracking-table liveWashTable">
                             <thead>
                                 <tr>
                                     <th></th>
@@ -151,7 +151,7 @@
                                     <th>ETA</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="liveWashTableBody">
                                 @foreach($live_wash_data as $booking)
                                 <tr class="inbox-data">
                                     <td></td>
@@ -270,4 +270,75 @@
         
     </div>
 </div>
+@endsection
+@section('scripts')
+    <!-- Firebase SDKs (compat version) -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', function(){
+            const firebaseConfig = {
+                apiKey:     "AIzaSyBL5FYCKi17Bd-WbSxk9MwCSvd2xsYQejY",
+                authDomain: "cartub-7a7b5.firebaseapp.com",
+                databaseURL:"https://cartub-7a7b5-default-rtdb.europe-west1.firebasedatabase.app",
+                projectId:  "cartub-7a7b5",
+                storageBucket:"cartub-7a7b5.firebasestorage.app",
+                messagingSenderId:"188507095259",
+                appId:      "1:188507095259:web:a929d71b852a3423a84cfe",
+                measurementId: "G-TT5M9Y9WWC"
+            };
+    
+            firebase.initializeApp(firebaseConfig);
+            const bookingsRef = firebase.database().ref("bookings");
+    
+            const $totalBookings   = $('#totalBookings');
+            const $totalRevenue    = $('#totalRevenue');
+            const $activeCustomers = $('#activeCustomers');
+            const $activeCleaners  = $('#activeCleaners');
+            const $liveWashBody    = $('#liveWashTableBody');
+
+            const table = $('#liveWashTable').DataTable({
+                processing: true,
+                serverSide: false,               // client-side processing
+                ajax: {
+                    url: "{{ route('dashboard.metrics') }}",
+                    dataSrc: 'live_wash_data'       // pulls just that array from your JSON
+                },
+                columns: [
+                    { data: null,    defaultContent: '', orderable: false },
+                    { data: 'vehicle'       },
+                    { data: 'customer_name' },
+                    { data: 'cleaner_name'  },
+                    { data: 'status'        },
+                    { data: 'eta'           },
+                ],
+                order: [[1, 'desc']]
+            });
+
+            const METRICS_URL = "{{ route('dashboard.metrics') }}";
+            function refreshDashboard() {
+                $.getJSON(METRICS_URL, function(data) {
+                    
+                    // 1) Update cards
+                    $totalBookings.text(data.total_booking_count);
+                    $totalRevenue.text(parseFloat(data.total_revenue).toFixed(2));
+                    $activeCustomers.text(data.total_active_customer);
+                    $activeCleaners.text(data.total_active_cleaner);
+
+                    // 2) Update live-wash table
+                    table.clear();
+                    table.rows.add(data.live_wash_data);
+                    table.draw(false);
+                }).fail(function(err){
+                    console.error('Dashboard refresh failed', err);
+                });
+                
+            }
+
+            bookingsRef.on('child_added',   refreshDashboard,() => table.ajax.reload(null,false));
+            bookingsRef.on('child_changed', refreshDashboard,() => table.ajax.reload(null,false));
+            refreshDashboard();
+
+        });
+    </script>
 @endsection

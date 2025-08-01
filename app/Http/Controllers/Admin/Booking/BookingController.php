@@ -17,6 +17,8 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use App\Services\Admin\FirebaseService;
+
 
 class BookingController extends Controller
 {
@@ -69,7 +71,7 @@ class BookingController extends Controller
         return view('admin.bookings.create',$this->data);
     }
     
-    public function store(Request $request)
+    public function store(Request $request,FirebaseService $firebaseService)
     {
         try {
             // Validate the request
@@ -151,6 +153,21 @@ class BookingController extends Controller
                     // }
                 }
 
+                //Store to database
+                $firebaseService->storeBooking([
+                    'id' => $booking->id,
+                    'booking_number' => $booking->booking_number,
+                    'customer_name' => $booking->customer->name,
+                    'status' => $booking->status,
+                    'scheduled_date' => $booking->scheduled_date,
+                    'scheduled_time' => $booking->scheduled_time,
+                    'vehicle_number' => $booking->vehicle->license_plate,
+                    'vehicle_model' => $booking->vehicle->model,
+                    'total_amount' => $booking->total_amount,
+                    'payment_status' => $booking->payment_status,
+                    'created_at' => $booking->created_at->toIso8601String(),
+                    'payment_method' => $booking->payment->payment_method,
+                ]);
                 DB::commit();
                 $customer = User::find($booking->customer_id);
                 // Send Booking SMS

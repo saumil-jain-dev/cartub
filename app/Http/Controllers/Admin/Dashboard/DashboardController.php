@@ -90,4 +90,38 @@ class DashboardController extends Controller
 
         return response()->json(['data' => $bookings]);
     }
+
+    public function metrics(Request $request)
+    {
+        $washTypes = Service::where('type', 'service')
+        ->withCount('bookings')   // assumes you have bookings() relationship
+        ->orderByDesc('bookings_count')
+        ->get();
+
+        
+        $totalBookings = Booking::get()->count();
+        $totalRevenue = Booking::get()->sum('total_amount');
+        $activeCustomers = User::where('is_active',1)->where('role','customer')->count();
+        $activeCleaners = User::where('is_active',1)->where('role','cleaner')->count();
+        $liveWashData = Booking::with(['vehicle','customer','cleaner'])->orderBy('id','desc')->get()->map(function($b) {
+                return [
+                    'id'            => $b->id,
+                    'vehicle'       => ($b->vehicle?->model ?? '') 
+                                       . ' (' . ($b->vehicle?->license_plate ?? '') . ')',
+                    'customer_name' => $b->customer?->name ?? '',
+                    'cleaner_name'  => $b->cleaner?->name  ?? '',
+                    'status'        => $b->status,
+                    
+                ];
+            });
+        $this->data['washTypes'] = $washTypes;
+        return response()->json([
+            'total_booking_count'    => $totalBookings,
+            'total_revenue'          => $totalRevenue,
+            'total_active_customer'  => $activeCustomers,
+            'total_active_cleaner'   => $activeCleaners,
+            'live_wash_data'         => $liveWashData,
+            'wash_types'             => $washTypes,   // if you want to refresh that table too
+        ]);
+    }
 }
