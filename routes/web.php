@@ -79,6 +79,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::get('/cancel-booking/{id}','cancelBooking')->name('bookings.cancel');
             Route::get('get-customer-vehicles/{customerId}','getCustomerVehicles')->name('bookings.get-customer-vehicle');
             Route::post('validate-coupon','validateCoupon')->name('bookings.validate-coupon');
+            Route::get('search-vehicle','searchVehicle')->name('bookings.search-vehicle');
         });
     });
 
@@ -86,10 +87,12 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
     Route::controller(UserController::class)->group(function () {
         Route::prefix('users')->group(function () {
             Route::get('/','index')->name('users.index');
+            Route::post('store','store')->name('users.store');
             Route::get('/profile/{id}','getProfile')->name('users.profile');
             Route::get('edit','edit')->name('users.edit');
             Route::post('update','update')->name('users.update');
             Route::delete('{id}','destroy')->name('users.destroy');
+            Route::get('{id}/addresses','getAddresses')->name('users.addresses');
         });
     });
 
@@ -110,6 +113,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
     Route::controller(VehicleController::class)->group(function () {
         Route::prefix('vehicle')->group(function () {
             Route::get('customer-vehicles-list','index')->name('vehicle.index');
+            Route::post('store','store')->name('vehicle.store');
             Route::get('wash-types','washType')->name('vehicle.wash-type');
             Route::get('wash-type/create','washTypeAdd')->name('vehicle.wash-type-create');
             Route::post('wash-type/store','washTypeStore')->name('vehicle.wash-types-store');

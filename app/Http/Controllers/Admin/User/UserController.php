@@ -33,6 +33,48 @@ class UserController extends Controller
         return view("admin.users.index", $this->data);
     }
 
+    public function store(Request $request){
+        $role = 'customer';
+        $validator = Validator::make($request->all(), [
+            'name' => [
+                'required',
+                'regex:/^[A-Za-z\s]+$/',
+                'max:255',
+            ],
+            'email'      => [
+                'required',
+                'email',
+                Rule::unique('users','email')->where(function ($query) use ($role){
+                    $query->where('role', $role)->whereNull('deleted_at'); // Ignore soft-deleted users
+                }),
+            ],
+            'phone'      => [
+                'required',
+                'numeric',
+                'digits:10',
+                Rule::unique('users','phone')->where(function ($query) use ($role){
+                    $query->where('role', $role)->whereNull('deleted_at'); // Ignore soft-deleted users
+                }),
+            ],
+            
+        ]);
+        
+        if ($validator->fails()) { 
+            return back()->withErrors($validator->errors())->withInput();
+        }
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'role' => $role, // if applicable
+        ]);
+
+        Session::flash('success', "User updated successfully");
+        return response()->json([
+            'success' => true,
+            'data' => $user
+        ]);
+    }
     public function getProfile($id) {
         $this->data['pageTitle'] = 'User Profile';
         $user = User::withCount('vehicles')->withCount('booking')->where('id', $id)->first();
@@ -97,5 +139,10 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
+    }
+
+    public function getAddresses($id) {
+        $addresses = Booking::select('address','latitude','longitude')->where('customer_id',$id)->groupBy('address', 'latitude', 'longitude')->get()->toArray();// Assuming you have a relationship defined in User model
+        return response()->json(['addresses' => $addresses]);
     }
 }

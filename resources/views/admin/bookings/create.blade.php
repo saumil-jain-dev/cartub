@@ -9,6 +9,22 @@
         ['label' => $pageTitle] // Last item, no URL
     ]
 ])
+@section('styles')
+<style>
+  label.error {
+    color: #e74c3c;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 5px;
+    display: block;
+}
+
+input.error, select.error {
+    border: 1px solid #e74c3c;
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.4);
+}
+</style>
+@endsection
 <div class="container-fluid dashboard-13">
 <div class="card">
     <div class="card-header">
@@ -75,16 +91,23 @@
                                             <option selected="" disabled="" value="">Select
                                                 Customer Name</option>
                                             @foreach ($users as $user)
-                                                <option value="{{ $user->id }}" data-name="{{ $user->name }}" data-email="{{ $user->email }}" data-phone="{{ $user->phone }}"> {{ $user->name }} </option>
+                                                <option value="{{ $user->id }}" data-name="{{ $user->name }}" data-email="{{ $user->email }}" data-phone="{{ $user->phone }}"> {{ $user->name }} ({{ $user->phone }}) </option>
                                             @endforeach
                                             
-                                        </select></div>
+                                        </select>
+                                        <div class="d-flex align-items-center mt-2">
+                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+                                                + Add Customer
+                                            </button>
+                                        </div>
+                                    </div>
                                      <div class="col-md-6">
                                         <label class="form-label" for="customSelectCustomerVehicle">Customer Vehicle</label>
                                         <select class="form-select" id="customSelectCustomerVehicle">
-                                            <option selected disabled>Select Vehicle</option>
+                                            <option selected disabled value="">Select Vehicle</option>
                                             <!-- Options will be populated dynamically -->
                                         </select>
+                                        <button type="button" class="btn btn-sm btn-primary mt-2" id="addVehicleBtn">+ Add Vehicle</button>
                                     </div>
                                     <div class="col-sm-6"><label class="form-label"
                                             for="customContact">Contact Number</label><input
@@ -94,7 +117,13 @@
                                             for="customEmail">Email</label><input
                                             class="form-control" id="customEmail" type="email"
                                             placeholder="pixelstrap@example.com"></div>
-                                   
+                                   <div id="customerAddressContainer" style="display: none;">
+                                        <label for="customerAddress">Select Address</label>
+                                        <select id="customerAddress" class="form-select">
+                                            <option value="">Select Address</option>
+                                            <!-- Dynamically append options here -->
+                                        </select>
+                                    </div>
                                     <div class="col-12"> <label class="form-label"
                                             for="currentAddress1">Customer Booking Address
                                         </label><textarea class="form-control" id="currentAddress1"
@@ -155,6 +184,10 @@
                                                     
                                                     
                                                 </select>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="form-label" for="packageSelect">Schedule Date & Time</label>
+                                                <input type="text" class="form-control" id="scheduleDatetime" name="schedule_datetime" placeholder="Select date and time">
                                             </div>
                                         </div>
                                     </div>
@@ -304,7 +337,61 @@
         </div>
     </div>
 </div>
+    <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="addCustomerForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="addCustomerModalLabel">Add Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <div class="mb-3">
+                    <label for="customerName" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="customerName" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="customerEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="customerEmail" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="customerPhone" class="form-label">Phone</label>
+                    <input type="text" class="form-control" id="customerPhone" name="phone" required>
+                </div>
+                </div>
+                <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Add Customer</button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
 
+    <div class="modal fade" id="vehicleModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Vehicle</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="vehicleNumber">Vehicle Number</label>
+                <input type="text" class="form-control" id="vehicleNumber">
+                <button type="button" class="btn btn-primary mt-2" id="searchVehicleBtn">Search</button>
+
+                <div id="vehicleDetails" class="mt-3" style="display: none;">
+                <p><strong>Model:</strong> <span id="vModel"></span></p>
+                <p><strong>Make:</strong> <span id="vMake"></span></p>
+                <p><strong>Color:</strong> <span id="vColor"></span></p>
+                <p><strong>Year:</strong> <span id="vYear"></span></p>
+                <button type="button" class="btn btn-success" id="addThisVehicle">Add</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 @endsection
@@ -313,10 +400,26 @@
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAFmrV-jN6567bNi-hsWYUN5tPpNqg8-Q&libraries=places"
     async defer></script>
 <script type="text/javascript">
-    
+    flatpickr("#scheduleDatetime", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        minDate: "today", // disables dates before today
+        // defaultDate: new Date(), // optional
+        time_24hr: true,
+    });
     $(document).ready(function () {
         $('#packageSelect').select2({
             placeholder: "Select packages",
+            allowClear: true,
+            width: '100%'
+        });
+        $('#customSelectCustomerName').select2({
+            placeholder: "Select Customer Name",
+            allowClear: true,
+            width: '100%'
+        });
+        $('#customSelectCustomerVehicle').select2({
+            placeholder: "Select Vehicle",
             allowClear: true,
             width: '100%'
         });
@@ -354,6 +457,92 @@
                     $('#customSelectCustomerVehicle').html('<option disabled>Error loading vehicles</option>');
                 }
             });
+
+            //Fetch Addresses
+            $.ajax({
+                url: `${site_url}/admin/users/${customerId}/addresses`, // Adjust URL as per your route
+                method: 'GET',
+                success: function (response) {
+                    if (response.addresses.length > 0) {
+                        const $addressSelect = $('#customerAddress');
+                        $addressSelect.empty().append(`<option value="">Select Address</option>`);
+
+                        response.addresses.forEach(address => {
+                            $addressSelect.append(`
+                                <option value='${JSON.stringify(address)}'>
+                                    ${address.address}
+                                </option>
+                            `);
+                        });
+
+                        $('#customerAddressContainer').show();
+                    } else {
+                        $('#customerAddressContainer').hide();
+                        $('#customerAddress').val('');
+                        // Also clear the address fields
+                        $('#currentAddress1').val('');
+                        $('#customSelectCountry').val('');
+                        $('#customstate').val('');
+                        $('#customPostalCode').val('');
+                        $('#latitude').val('');
+                        $('#longitude').val('');
+                    }
+                },
+                error: function () {
+                    $('#customerAddressContainer').hide();
+                    toastr.error('Failed to fetch customer addresses.');
+                }
+            });
+        });
+        let geocoder = new google.maps.Geocoder();
+        $('#customerAddress').on('change', function () {
+            
+            const selectedAddress = $(this).find('option:selected').text();
+            if (!selectedAddress) return;
+            geocoder.geocode({ address: selectedAddress }, function (results, status) {
+                if (status === 'OK' && results[0]) {
+                    const place = results[0];
+
+                    let addressComponents = {
+                    country: '',
+                    state: '',
+                    postal_code: ''
+                    };
+
+                    for (const component of place.address_components) {
+                    const types = component.types;
+
+                    if (types.includes('country')) {
+                        addressComponents.country = component.long_name;
+                    }
+                    if (types.includes('administrative_area_level_1')) {
+                        addressComponents.state = component.long_name;
+                    }
+                    if (types.includes('postal_code')) {
+                        addressComponents.postal_code = component.long_name;
+                    }
+                    }
+
+                    // Set form fields
+                    $('#currentAddress1').val(selectedAddress);
+                    $('#customSelectCountry').val(addressComponents.country);
+                    $('#customstate').val(addressComponents.state);
+                    $('#customPostalCode').val(addressComponents.postal_code);
+                    $('#latitude').val(place.geometry.location.lat());
+                    $('#longitude').val(place.geometry.location.lng());
+
+                } else {
+                    toastr.error('Could not locate the address.');
+                }
+            });
+            // const address = JSON.parse(rawValue);
+            // $('#customSelectCountry').val(address.country);
+            // $('#customstate').val(address.state);
+            // $('#customPostalCode').val(address.postal_code);
+            // $('#latitude').val(address.latitude);
+            // $('#longitude').val(address.longitude);
+            // $('#currentAddress1').val(address.address);
+            
         });
     });
 
@@ -406,9 +595,6 @@
             // Set coordinates
             $('#latitude').val(place.geometry.location.lat());
             $('#longitude').val(place.geometry.location.lng());
-    
-            console.log("Latitude:", place.geometry.location.lat());
-            console.log("Longitude:", place.geometry.location.lng());
         });
     }
 
@@ -446,8 +632,13 @@ function proceedNextButtonClick(targetTabId) {
     // Step 2: Validate Wash Type
     if (currentTabId === 'ship-wizard-tab') {
         const washType = $('#washTypeSelect').val();
+        const scheduleDatetime = $('#scheduleDatetime').val();
         if (!washType) {
             toastr.error("Please select a wash type.");
+            return;
+        }
+        if (!scheduleDatetime) {
+            toastr.error("Please select a schedule date and time.");
             return;
         }
     }
@@ -488,6 +679,7 @@ function submitBookingForm() {
         subtotal: $('#subtotal_amount').val(),
         discount_amount: $('#discount_amount').val(),
         total_amount: $('#total_amount').val(),
+        scheduleDatetime: $('#scheduleDatetime').val(),
         _token: $('meta[name="csrf-token"]').attr('content')
     };
 
@@ -686,6 +878,193 @@ $(document).on('change', '#couponSelect', function () {
         error: function () {
             toastr.error("Server error while applying coupon.");
         }
+    });
+});
+$(document).ready(function () {
+    $('#addCustomerForm').validate({
+        rules: {
+            name: {
+                required: true,
+                minlength: 2
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            phone: {
+                required: true,
+                minlength: 9,
+                maxlength: 10,
+                digits: true
+            }
+        },
+        messages: {
+            name: {
+                required: "Please enter the customer's name",
+                minlength: "Name must be at least 2 characters"
+            },
+            email: {
+                required: "Please enter an email address",
+                email: "Please enter a valid email"
+            },
+            phone: {
+                required: "Please enter a phone number",
+                minlength: "Phone number too short",
+                maxlength: "Phone number too long",
+                digits: "Only numbers are allowed"
+            }
+        },
+        errorPlacement: function(error, element) {
+            error.insertAfter(element); // or use `.appendTo()` for custom wrappers
+        },
+        submitHandler: function (form, event) {
+            event.preventDefault(); // prevent default submit
+
+            // Perform your AJAX as before
+            let formData = {
+                name: $('#customerName').val(),
+                email: $('#customerEmail').val(),
+                phone: $('#customerPhone').val(),
+                _token: $('meta[name="csrf-token"]').attr('content')
+            };
+
+            $.ajax({
+                url: `${site_url}/admin/users/store`,
+                method: 'POST',
+                data: formData,
+                success: function (res) {
+                    if (res.success) {
+                        const customer = res.data;
+
+                        $('#customSelectCustomerName').append(`<option value="${customer.id}" data-name="${ customer.name }" data-email="${ customer.email }" data-phone="${ customer.phone }" selected>${customer.name} (${customer.phone})</option>`).trigger('change');
+                        
+                        $('#addCustomerModal').modal('hide');
+                        $('#addCustomerForm')[0].reset();
+                        toastr.success("Customer added successfully!");
+                    } else {
+                        toastr.error(res.message || "Failed to add customer.");
+                    }
+                },
+                error: function (xhr) {
+                    let errors = xhr.responseJSON?.errors;
+                    if (errors) {
+                        let messages = Object.values(errors).flat().join('<br>');
+                        toastr.error(messages);
+                    } else {
+                        toastr.error("An error occurred.");
+                    }
+                }
+            });
+        }
+    });
+
+    $('#addVehicleBtn').on('click', function() {
+        const customerId = $('#customSelectCustomerName').val();
+        
+        if (!customerId) {
+            toastr.error("Please select a customer before adding a vehicle.");
+            return;
+        }
+
+        $('#vehicleModal').modal('show');
+    });
+
+    $('#searchVehicleBtn').on('click', function() {
+        const vehicleNumber = $('#vehicleNumber').val();
+
+        if (!vehicleNumber) {
+            toastr.error("Please enter a vehicle number.");
+            return;
+        }
+
+        // Disable button and change text
+        const $btn = $(this);
+        const originalText = $btn.text();
+        $btn.prop('disabled', true).text('Searching...');
+
+        $('#vehicleDetails').hide(); // hide previous data
+        $.ajax({
+            url: `${site_url}/admin/bookings/search-vehicle`, // Replace with actual API
+            method: 'GET',
+            data: { number: vehicleNumber },
+            success: function(response) {
+                if (response.success) {
+                    $btn.prop('disabled', false).text(originalText);
+                    const vehicle = response.data;
+
+                    $('#vModel').text(vehicle.Model);
+                    $('#vMake').text(vehicle.Make);
+                    $('#vColor').text(vehicle.Colour);
+                    $('#vYear').text(vehicle.YearOfManufacture);
+
+                    $('#vehicleDetails').data('vehicle', vehicle).slideDown();
+                } else {
+                    toastr.error("Vehicle not found.");
+                    $('#vehicleDetails').hide();
+                    $btn.prop('disabled', false).text(originalText);
+                }
+            },
+            error: function() {
+                $btn.prop('disabled', false).text(originalText);
+                toastr.error("Something went wrong.");
+            }
+        });
+    });
+    
+    $('#addThisVehicle').on('click', function () {
+        const customerId = $('#customSelectCustomerName').val();
+        const vehicle = JSON.stringify($('#vehicleDetails').data('vehicle'), null, 2);
+        const parsedVehicle = JSON.parse(vehicle);
+        
+        if (!customerId) {
+            toastr.error('Please select a customer first.');
+            return;
+        }
+
+        if (!vehicle) {
+            toastr.error('No vehicle data found.');
+            return;
+        }
+
+        const $btn = $(this);
+        const originalText = $btn.text();
+        $btn.prop('disabled', true).text('Adding...');
+
+        $.ajax({
+            url: `${site_url}/admin/vehicle/store`, // Your API to store vehicle
+            method: 'POST',
+            data: {
+                customer_id: customerId,
+                number: parsedVehicle.Vrm,
+                model: parsedVehicle.Model,
+                make: parsedVehicle.Make,
+                color: parsedVehicle.Colour,
+                year: parsedVehicle.YearOfManufacture,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (res) {
+                $btn.prop('disabled', false).text(originalText);
+
+                if (res.success) {
+                    const vehicleId = res.data.id;
+                    const vehicleText = `${parsedVehicle.Model} (${parsedVehicle.Vrm})`;
+
+                    // Append to select and select it
+                    $('#customSelectCustomerVehicle').append(`
+                        <option value="${vehicleId}" selected>${vehicleText}</option>
+                    `).val(vehicleId).trigger('change');
+
+                    $('#vehicleModal').modal('hide');
+                    toastr.success('Vehicle added successfully.');
+                } else {
+                    toastr.error(res.message || 'Failed to add vehicle.');
+                }
+            },
+            error: function () {
+                $btn.prop('disabled', false).text(originalText);
+                toastr.error('Server error. Try again.');
+            }
+        });
     });
 });
 </script>

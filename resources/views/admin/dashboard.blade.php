@@ -207,33 +207,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-5 col-md-6">
-            <div class="card delivery-chart sales-report">
-                <div class="card-header card-no-border">
-                    <div class="header-top">
-                        <h5>Bookings Trend</h5>
-                        <div class="card-header-right-icon">
-                            <div class="dropdown icon-dropdown">
-                                <button class="btn dropdown-toggle" id="deliveryDuration" type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false"><i
-                                        class="icon-more-alt"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="deliveryDuration">
-                                    <a class="dropdown-item chart-filter" href="javascript:void(0)" data-filter="week">This Week</a>
-                                    <a class="dropdown-item chart-filter" href="javascript:void(0)" data-filter="month">This Month</a>
-                                    <a class="dropdown-item chart-filter" href="javascript:void(0)" data-filter="prev_month">Previous Month</a>
-                                    <a class="dropdown-item chart-filter" href="javascript:void(0)" data-filter="last_3_months">Last 3 Months</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body pt-0">
-                    <div class="delivery-duration-chart">
-                        <div id="bookingTrendWeeklyChart"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
         <div class="col-xl-4 col-md-6">
             <div class="card">
                 <div class="card-header card-no-border">
@@ -293,35 +267,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-md-6">
-            <div class="card">
-                <div class="card-header card-no-border">
-                    <div class="header-top">
-                        <h5>Hourly Booking Heatmap</h5>
-                        <div class="card-header-right-icon">
-                            <div class="dropdown icon-dropdown">
-                                <button class="btn dropdown-toggle" id="fleetStatus" type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false"><i
-                                        class="icon-more-alt"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end"
-                                    aria-labelledby="fleetStatus">
-                                    <a class="dropdown-item" href="#!">This Month</a><a
-                                        class="dropdown-item" href="#!">Previous Month</a><a
-                                        class="dropdown-item" href="#!">Last 3 Months</a>
-                                    <a class="dropdown-item" href="#!">Last 6 Months</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body pt-0">
-                    <div class="fleet-status-chart">
-                        <div id="market-graph"></div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
+        
     </div>
 </div>
 @endsection
