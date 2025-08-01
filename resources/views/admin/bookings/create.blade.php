@@ -117,7 +117,13 @@ input.error, select.error {
                                             for="customEmail">Email</label><input
                                             class="form-control" id="customEmail" type="email"
                                             placeholder="pixelstrap@example.com"></div>
-                                   
+                                   <div id="customerAddressContainer" style="display: none;">
+                                        <label for="customerAddress">Select Address</label>
+                                        <select id="customerAddress" class="form-select">
+                                            <option value="">Select Address</option>
+                                            <!-- Dynamically append options here -->
+                                        </select>
+                                    </div>
                                     <div class="col-12"> <label class="form-label"
                                             for="currentAddress1">Customer Booking Address
                                         </label><textarea class="form-control" id="currentAddress1"
@@ -178,6 +184,10 @@ input.error, select.error {
                                                     
                                                     
                                                 </select>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="form-label" for="packageSelect">Schedule Date & Time</label>
+                                                <input type="text" class="form-control" id="scheduleDatetime" name="schedule_datetime" placeholder="Select date and time">
                                             </div>
                                         </div>
                                     </div>
@@ -390,7 +400,13 @@ input.error, select.error {
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAFmrV-jN6567bNi-hsWYUN5tPpNqg8-Q&libraries=places"
     async defer></script>
 <script type="text/javascript">
-    
+    flatpickr("#scheduleDatetime", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        minDate: "today", // disables dates before today
+        // defaultDate: new Date(), // optional
+        time_24hr: true,
+    });
     $(document).ready(function () {
         $('#packageSelect').select2({
             placeholder: "Select packages",
@@ -441,6 +457,92 @@ input.error, select.error {
                     $('#customSelectCustomerVehicle').html('<option disabled>Error loading vehicles</option>');
                 }
             });
+
+            //Fetch Addresses
+            $.ajax({
+                url: `${site_url}/admin/users/${customerId}/addresses`, // Adjust URL as per your route
+                method: 'GET',
+                success: function (response) {
+                    if (response.addresses.length > 0) {
+                        const $addressSelect = $('#customerAddress');
+                        $addressSelect.empty().append(`<option value="">Select Address</option>`);
+
+                        response.addresses.forEach(address => {
+                            $addressSelect.append(`
+                                <option value='${JSON.stringify(address)}'>
+                                    ${address.address}
+                                </option>
+                            `);
+                        });
+
+                        $('#customerAddressContainer').show();
+                    } else {
+                        $('#customerAddressContainer').hide();
+                        $('#customerAddress').val('');
+                        // Also clear the address fields
+                        $('#currentAddress1').val('');
+                        $('#customSelectCountry').val('');
+                        $('#customstate').val('');
+                        $('#customPostalCode').val('');
+                        $('#latitude').val('');
+                        $('#longitude').val('');
+                    }
+                },
+                error: function () {
+                    $('#customerAddressContainer').hide();
+                    toastr.error('Failed to fetch customer addresses.');
+                }
+            });
+        });
+        let geocoder = new google.maps.Geocoder();
+        $('#customerAddress').on('change', function () {
+            
+            const selectedAddress = $(this).find('option:selected').text();
+            if (!selectedAddress) return;
+            geocoder.geocode({ address: selectedAddress }, function (results, status) {
+                if (status === 'OK' && results[0]) {
+                    const place = results[0];
+
+                    let addressComponents = {
+                    country: '',
+                    state: '',
+                    postal_code: ''
+                    };
+
+                    for (const component of place.address_components) {
+                    const types = component.types;
+
+                    if (types.includes('country')) {
+                        addressComponents.country = component.long_name;
+                    }
+                    if (types.includes('administrative_area_level_1')) {
+                        addressComponents.state = component.long_name;
+                    }
+                    if (types.includes('postal_code')) {
+                        addressComponents.postal_code = component.long_name;
+                    }
+                    }
+
+                    // Set form fields
+                    $('#currentAddress1').val(selectedAddress);
+                    $('#customSelectCountry').val(addressComponents.country);
+                    $('#customstate').val(addressComponents.state);
+                    $('#customPostalCode').val(addressComponents.postal_code);
+                    $('#latitude').val(place.geometry.location.lat());
+                    $('#longitude').val(place.geometry.location.lng());
+
+                } else {
+                    toastr.error('Could not locate the address.');
+                }
+            });
+            // const address = JSON.parse(rawValue);
+            // $('#customSelectCountry').val(address.country);
+            // $('#customstate').val(address.state);
+            // $('#customPostalCode').val(address.postal_code);
+            // $('#latitude').val(address.latitude);
+            // $('#longitude').val(address.longitude);
+            // $('#currentAddress1').val(address.address);
+            
         });
     });
 
@@ -493,9 +595,6 @@ input.error, select.error {
             // Set coordinates
             $('#latitude').val(place.geometry.location.lat());
             $('#longitude').val(place.geometry.location.lng());
-    
-            console.log("Latitude:", place.geometry.location.lat());
-            console.log("Longitude:", place.geometry.location.lng());
         });
     }
 
@@ -533,8 +632,13 @@ function proceedNextButtonClick(targetTabId) {
     // Step 2: Validate Wash Type
     if (currentTabId === 'ship-wizard-tab') {
         const washType = $('#washTypeSelect').val();
+        const scheduleDatetime = $('#scheduleDatetime').val();
         if (!washType) {
             toastr.error("Please select a wash type.");
+            return;
+        }
+        if (!scheduleDatetime) {
+            toastr.error("Please select a schedule date and time.");
             return;
         }
     }
@@ -575,6 +679,7 @@ function submitBookingForm() {
         subtotal: $('#subtotal_amount').val(),
         discount_amount: $('#discount_amount').val(),
         total_amount: $('#total_amount').val(),
+        scheduleDatetime: $('#scheduleDatetime').val(),
         _token: $('meta[name="csrf-token"]').attr('content')
     };
 
@@ -872,27 +977,92 @@ $(document).ready(function () {
             return;
         }
 
+        // Disable button and change text
+        const $btn = $(this);
+        const originalText = $btn.text();
+        $btn.prop('disabled', true).text('Searching...');
+
+        $('#vehicleDetails').hide(); // hide previous data
         $.ajax({
             url: `${site_url}/admin/bookings/search-vehicle`, // Replace with actual API
             method: 'GET',
             data: { number: vehicleNumber },
             success: function(response) {
                 if (response.success) {
+                    $btn.prop('disabled', false).text(originalText);
                     const vehicle = response.data;
 
-                    $('#vModel').text(vehicle.model);
-                    $('#vMake').text(vehicle.make);
-                    $('#vColor').text(vehicle.color);
-                    $('#vYear').text(vehicle.year);
+                    $('#vModel').text(vehicle.Model);
+                    $('#vMake').text(vehicle.Make);
+                    $('#vColor').text(vehicle.Colour);
+                    $('#vYear').text(vehicle.YearOfManufacture);
 
                     $('#vehicleDetails').data('vehicle', vehicle).slideDown();
                 } else {
                     toastr.error("Vehicle not found.");
                     $('#vehicleDetails').hide();
+                    $btn.prop('disabled', false).text(originalText);
                 }
             },
             error: function() {
+                $btn.prop('disabled', false).text(originalText);
                 toastr.error("Something went wrong.");
+            }
+        });
+    });
+    
+    $('#addThisVehicle').on('click', function () {
+        const customerId = $('#customSelectCustomerName').val();
+        const vehicle = JSON.stringify($('#vehicleDetails').data('vehicle'), null, 2);
+        const parsedVehicle = JSON.parse(vehicle);
+        
+        if (!customerId) {
+            toastr.error('Please select a customer first.');
+            return;
+        }
+
+        if (!vehicle) {
+            toastr.error('No vehicle data found.');
+            return;
+        }
+
+        const $btn = $(this);
+        const originalText = $btn.text();
+        $btn.prop('disabled', true).text('Adding...');
+
+        $.ajax({
+            url: `${site_url}/admin/vehicle/store`, // Your API to store vehicle
+            method: 'POST',
+            data: {
+                customer_id: customerId,
+                number: parsedVehicle.Vrm,
+                model: parsedVehicle.Model,
+                make: parsedVehicle.Make,
+                color: parsedVehicle.Colour,
+                year: parsedVehicle.YearOfManufacture,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (res) {
+                $btn.prop('disabled', false).text(originalText);
+
+                if (res.success) {
+                    const vehicleId = res.data.id;
+                    const vehicleText = `${parsedVehicle.Model} (${parsedVehicle.Vrm})`;
+
+                    // Append to select and select it
+                    $('#customSelectCustomerVehicle').append(`
+                        <option value="${vehicleId}" selected>${vehicleText}</option>
+                    `).val(vehicleId).trigger('change');
+
+                    $('#vehicleModal').modal('hide');
+                    toastr.success('Vehicle added successfully.');
+                } else {
+                    toastr.error(res.message || 'Failed to add vehicle.');
+                }
+            },
+            error: function () {
+                $btn.prop('disabled', false).text(originalText);
+                toastr.error('Server error. Try again.');
             }
         });
     });

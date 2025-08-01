@@ -92,6 +92,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::get('edit','edit')->name('users.edit');
             Route::post('update','update')->name('users.update');
             Route::delete('{id}','destroy')->name('users.destroy');
+            Route::get('{id}/addresses','getAddresses')->name('users.addresses');
         });
     });
 
@@ -112,6 +113,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
     Route::controller(VehicleController::class)->group(function () {
         Route::prefix('vehicle')->group(function () {
             Route::get('customer-vehicles-list','index')->name('vehicle.index');
+            Route::post('store','store')->name('vehicle.store');
             Route::get('wash-types','washType')->name('vehicle.wash-type');
             Route::get('wash-type/create','washTypeAdd')->name('vehicle.wash-type-create');
             Route::post('wash-type/store','washTypeStore')->name('vehicle.wash-types-store');

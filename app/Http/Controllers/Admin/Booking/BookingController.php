@@ -72,15 +72,6 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         try {
-        
-        // Add debugging for lat/lng before validation
-        Log::info('Raw latitude/longitude data:', [
-            'latitude' => $request->input('latitude'),
-            'longitude' => $request->input('longitude'),
-            'latitude_type' => gettype($request->input('latitude')),
-            'longitude_type' => gettype($request->input('longitude')),
-        ]);
-        
             // Validate the request
             $validated = $request->validate([
                 'customer_id' => 'required|exists:users,id',
@@ -104,30 +95,10 @@ class BookingController extends Controller
                 'total_amount' => 'required|numeric|min:0',
             ]);
 
-            // Check if customer exists and is active
-            $customer = User::where('id', $validated['customer_id'])
-                          ->where('role', 'customer')
-                          ->where('is_active', 1)
-                          ->first();
-            
-            if (!$customer) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Selected customer is not found or inactive'
-                ], 400);
-            }
-
-            // Check if vehicle belongs to customer
-            $vehicle = Vehicle::where('id', $validated['vehicle_id'])
-                             ->where('customer_id', $validated['customer_id'])
-                             ->first();
-            
-            if (!$vehicle) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Selected vehicle does not belong to this customer'
-                ], 400);
-            }
+            $scheduleDatetime = $request->input('scheduleDatetime');
+            $datetime = \Carbon\Carbon::parse($scheduleDatetime);
+            $scheduleDate = $datetime->toDateString();
+            $scheduleTime = $datetime->toTimeString();
 
             DB::beginTransaction();
 
@@ -143,8 +114,8 @@ class BookingController extends Controller
             $booking->latitude = $validated['latitude'] ?? null;
             $booking->longitude = $validated['longitude'] ?? null;
             $booking->notes = '';
-            $booking->scheduled_date = now()->addDay(); // Default to tomorrow
-            $booking->scheduled_time = now()->setTime(10, 0); // Default to 10 AM
+            $booking->scheduled_date = $scheduleDate;
+            $booking->scheduled_time = $scheduleTime;
             $booking->coupon_id = $validated['coupon_id'] ?? null;
             $booking->gross_amount = $validated['subtotal'];
             $booking->discount_amount = $validated['discount_amount'] ?? 0;
@@ -181,7 +152,7 @@ class BookingController extends Controller
                 }
 
                 DB::commit();
-
+                $customer = User::find($booking->customer_id);
                 // Send Booking SMS
                 $phone = $customer->country_code . $customer->phone;
                 $message = "Your CarTub booking #{$booking->booking_number} is confirmed for " .
@@ -452,26 +423,50 @@ class BookingController extends Controller
             return response()->json(['success' => false, 'message' => 'Vehicle number is required'], 400);
         }
 
-        $vehicleNumber = $request->vehicle_number;
-        $apikey = env('APP_ENV') == "local" ? config('constants.CAR_CHECK_TEST_API_KEY') : config('constants.CAR_CHECK_LIVE_API_KEY');
-        $curl = curl_init();
+        // $vehicleNumber = $request->vehicle_number;
+        // $apikey = env('APP_ENV') == "local" ? config('constants.CAR_CHECK_TEST_API_KEY') : config('constants.CAR_CHECK_LIVE_API_KEY');
+        // $curl = curl_init();
 
-        curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://api.checkcardetails.co.uk/vehicledata/vehicleregistration?apikey='.$apikey.'&vrm='.$vehicleNumber,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => 'GET',
-        ));
+        // curl_setopt_array($curl, array(
+        // CURLOPT_URL => 'https://api.checkcardetails.co.uk/vehicledata/vehicleregistration?apikey='.$apikey.'&vrm='.$vehicleNumber,
+        // CURLOPT_RETURNTRANSFER => true,
+        // CURLOPT_ENCODING => '',
+        // CURLOPT_MAXREDIRS => 10,
+        // CURLOPT_TIMEOUT => 0,
+        // CURLOPT_FOLLOWLOCATION => true,
+        // CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        // CURLOPT_CUSTOMREQUEST => 'GET',
+        // ));
 
-        $apiResponse = curl_exec($curl);
+        // $apiResponse = curl_exec($curl);
 
-        curl_close($curl);
+        // curl_close($curl);
+        $apiResponse = '{
+    "registrationNumber": "EA65AMX",
+    "make": "AUDI",
+    "model": "A7",
+    "colour": "BLACK",
+    "fuelType": "DIESEL",
+    "engineCapacity": 2967,
+    "yearOfManufacture": 2015,
+    "vehicleAge": "9 years 9 months",
+    "wheelplan": "2 AXLE RIGID BODY",
+    "dateOfLastV5CIssued": "2024-09-25",
+    "typeApproval": "M1",
+    "co2Emissions": 142,
+    "registrationPlace": "Chelmsford",
+    "tax": {
+        "taxStatus": "Taxed",
+        "taxDueDate": "2026-08-01",
+        "days": "366"
+    },
+    "mot": {
+        "motStatus": "Valid",
+        "motDueDate": "2026-01-26",
+        "days": 179
+    }
+}';
         $response = json_decode($apiResponse, true);
-        // dd($response);
         $result = [];
         if (isset($response['registrationNumber'])) {
             // Success case
@@ -488,7 +483,7 @@ class BookingController extends Controller
         
         }
         if(empty($result)){
-            return response()->json(['data' => [],'error'=> ''],404);
+            return response()->json(['data' => [],'error'=> ''],200);
         }
         return response()->json(['success' => true, 'data' => $result]);
     }

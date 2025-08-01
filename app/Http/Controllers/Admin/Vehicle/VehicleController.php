@@ -229,4 +229,46 @@ class VehicleController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function store(Request $request) {
+        $vehicleData = Vehicle::where('license_plate', $request->number)
+            ->where('customer_id', $request->customer_id)
+            ->first();
+        if ($vehicleData) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vehicle already exists for this customer.',
+            ], 200);
+        }
+        DB::beginTransaction();
+        try {
+            $vehicle = Vehicle::create([
+                'customer_id' => $request->customer_id,
+                'license_plate' => $request->number,
+                'make' => $request->make,
+                'model' => $request->model,
+                'year' => $request->year,
+                'color' => $request->color,
+            ]);
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'id' => $vehicle->id,
+                    'number' => $vehicle->license_plate,
+                    'model' => $vehicle->model,
+                    'make' => $vehicle->make,
+                    'color' => $vehicle->color,
+                    'year' => $vehicle->year,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong. Please try again.',
+            ], 500);
+        }
+    }
 }

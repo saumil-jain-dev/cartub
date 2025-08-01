@@ -140,4 +140,9 @@ class UserController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function getAddresses($id) {
+        $addresses = Booking::select('address','latitude','longitude')->where('customer_id',$id)->groupBy('address', 'latitude', 'longitude')->get()->toArray();// Assuming you have a relationship defined in User model
+        return response()->json(['addresses' => $addresses]);
+    }
 }
