@@ -423,6 +423,9 @@ input.error, select.error {
             allowClear: true,
             width: '100%'
         });
+        $('.close').on('click', function () {
+            $('#vehicleModal').modal('hide');
+        });
         
         $('#customSelectCustomerName').on('change', function () {
             var selected = $(this).find('option:selected');
