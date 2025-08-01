@@ -423,49 +423,49 @@ class BookingController extends Controller
             return response()->json(['success' => false, 'message' => 'Vehicle number is required'], 400);
         }
 
-        // $vehicleNumber = $request->vehicle_number;
-        // $apikey = env('APP_ENV') == "local" ? config('constants.CAR_CHECK_TEST_API_KEY') : config('constants.CAR_CHECK_LIVE_API_KEY');
-        // $curl = curl_init();
+        $vehicleNumber = $request->vehicle_number;
+        $apikey = env('APP_ENV') == "local" ? config('constants.CAR_CHECK_TEST_API_KEY') : config('constants.CAR_CHECK_LIVE_API_KEY');
+        $curl = curl_init();
 
-        // curl_setopt_array($curl, array(
-        // CURLOPT_URL => 'https://api.checkcardetails.co.uk/vehicledata/vehicleregistration?apikey='.$apikey.'&vrm='.$vehicleNumber,
-        // CURLOPT_RETURNTRANSFER => true,
-        // CURLOPT_ENCODING => '',
-        // CURLOPT_MAXREDIRS => 10,
-        // CURLOPT_TIMEOUT => 0,
-        // CURLOPT_FOLLOWLOCATION => true,
-        // CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        // CURLOPT_CUSTOMREQUEST => 'GET',
-        // ));
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://api.checkcardetails.co.uk/vehicledata/vehicleregistration?apikey='.$apikey.'&vrm='.$vehicleNumber,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
 
-        // $apiResponse = curl_exec($curl);
+        $apiResponse = curl_exec($curl);
 
-        // curl_close($curl);
-        $apiResponse = '{
-    "registrationNumber": "EA65AMX",
-    "make": "AUDI",
-    "model": "A7",
-    "colour": "BLACK",
-    "fuelType": "DIESEL",
-    "engineCapacity": 2967,
-    "yearOfManufacture": 2015,
-    "vehicleAge": "9 years 9 months",
-    "wheelplan": "2 AXLE RIGID BODY",
-    "dateOfLastV5CIssued": "2024-09-25",
-    "typeApproval": "M1",
-    "co2Emissions": 142,
-    "registrationPlace": "Chelmsford",
-    "tax": {
-        "taxStatus": "Taxed",
-        "taxDueDate": "2026-08-01",
-        "days": "366"
-    },
-    "mot": {
-        "motStatus": "Valid",
-        "motDueDate": "2026-01-26",
-        "days": 179
-    }
-}';
+        curl_close($curl);
+//         $apiResponse = '{
+//     "registrationNumber": "EA65AMX",
+//     "make": "AUDI",
+//     "model": "A7",
+//     "colour": "BLACK",
+//     "fuelType": "DIESEL",
+//     "engineCapacity": 2967,
+//     "yearOfManufacture": 2015,
+//     "vehicleAge": "9 years 9 months",
+//     "wheelplan": "2 AXLE RIGID BODY",
+//     "dateOfLastV5CIssued": "2024-09-25",
+//     "typeApproval": "M1",
+//     "co2Emissions": 142,
+//     "registrationPlace": "Chelmsford",
+//     "tax": {
+//         "taxStatus": "Taxed",
+//         "taxDueDate": "2026-08-01",
+//         "days": "366"
+//     },
+//     "mot": {
+//         "motStatus": "Valid",
+//         "motDueDate": "2026-01-26",
+//         "days": 179
+//     }
+// }';
         $response = json_decode($apiResponse, true);
         $result = [];
         if (isset($response['registrationNumber'])) {
