@@ -80,6 +80,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::get('get-customer-vehicles/{customerId}','getCustomerVehicles')->name('bookings.get-customer-vehicle');
             Route::post('validate-coupon','validateCoupon')->name('bookings.validate-coupon');
             Route::get('search-vehicle','searchVehicle')->name('bookings.search-vehicle');
+            Route::get('track/{id}', 'trackBooking')->name('bookings.track');
         });
     });
 
