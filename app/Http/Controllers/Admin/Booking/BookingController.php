@@ -504,4 +504,19 @@ class BookingController extends Controller
         }
         return response()->json(['success' => true, 'data' => $result]);
     }
+
+    public function trackBooking($id)
+    {
+        // Make sure customer coords are stored on the booking model:
+        // $booking->customer_lat, $booking->customer_lng
+        $booking = Booking::findOrFail($id);
+        
+        return view('admin.bookings.track', [
+            'bookingId'    => $booking->id,
+            'destLat'      => $booking->latitude,
+            'destLng'      => $booking->longitude,
+            'pageTitle'    => 'Track Booking',
+            'bookingNumber' => $booking->booking_number,
+        ]);
+    }
 }
