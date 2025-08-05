@@ -59,6 +59,12 @@
                         </div>
                     </div>
                 </div>
+                @if(in_array($bookingDetails->status, ['pending','accepted','in_route','mark_as_arrived']))
+                    <a href="{{ route('bookings.track', $bookingDetails->id) }}"
+                        class="btn btn-primary mb-3">
+                        Track Booking
+                    </a>
+                @endif
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header card-no-border">
