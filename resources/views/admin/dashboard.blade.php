@@ -124,16 +124,7 @@
                         <h5>Live Wash Status</h5>
                         <div class="card-header-right-icon">
                             <div class="dropdown icon-dropdown">
-                                <button class="btn dropdown-toggle" id="shipmentTracking" type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false"><i
-                                        class="icon-more-alt"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end"
-                                    aria-labelledby="shipmentTracking">
-                                    <a class="dropdown-item" href="#!">This Month</a><a
-                                        class="dropdown-item" href="#!">Previous Month</a><a
-                                        class="dropdown-item" href="#!">Last 3 Months</a>
-                                    <a class="dropdown-item" href="#!">Last 6 Months</a>
-                                </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -146,9 +137,9 @@
                                     <th></th>
                                     <th>Vehicle</th>
                                     <th>Customer</th>
-                                    <th>Cleaner</th>
+                                    
                                     <th>Status</th>
-                                    <th>ETA</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody id="liveWashTableBody">
@@ -157,8 +148,8 @@
                                     <td></td>
                                     <td><a href="{{ route('bookings.show',$booking->id) }}" target="_blank">{{ $booking->vehicle?->model }}
                                             ({{ $booking->vehicle?->license_plate }})</a></td>
-                                    <td>Priya Nair</td>
-                                    <td>Sameer</td>
+                                    <td>{{ $booking->customer?->name }}</td>
+                                    
                                     <td>
                                         @php
                                             if ($booking->status === 'pending' && $booking->cleaner_id) {
@@ -195,7 +186,6 @@
 
                                         <span class="badge {{ $badgeClass }}">{{ $badgeText }}</span>
                                     </td>
-                                    <td>10 mins</td>
                                 </tr>
                                 
                                 @endforeach
@@ -233,11 +223,11 @@
                             <thead>
                                 <tr>
                                     <th>Wash Type</th>
-                                    <th>Avg. Duration</th>
+                                    
                                     <th>Total Washes</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="liveWashTypeTableBody">
                                 @foreach ($washTypes as $washType)
                                     <tr>
                                         <td>
@@ -254,9 +244,8 @@
                                                 </div><span class="f-w-500">{{ $washType->name }}</span>
                                             </div>
                                         </td>
-                                        <td> <button class="btn button-light-info f-w-500 txt-info">20
-                                                mins</button>
-                                        </td>
+                                        
+                                        
                                         <td class="f-w-500">{{ $washType->bookings_count }}</td>
                                     </tr>
                                 @endforeach
@@ -296,25 +285,9 @@
             const $activeCustomers = $('#activeCustomers');
             const $activeCleaners  = $('#activeCleaners');
             const $liveWashBody    = $('#liveWashTableBody');
+            const $liveWashTypeTableBody = $('#liveWashTypeTableBody');
 
-            const table = $('#liveWashTable').DataTable({
-                processing: true,
-                serverSide: false,               // client-side processing
-                ajax: {
-                    url: "{{ route('dashboard.metrics') }}",
-                    dataSrc: 'live_wash_data'       // pulls just that array from your JSON
-                },
-                columns: [
-                    { data: null,    defaultContent: '', orderable: false },
-                    { data: 'vehicle'       },
-                    { data: 'customer_name' },
-                    { data: 'cleaner_name'  },
-                    { data: 'status'        },
-                    { data: 'eta'           },
-                ],
-                order: [[1, 'desc']]
-            });
-
+            
             const METRICS_URL = "{{ route('dashboard.metrics') }}";
             function refreshDashboard() {
                 $.getJSON(METRICS_URL, function(data) {
@@ -326,9 +299,44 @@
                     $activeCleaners.text(data.total_active_cleaner);
 
                     // 2) Update live-wash table
-                    table.clear();
-                    table.rows.add(data.live_wash_data);
-                    table.draw(false);
+                    $liveWashBody.empty();
+                    $.each(data.live_wash_data, function(_, b) {
+                        const row = `
+                        <tr>
+                            <td></td>
+                            <td><a href="/bookings/${b.id}" target="_blank">${b.vehicle}</a></td>
+                            <td>${b.customer_name}</td>
+                            
+                            <td><span class="badge f-14 f-w-400 txt-dark">${b.status}</span></td>
+                            
+                        </tr>`;
+                        $liveWashBody.append(row);
+                    });
+
+                    // 3) WashType Booking Count Update
+                    $liveWashTypeTableBody.empty();
+                    $.each(data.wash_types, function(_, w) {
+                        const rows = `
+                        <tr>
+                            
+                            <td><div class="referral-wrapper">
+                                                <div>
+                                                    <div class="border-secondary">
+                                                        <div class="social-wrapper bg-light-secondary"><svg
+                                                                class="stroke-icon">
+                                                                <use
+                                                                    href="{{ asset('assets/svg/icon-sprite.svg#s-pinterest') }}">
+                                                                </use>
+                                                            </svg></div>
+                                                    </div>
+                                                </div><span class="f-w-500">${w.name }</span>
+                                            </div></td>
+                            
+                            <td class="f-w-500"> ${w.bookings_count}</td>
+                            
+                        </tr>`;
+                        $liveWashTypeTableBody.append(rows);
+                    });
                 }).fail(function(err){
                     console.error('Dashboard refresh failed', err);
                 });
@@ -339,6 +347,15 @@
             bookingsRef.on('child_changed', refreshDashboard,() => table.ajax.reload(null,false));
             refreshDashboard();
 
+        });
+        $(document).ready(function() {
+            setTimeout(() => {
+                
+                $('#liveWashTable').DataTable({
+                    pageLength: 5,
+                    responsive: true
+                });
+            }, 2000);
         });
     </script>
 @endsection
