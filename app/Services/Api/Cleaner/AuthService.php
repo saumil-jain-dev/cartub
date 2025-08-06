@@ -299,4 +299,14 @@ class AuthService {
             throw new Exception('Failed to update availability: ' . $e->getMessage());
         }
     }
+
+    public function deleteAccount(){
+        $user = Auth::user();
+        DB::table('personal_access_tokens')
+        ->where('tokenable_id', $user->id)
+        ->delete();
+        UserDevice::where('user_id',$user->id)->delete();
+        User::find($user->id)->delete();
+        return true;
+    }
 }

@@ -200,4 +200,13 @@ class AuthenticationController extends Controller
             return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
         }
     }
+
+    public function deleteAccount() {
+        try {
+            $user = $this->authService->deleteAccount();
+            return success([], trans('messages.delete_account'), config('code.SUCCESS_CODE'));
+        } catch (Exception $e) {
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+    }
 }

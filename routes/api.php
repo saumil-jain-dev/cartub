@@ -26,6 +26,7 @@ Route::prefix('v1')->group(function () {
                 Route::post('profile/update', 'updateProfile');
                 Route::post('service/list', 'listServices');
                 Route::post('wash-type/list', 'listWashTypes');
+                Route::post('delete-account', 'deleteAccount');
                 Route::post('logout', 'logout');
 
                 //notification routes
@@ -80,6 +81,8 @@ Route::prefix('v1')->group(function () {
                 Route::get('profile','profile');
                 Route::post('profile/update','updateProfile');
                 Route::post('logout','logout');
+                Route::post('delete-account', 'deleteAccount');
+                
                 //notification routes
                 Route::post('notification/list', 'listNotifications');
                 Route::post('notification/mark-as-read', 'markNotificationAsRead');
