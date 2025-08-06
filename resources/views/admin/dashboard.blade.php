@@ -336,6 +336,7 @@
                             
                         </tr>`;
                         $liveWashTypeTableBody.append(rows);
+                        loadTable();
                     });
                 }).fail(function(err){
                     console.error('Dashboard refresh failed', err);
@@ -346,9 +347,10 @@
             bookingsRef.on('child_added',   refreshDashboard,() => table.ajax.reload(null,false));
             bookingsRef.on('child_changed', refreshDashboard,() => table.ajax.reload(null,false));
             refreshDashboard();
+            loadTable();
 
         });
-        $(document).ready(function() {
+        function loadTable(){
             setTimeout(() => {
                 
                 $('#liveWashTable').DataTable({
@@ -356,6 +358,9 @@
                     responsive: true
                 });
             }, 2000);
+        }
+        $(document).ready(function() {
+            
         });
     </script>
 @endsection

@@ -146,7 +146,7 @@
                         <i class="fa-solid fa-thumbtack"></i>
                         <a class="sidebar-link sidebar-title" href="#">
                             <svg class="stroke-icon">
-                                <use href="assets/svg/icon-sprite.svg#stroke-table"></use>
+                                <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-table') }}"></use>
                             </svg>
                             <svg class="fill-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#fill-table') }}"></use>
