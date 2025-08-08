@@ -396,9 +396,7 @@ input.error, select.error {
 </div>
 @endsection
 @section('scripts')
-<script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAFmrV-jN6567bNi-hsWYUN5tPpNqg8-Q&libraries=places"
-    async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAFmrV-jN6567bNi-hsWYUN5tPpNqg8-Q&libraries=places" async defer></script>
 <script type="text/javascript">
     flatpickr("#scheduleDatetime", {
         enableTime: true,

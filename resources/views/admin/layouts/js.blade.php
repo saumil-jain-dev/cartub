@@ -23,8 +23,8 @@
 <script src="{{ asset('assets/js/header-slick.js') }}"></script>
 
 <!-- Apex Charts -->
-<script src="{{ asset('assets/js/chart/apex-chart/apex-chart.js') }}"></script>
-<script src="{{ asset('assets/js/chart/apex-chart/stock-prices.js') }}"></script>
+{{-- <script src="{{ asset('assets/js/chart/apex-chart/apex-chart.js') }}"></script>
+<script src="{{ asset('assets/js/chart/apex-chart/stock-prices.js') }}"></script> --}}
 
 <!-- Counter -->
 <script src="{{ asset('assets/js/counter/counter-custom.js') }}"></script>
@@ -71,7 +71,7 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <!-- Dashboard Scripts -->
-<script src="{{ asset('assets/js/dashboard/dashboard.js') }}"></script>
+{{-- <script src="{{ asset('assets/js/dashboard/dashboard.js') }}"></script> --}}
 <script src="{{ asset('assets/js/sweet-alert/sweetalert.min.js') }}"></script>
 {{--
 <script src="assets/js/trash_popup.js"></script> --}}
@@ -79,7 +79,7 @@
 <!-- Theme and Custom Scripts -->
 <script src="{{ asset('assets/js/script.js') }}"></script>
 <script src="{{ asset('assets/js/script1.js') }}"></script>
-<script src="{{ asset('assets/js/custom-project.js') }}"></script>
+{{-- <script src="{{ asset('assets/js/custom-project.js') }}"></script> --}}
 <script>
     const site_url = "{{ URL('/') }}"
 </script>

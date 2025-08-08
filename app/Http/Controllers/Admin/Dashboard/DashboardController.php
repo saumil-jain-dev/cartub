@@ -33,22 +33,6 @@ class DashboardController extends Controller
         return view('admin.dashboard',$this->data); // Ensure this view exists
     }
 
-    public function bookingTrend(Request $request)
-    {
-        $filter = $request->get('filter', 'week');
-
-        $data = match ($filter) {
-            'week' => $this->getWeeklyData(),
-            'month' => $this->getMonthlyData(),
-            'prev_month' => $this->getPreviousMonthData(),
-            'last_3_months' => $this->getLast3MonthsData(),
-            default => $this->getWeeklyData(),
-        };
-
-        return response()->json([
-            'data' => $data,
-        ]);
-    }
 
     public function todayWash(Request $request){
         if(! hasPermission('dashboard.today-wash')){
@@ -89,5 +73,63 @@ class DashboardController extends Controller
             ->get();
 
         return response()->json(['data' => $bookings]);
+    }
+
+    public function metrics(Request $request)
+    {
+        $washTypes = Service::where('type', 'service')
+        ->withCount('bookings')   // assumes you have bookings() relationship
+        ->orderByDesc('bookings_count')
+        ->get();
+
+        
+        $totalBookings = Booking::get()->count();
+        $totalRevenue = Booking::get()->sum('total_amount');
+        $activeCustomers = User::where('is_active',1)->where('role','customer')->count();
+        $activeCleaners = User::where('is_active',1)->where('role','cleaner')->count();
+        $liveWashData = Booking::with(['vehicle','customer','cleaner'])->orderBy('id','desc')->get()->map(function($b) {
+                if ($b->status === 'pending' && $b->cleaner_id) {
+                    $badgeText = 'Assigned';
+                    
+                } else {
+                    switch ($b->status) {
+                        case 'pending':
+                            $badgeText = 'Pending';
+                            break;
+                        case 'in_route':
+                            $badgeText = 'In Route';
+                            break;
+                        case 'in_progress':
+                            $badgeText = 'In Progress';
+                            break;
+                        case 'completed':
+                            $badgeText = 'Completed';
+                            break;
+                        case 'cancelled':
+                            $badgeText = 'Cancelled';
+                            break;
+                        default:
+                            $badgeText = ucfirst($b->status);
+                    }
+                }
+                return [
+                    'id'            => $b->id,
+                    'vehicle'       => ($b->vehicle?->model ?? '') 
+                                       . ' (' . ($b->vehicle?->license_plate ?? '') . ')',
+                    'customer_name' => $b->customer?->name ?? '',
+                    'cleaner_name'  => $b->cleaner?->name  ?? '',
+                    'status'        => $badgeText,
+                    
+                ];
+            });
+        $this->data['washTypes'] = $washTypes;
+        return response()->json([
+            'total_booking_count'    => $totalBookings,
+            'total_revenue'          => $totalRevenue,
+            'total_active_customer'  => $activeCustomers,
+            'total_active_cleaner'   => $activeCleaners,
+            'live_wash_data'         => $liveWashData,
+            'wash_types'             => $washTypes,   // if you want to refresh that table too
+        ]);
     }
 }

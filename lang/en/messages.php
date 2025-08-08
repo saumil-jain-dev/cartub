@@ -9,6 +9,7 @@ return [
     'invalid_otp' => 'Invalid or expired OTP.',
     'invalid_password' => 'Invalid password.',
     'logout_success' => 'You are logged out successfully.',
+    'delete_account' => 'Account deleted successfully.',
 
     'not_found' => ':attribute not found.',
     'coupon_applied' => 'Coupon applied successfully.',

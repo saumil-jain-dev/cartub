@@ -22,7 +22,7 @@
                             </div>
                             <div>
                                 <p class="c-o-light mb-1">Total Bookings</p>
-                                <h4><span class="counter" data-target="{{ $total_booking_count }}">{{ $total_booking_count }}</span></h4>
+                                <h4><span id="totalBookings" class="counter" data-target="{{ $total_booking_count }}">{{ $total_booking_count }}</span></h4>
                             </div>
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                             </div>
                             <div>
                                 <p class="c-o-light mb-1">Total Revenue</p>
-                                <h4><span class="counter" data-target="{{ $total_revenue }}">{{ $total_revenue }}</span></h4>
+                                <h4><span id="totalRevenue" class="counter" data-target="{{ $total_revenue }}">{{ $total_revenue }}</span></h4>
                             </div>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                             </div>
                             <div>
                                 <p class="c-o-light mb-1">Active Customers</p>
-                                <h4><span class="counter" data-target="{{ $total_active_customer }}">{{ $total_active_customer }}</span></h4>
+                                <h4><span id="activeCustomers" class="counter" data-target="{{ $total_active_customer }}">{{ $total_active_customer }}</span></h4>
                             </div>
                         </div>
                     </div>
@@ -103,7 +103,7 @@
                             </div>
                             <div>
                                 <p class="c-o-light mb-1">Active Cleaners</p>
-                                <h4><span class="counter" data-target="{{ $total_active_cleaner }}">{{ $total_active_cleaner }}</span></h4>
+                                <h4><span id="activeCleaners" class="counter" data-target="{{ $total_active_cleaner }}">{{ $total_active_cleaner }}</span></h4>
                             </div>
                         </div>
                     </div>
@@ -124,41 +124,32 @@
                         <h5>Live Wash Status</h5>
                         <div class="card-header-right-icon">
                             <div class="dropdown icon-dropdown">
-                                <button class="btn dropdown-toggle" id="shipmentTracking" type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false"><i
-                                        class="icon-more-alt"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end"
-                                    aria-labelledby="shipmentTracking">
-                                    <a class="dropdown-item" href="#!">This Month</a><a
-                                        class="dropdown-item" href="#!">Previous Month</a><a
-                                        class="dropdown-item" href="#!">Last 3 Months</a>
-                                    <a class="dropdown-item" href="#!">Last 6 Months</a>
-                                </div>
+                                
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-body px-0 pt-0 shipment-tracking-table">
                     <div class="recent-table table-responsive custom-scrollbar">
-                        <table class="table" id="shipment-tracking-table">
+                        <table class="table" id="shipment-tracking-table liveWashTable">
                             <thead>
                                 <tr>
                                     <th></th>
                                     <th>Vehicle</th>
-                                    <th>Customer</th>
-                                    <th>Cleaner</th>
+                                    
+                                    
                                     <th>Status</th>
-                                    <th>ETA</th>
+                                    
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="liveWashTableBody">
                                 @foreach($live_wash_data as $booking)
                                 <tr class="inbox-data">
                                     <td></td>
                                     <td><a href="{{ route('bookings.show',$booking->id) }}" target="_blank">{{ $booking->vehicle?->model }}
                                             ({{ $booking->vehicle?->license_plate }})</a></td>
-                                    <td>Priya Nair</td>
-                                    <td>Sameer</td>
+                                    
+                                    
                                     <td>
                                         @php
                                             if ($booking->status === 'pending' && $booking->cleaner_id) {
@@ -195,7 +186,6 @@
 
                                         <span class="badge {{ $badgeClass }}">{{ $badgeText }}</span>
                                     </td>
-                                    <td>10 mins</td>
                                 </tr>
                                 
                                 @endforeach
@@ -233,11 +223,11 @@
                             <thead>
                                 <tr>
                                     <th>Wash Type</th>
-                                    <th>Avg. Duration</th>
+                                    
                                     <th>Total Washes</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="liveWashTypeTableBody">
                                 @foreach ($washTypes as $washType)
                                     <tr>
                                         <td>
@@ -254,9 +244,8 @@
                                                 </div><span class="f-w-500">{{ $washType->name }}</span>
                                             </div>
                                         </td>
-                                        <td> <button class="btn button-light-info f-w-500 txt-info">20
-                                                mins</button>
-                                        </td>
+                                        
+                                        
                                         <td class="f-w-500">{{ $washType->bookings_count }}</td>
                                     </tr>
                                 @endforeach
@@ -270,4 +259,108 @@
         
     </div>
 </div>
+@endsection
+@section('scripts')
+    <!-- Firebase SDKs (compat version) -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', function(){
+            const firebaseConfig = {
+                apiKey:     "AIzaSyBL5FYCKi17Bd-WbSxk9MwCSvd2xsYQejY",
+                authDomain: "cartub-7a7b5.firebaseapp.com",
+                databaseURL:"https://cartub-7a7b5-default-rtdb.europe-west1.firebasedatabase.app",
+                projectId:  "cartub-7a7b5",
+                storageBucket:"cartub-7a7b5.firebasestorage.app",
+                messagingSenderId:"188507095259",
+                appId:      "1:188507095259:web:a929d71b852a3423a84cfe",
+                measurementId: "G-TT5M9Y9WWC"
+            };
+    
+            firebase.initializeApp(firebaseConfig);
+            const bookingsRef = firebase.database().ref("bookings");
+    
+            const $totalBookings   = $('#totalBookings');
+            const $totalRevenue    = $('#totalRevenue');
+            const $activeCustomers = $('#activeCustomers');
+            const $activeCleaners  = $('#activeCleaners');
+            const $liveWashBody    = $('#liveWashTableBody');
+            const $liveWashTypeTableBody = $('#liveWashTypeTableBody');
+
+            
+            const METRICS_URL = "{{ route('dashboard.metrics') }}";
+            function refreshDashboard() {
+                $.getJSON(METRICS_URL, function(data) {
+                    
+                    // 1) Update cards
+                    $totalBookings.text(data.total_booking_count);
+                    $totalRevenue.text(parseFloat(data.total_revenue).toFixed(2));
+                    $activeCustomers.text(data.total_active_customer);
+                    $activeCleaners.text(data.total_active_cleaner);
+
+                    // 2) Update live-wash table
+                    $liveWashBody.empty();
+                    $.each(data.live_wash_data, function(_, b) {
+                        const row = `
+                        <tr>
+                            <td></td>
+                            <td><a href="/bookings/${b.id}" target="_blank">${b.vehicle}</a></td>
+                            
+                            
+                            <td><span class="badge f-14 f-w-400 txt-dark">${b.status}</span></td>
+                            
+                        </tr>`;
+                        $liveWashBody.append(row);
+                    });
+
+                    // 3) WashType Booking Count Update
+                    $liveWashTypeTableBody.empty();
+                    $.each(data.wash_types, function(_, w) {
+                        const rows = `
+                        <tr>
+                            
+                            <td><div class="referral-wrapper">
+                                                <div>
+                                                    <div class="border-secondary">
+                                                        <div class="social-wrapper bg-light-secondary"><svg
+                                                                class="stroke-icon">
+                                                                <use
+                                                                    href="{{ asset('assets/svg/icon-sprite.svg#s-pinterest') }}">
+                                                                </use>
+                                                            </svg></div>
+                                                    </div>
+                                                </div><span class="f-w-500">${w.name }</span>
+                                            </div></td>
+                            
+                            <td class="f-w-500"> ${w.bookings_count}</td>
+                            
+                        </tr>`;
+                        $liveWashTypeTableBody.append(rows);
+                        loadTable();
+                    });
+                }).fail(function(err){
+                    console.error('Dashboard refresh failed', err);
+                });
+                
+            }
+
+            bookingsRef.on('child_added',   refreshDashboard,() => table.ajax.reload(null,false));
+            bookingsRef.on('child_changed', refreshDashboard,() => table.ajax.reload(null,false));
+            refreshDashboard();
+            loadTable();
+
+        });
+        function loadTable(){
+            setTimeout(() => {
+                
+                $('#liveWashTable').DataTable({
+                    pageLength: 5,
+                    responsive: true
+                });
+            }, 2000);
+        }
+        $(document).ready(function() {
+            
+        });
+    </script>
 @endsection
