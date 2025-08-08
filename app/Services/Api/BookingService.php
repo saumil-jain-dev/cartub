@@ -344,7 +344,7 @@ class BookingService {
                 'amount' => intval($amount * 100),
                 'currency' => $currency,
                 'customer' => $customer_id,
-                'payment_method_types' => ['card','apple_pay'],
+                'payment_method_types' => ['card'],
             ]);
 
 
