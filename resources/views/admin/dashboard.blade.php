@@ -136,7 +136,7 @@
                                 <tr>
                                     <th></th>
                                     <th>Vehicle</th>
-                                    <th>Customer</th>
+                                    
                                     
                                     <th>Status</th>
                                     
@@ -148,7 +148,7 @@
                                     <td></td>
                                     <td><a href="{{ route('bookings.show',$booking->id) }}" target="_blank">{{ $booking->vehicle?->model }}
                                             ({{ $booking->vehicle?->license_plate }})</a></td>
-                                    <td>{{ $booking->customer?->name }}</td>
+                                    
                                     
                                     <td>
                                         @php
@@ -305,7 +305,7 @@
                         <tr>
                             <td></td>
                             <td><a href="/bookings/${b.id}" target="_blank">${b.vehicle}</a></td>
-                            <td>${b.customer_name}</td>
+                            
                             
                             <td><span class="badge f-14 f-w-400 txt-dark">${b.status}</span></td>
                             
