@@ -13,15 +13,25 @@ class VehicleService {
 
 
     public function addVehicle($request) {
-        try{
+        try {
             DB::beginTransaction();
+            $customerId = Auth::id();
+            $licensePlate = $request->license_plate;
+            // Check for duplicate vehicle for this customer
+            $existingVehicle = Vehicle::where('customer_id', $customerId)
+                ->where('license_plate', $licensePlate)
+                ->first();
+            if ($existingVehicle) {
+                DB::rollBack();
+                throw new Exception('Vehicle with this number already exists for this customer.');
+            }
             $vehicle = new Vehicle();
-            $vehicle->customer_id = Auth::id();
+            $vehicle->customer_id = $customerId;
             $vehicle->make = $request->make;
             $vehicle->model = $request->model;
             $vehicle->year = $request->year;
             $vehicle->color = $request->color;
-            $vehicle->license_plate = $request->license_plate;
+            $vehicle->license_plate = $licensePlate;
             $vehicle->save();
 
             DB::commit();
@@ -98,7 +108,7 @@ class VehicleService {
         if (isset($response['registrationNumber'])) {
             // Success case
             $data = $response;
-        
+
             $result = [
                 'Colour' => $data['colour'] ?? null,
                 'Vrm' => $data['registrationNumber'] ?? null,
@@ -107,7 +117,7 @@ class VehicleService {
                 'YearOfManufacture' => $data['yearOfManufacture'] ?? null,
                 'VehicleClass' => $data['VehicleClass'] ?? null,
             ];
-        
+
         }
         return $result;
     }
