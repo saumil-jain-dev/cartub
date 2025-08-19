@@ -53,9 +53,9 @@ if (!function_exists('uploadMultipleImages')) {
 function    getImage($file)
 {
     if (file_exists(public_path($file)) && $file) {
-        return asset('/public/' . $file);
+        return asset($file);
     } else {
-        return asset('/public/images/no-image.jpg');
+        return asset('images/no-image.jpg');
     }
 }
 
