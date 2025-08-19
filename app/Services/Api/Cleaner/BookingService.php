@@ -160,11 +160,11 @@ class BookingService {
                             ]);
                         }
                     }
-                    $cleaner_commmission = getSettingsData('cleaner_commision');
+                    $cleaner_commission = getSettingsData('cleaner_commission');
                     $cleanerEarnings = new CleanerEarning();
                     $cleanerEarnings->cleaner_id = $booking->cleaner_id;
                     $cleanerEarnings->booking_id = $booking->id;
-                    $cleanerEarnings->amount = $cleaner_commmission ?? 0;
+                    $cleanerEarnings->amount = $cleaner_commission ?? 0;
                     $cleanerEarnings->earned_on = Carbon::now();
                     $cleanerEarnings->save();
 
