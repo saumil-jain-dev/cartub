@@ -31,9 +31,9 @@ class BookingController extends Controller
         if(! hasPermission('bookings.index')){
             abort(403);
         }
-        
+
         $this->data['pageTitle'] = 'All Bookings';
-        
+
         $bookings = Booking::with(['customer', 'payment']);
 
         // Filters
@@ -58,7 +58,7 @@ class BookingController extends Controller
         }
 
         $this->data['bookingData'] = $bookings->orderBy('bookings.id','desc')->get();
-        
+
         return view('admin.bookings.index',$this->data);
     }
 
@@ -70,7 +70,7 @@ class BookingController extends Controller
         $this->data['coupons'] = Coupon::where('is_active',true)->where('valid_until','>',now())->orderBy('id','desc')->get();
         return view('admin.bookings.create',$this->data);
     }
-    
+
     public function store(Request $request,FirebaseService $firebaseService)
     {
         try {
@@ -142,7 +142,7 @@ class BookingController extends Controller
                     $coupon = Coupon::where('id', $validated['coupon_id'])
                                    ->where('is_active', true)
                                    ->first();
-                    
+
                     // if ($coupon) {
                     //     CouponUsage::create([
                     //         'coupon_id' => $validated['coupon_id'],
@@ -263,20 +263,20 @@ class BookingController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
-            
+
             Log::error('Booking creation failed', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'request_data' => $request->all()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while creating the booking. Please try again.'
             ], 500);
         }
     }
-    
+
     /**
      * Generate a unique booking number
     */
@@ -371,7 +371,7 @@ class BookingController extends Controller
     }
 
     public function assignBooking(Request $request){
-        
+
         $booking = Booking::findOrFail($request->booking_id);
         $booking->cleaner_id = $request->cleaner_id;
         $booking->save();
@@ -388,10 +388,10 @@ class BookingController extends Controller
 
         ];
         // $this->save_notification($request->cleaner_id,$notificationData);
-        
+
         Session::flash('success', "Cleaner assigned successfully");
         return redirect()->route('bookings.index');
-        
+
     }
 
     public function cancelBooking($id){
@@ -425,7 +425,7 @@ class BookingController extends Controller
                     'cleaner_id' => $booking->cleaner_id,
                     'customer_id' => $booking->customer_id,
                 ],
-    
+
             ];
             // $this->save_notification($booking->cleaner_id,$notificationData);
         }
@@ -488,7 +488,7 @@ class BookingController extends Controller
         if (isset($response['registrationNumber'])) {
             // Success case
             $data = $response;
-        
+
             $result = [
                 'Colour' => $data['colour'] ?? null,
                 'Vrm' => $data['registrationNumber'] ?? null,
@@ -497,7 +497,7 @@ class BookingController extends Controller
                 'YearOfManufacture' => $data['yearOfManufacture'] ?? null,
                 'VehicleClass' => $data['VehicleClass'] ?? null,
             ];
-        
+
         }
         if(empty($result)){
             return response()->json(['data' => [],'error'=> ''],200);
@@ -510,7 +510,7 @@ class BookingController extends Controller
         // Make sure customer coords are stored on the booking model:
         // $booking->customer_lat, $booking->customer_lng
         $booking = Booking::findOrFail($id);
-        
+
         return view('admin.bookings.track', [
             'bookingId'    => $booking->id,
             'destLat'      => $booking->latitude,
