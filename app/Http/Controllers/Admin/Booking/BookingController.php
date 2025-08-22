@@ -512,6 +512,7 @@ class BookingController extends Controller
         $booking = Booking::findOrFail($id);
 
         return view('admin.bookings.track', [
+            'cleanerId' => $booking->cleaner_id,
             'bookingId'    => $booking->id,
             'destLat'      => $booking->latitude,
             'destLng'      => $booking->longitude,
