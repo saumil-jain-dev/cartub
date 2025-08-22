@@ -15,7 +15,7 @@
             <div class="card">
                 <div class="card-body">
                     <div id="map" style="width:100%; height:100vh;"></div>
-                    
+
                 </div>
             </div>
         </div>
@@ -25,16 +25,34 @@
 @section('scripts')
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAFmrV-jN6567bNi-hsWYUN5tPpNqg8-Q&libraries=places"></script>
     <!-- Firebase -->
-    
+ <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
 
     <script>
+
+         const firebaseConfig = {
+                apiKey:     "AIzaSyBL5FYCKi17Bd-WbSxk9MwCSvd2xsYQejY",
+                authDomain: "cartub-7a7b5.firebaseapp.com",
+                databaseURL:"https://cartub-7a7b5-default-rtdb.europe-west1.firebasedatabase.app",
+                projectId:  "cartub-7a7b5",
+                storageBucket:"cartub-7a7b5.firebasestorage.app",
+                messagingSenderId:"188507095259",
+                appId:      "1:188507095259:web:a929d71b852a3423a84cfe",
+                measurementId: "G-TT5M9Y9WWC"
+            };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+
         const bookingId = @json($bookingId);
+        const cleanerId = @json($cleanerId);
         const destLat   = parseFloat(@json($destLat));
         const destLng   = parseFloat(@json($destLng));
         const destLatLng = { lat: destLat, lng: destLng };
 
         // 3) Map + markers + polyline
-        let map, cleanerMarker, destMarker, routeLine;
+        let map, cleanerMarker, destMarker, routeLine , path = [destLatLng];;
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
                 center: destLatLng,
@@ -54,6 +72,7 @@
             });
 
             routeLine = new google.maps.Polyline({
+                // path: path,
                 map,
                 geodesic: true,
                 strokeOpacity: 0.7,
@@ -63,6 +82,30 @@
 
         $(document).ready(function() {
             initMap();
+
+            database.ref('cleaner_locations/' + cleanerId).on('value', (snapshot) => {
+                const data = snapshot.val();
+
+                if (data && data.booking_id == bookingId) { // Optional: Verify it matches the booking
+                    const driverLat = parseFloat(data.latitude);
+                    const driverLng = parseFloat(data.longitude);
+                    const driverLatLng = { lat: driverLat, lng: driverLng };
+
+                    // Update cleaner marker position
+                    cleanerMarker.setPosition(driverLatLng);
+                    map.panTo(driverLatLng);
+
+                    // Update route line (append to path for historical route)
+                    path.push(driverLatLng);
+                    routeLine.setPath(path);
+
+                    // Optional: Use other fields, e.g., display info window with speed/heading
+                    const infoWindow = new google.maps.InfoWindow({
+                        content: `Speed: ${data.speed} | Heading: ${data.heading} | Accuracy: ${data.accuracy}`
+                    });
+                    infoWindow.open(map, cleanerMarker);
+                }
+            });
         });
     </script>
 @endsection

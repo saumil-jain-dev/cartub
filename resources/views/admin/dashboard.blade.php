@@ -124,7 +124,7 @@
                         <h5>Live Wash Status</h5>
                         <div class="card-header-right-icon">
                             <div class="dropdown icon-dropdown">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -134,12 +134,9 @@
                         <table class="table" id="shipment-tracking-table liveWashTable">
                             <thead>
                                 <tr>
-                                    <th></th>
                                     <th>Vehicle</th>
-                                    
-                                    
                                     <th>Status</th>
-                                    
+                                    <th style="display: block;">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="liveWashTableBody">
@@ -148,8 +145,8 @@
                                     <td></td>
                                     <td><a href="{{ route('bookings.show',$booking->id) }}" target="_blank">{{ $booking->vehicle?->model }}
                                             ({{ $booking->vehicle?->license_plate }})</a></td>
-                                    
-                                    
+
+
                                     <td>
                                         @php
                                             if ($booking->status === 'pending' && $booking->cleaner_id) {
@@ -187,17 +184,17 @@
                                         <span class="badge {{ $badgeClass }}">{{ $badgeText }}</span>
                                     </td>
                                 </tr>
-                                
+
                                 @endforeach
-                                
-                                
+
+
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="col-xl-4 col-md-6">
             <div class="card">
                 <div class="card-header card-no-border">
@@ -223,8 +220,7 @@
                             <thead>
                                 <tr>
                                     <th>Wash Type</th>
-                                    
-                                    <th>Total Washes</th>
+                                    <th style="display: block;">Total Washes</th>
                                 </tr>
                             </thead>
                             <tbody id="liveWashTypeTableBody">
@@ -244,21 +240,56 @@
                                                 </div><span class="f-w-500">{{ $washType->name }}</span>
                                             </div>
                                         </td>
-                                        
-                                        
+
+
                                         <td class="f-w-500">{{ $washType->bookings_count }}</td>
                                     </tr>
                                 @endforeach
-                                
+
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
-        
+
     </div>
 </div>
+
+ <div class="modal fade" id="assignBookingModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('bookings.assign-cleaner') }}" method="POST" id="assignCleanerForm">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title">Assign Cleaner</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input type="hidden" name="booking_id" id="modalBookingId">
+                        <input type="hidden" name="type" value="dashboard">
+                        <div class="mb-3">
+                            <label>Booking Number</label>
+                            <input type="text" class="form-control" id="modalBookingNumber" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Cleaner</label>
+                            <select name="cleaner_id" class="form-control" id="modalCleanerSelect" required>
+                                <option value="">Loading available cleaners...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Assign</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('scripts')
     <!-- Firebase SDKs (compat version) -->
@@ -276,10 +307,10 @@
                 appId:      "1:188507095259:web:a929d71b852a3423a84cfe",
                 measurementId: "G-TT5M9Y9WWC"
             };
-    
+
             firebase.initializeApp(firebaseConfig);
             const bookingsRef = firebase.database().ref("bookings");
-    
+
             const $totalBookings   = $('#totalBookings');
             const $totalRevenue    = $('#totalRevenue');
             const $activeCustomers = $('#activeCustomers');
@@ -287,11 +318,11 @@
             const $liveWashBody    = $('#liveWashTableBody');
             const $liveWashTypeTableBody = $('#liveWashTypeTableBody');
 
-            
+
             const METRICS_URL = "{{ route('dashboard.metrics') }}";
             function refreshDashboard() {
                 $.getJSON(METRICS_URL, function(data) {
-                    
+
                     // 1) Update cards
                     $totalBookings.text(data.total_booking_count);
                     $totalRevenue.text(parseFloat(data.total_revenue).toFixed(2));
@@ -301,14 +332,16 @@
                     // 2) Update live-wash table
                     $liveWashBody.empty();
                     $.each(data.live_wash_data, function(_, b) {
+                        let actionBtns = `
+                            <button class="btn btn-sm btn-primary me-1 assign-booking" data-number="${b.booking_number}" data-id="${b.id}"><i class="fa fa-edit"></i>
+                            </button>
+                        `;
                         const row = `
                         <tr>
-                            <td></td>
                             <td><a href="/bookings/${b.id}" target="_blank">${b.vehicle}</a></td>
-                            
-                            
                             <td><span class="badge f-14 f-w-400 txt-dark">${b.status}</span></td>
-                            
+                            <td style="display: block;">${actionBtns}</td>
+
                         </tr>`;
                         $liveWashBody.append(row);
                     });
@@ -318,7 +351,7 @@
                     $.each(data.wash_types, function(_, w) {
                         const rows = `
                         <tr>
-                            
+
                             <td><div class="referral-wrapper">
                                                 <div>
                                                     <div class="border-secondary">
@@ -331,9 +364,9 @@
                                                     </div>
                                                 </div><span class="f-w-500">${w.name }</span>
                                             </div></td>
-                            
-                            <td class="f-w-500"> ${w.bookings_count}</td>
-                            
+
+                            <td class="f-w-500" style="display:block;"> ${w.bookings_count}</td>
+
                         </tr>`;
                         $liveWashTypeTableBody.append(rows);
                         loadTable();
@@ -341,7 +374,7 @@
                 }).fail(function(err){
                     console.error('Dashboard refresh failed', err);
                 });
-                
+
             }
 
             bookingsRef.on('child_added',   refreshDashboard,() => table.ajax.reload(null,false));
@@ -352,7 +385,7 @@
         });
         function loadTable(){
             setTimeout(() => {
-                
+
                 $('#liveWashTable').DataTable({
                     pageLength: 5,
                     responsive: true
@@ -360,7 +393,43 @@
             }, 2000);
         }
         $(document).ready(function() {
-            
+
+            const modal = new bootstrap.Modal($('#assignBookingModal')[0]);
+
+            $(document).on('click','.assign-booking',function(){
+
+                const bookingId = $(this).data('id');
+                const bookingNumber = $(this).data('number');
+                console.log(bookingNumber,"bookingNumber");
+                $('#modalBookingId').val(bookingId);
+                $('#modalBookingNumber').val(bookingNumber);
+
+                const $select = $('#modalCleanerSelect');
+                $select.html('<option>Loading...</option>');
+
+                $.ajax({
+
+                    url: `${site_url}/admin/bookings/${bookingId}/available-cleaners`,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (cleaners) {
+                        $select.html('<option value="">Select Cleaner</option>');
+
+                        if (cleaners.length === 0) {
+                            $select.html('<option value="">No cleaner available</option>');
+                        } else {
+                            $.each(cleaners, function (i, cleaner) {
+                                $select.append(`<option value="${cleaner.id}">${cleaner.name}</option>`);
+                            });
+                        }
+                    },
+                    error: function () {
+                        $select.html('<option value="">Failed to load cleaners</option>');
+                    }
+                });
+
+                modal.show();
+            });
         });
     </script>
 @endsection

@@ -16,7 +16,7 @@ class DashboardController extends Controller
     /**
      * Show the admin dashboard.
      */
-    
+
     public function index(){
         $washTypes = Service::where('type', 'service')
         ->withCount('bookings')   // assumes you have bookings() relationship
@@ -28,7 +28,7 @@ class DashboardController extends Controller
         $this->data['total_revenue'] = Booking::get()->sum('total_amount');
         $this->data['total_active_customer'] = User::where('is_active',1)->where('role','customer')->count();
         $this->data['total_active_cleaner'] = User::where('is_active',1)->where('role','cleaner')->count();
-        $this->data['live_wash_data'] = Booking::with('vehicle')->orderBy('id','desc')->get();
+        $this->data['live_wash_data'] = Booking::where('status','pending')->whereNull('cleaner_id')->with('vehicle')->orderBy('id','desc')->get();
         $this->data['washTypes'] = $washTypes;
         return view('admin.dashboard',$this->data); // Ensure this view exists
     }
@@ -39,11 +39,11 @@ class DashboardController extends Controller
             abort(403);
         }
         $this->data['pageTitle'] = "Today's Bookings";
-        
+
         $bookings = Booking::with(['customer', 'payment']);
 
         // Filters
-        
+
         if ($request->filled('payment_status')) {
             $bookings->where('payment_status',$request->payment_status);
         }
@@ -55,7 +55,7 @@ class DashboardController extends Controller
         }
 
         $this->data['bookingData'] = $bookings->whereDate('created_at',today())->orderBy('bookings.id','desc')->get();
-        
+
         return view('admin.today-wash',$this->data);
     }
 
@@ -63,7 +63,7 @@ class DashboardController extends Controller
         $this->data['pageTitle'] = "Live Wash Status";
         return view('admin.live-wash-status',$this->data);
     }
-    
+
     public function getByStatus(Request $request)
     {
         $status = $request->status;
@@ -82,15 +82,15 @@ class DashboardController extends Controller
         ->orderByDesc('bookings_count')
         ->get();
 
-        
+
         $totalBookings = Booking::get()->count();
         $totalRevenue = Booking::get()->sum('total_amount');
         $activeCustomers = User::where('is_active',1)->where('role','customer')->count();
         $activeCleaners = User::where('is_active',1)->where('role','cleaner')->count();
-        $liveWashData = Booking::with(['vehicle','customer','cleaner'])->orderBy('id','desc')->get()->map(function($b) {
+        $liveWashData = Booking::where('status','pending')->whereNull('cleaner_id')->with(['vehicle','customer','cleaner'])->orderBy('id','desc')->get()->map(function($b) {
                 if ($b->status === 'pending' && $b->cleaner_id) {
                     $badgeText = 'Assigned';
-                    
+
                 } else {
                     switch ($b->status) {
                         case 'pending':
@@ -114,12 +114,12 @@ class DashboardController extends Controller
                 }
                 return [
                     'id'            => $b->id,
-                    'vehicle'       => ($b->vehicle?->model ?? '') 
+                    'vehicle'       => ($b->vehicle?->model ?? '')
                                        . ' (' . ($b->vehicle?->license_plate ?? '') . ')',
                     'customer_name' => $b->customer?->name ?? '',
                     'cleaner_name'  => $b->cleaner?->name  ?? '',
                     'status'        => $badgeText,
-                    
+                    'booking_number' => $b->booking_number
                 ];
             });
         $this->data['washTypes'] = $washTypes;
