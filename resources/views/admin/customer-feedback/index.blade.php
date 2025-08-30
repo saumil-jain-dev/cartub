@@ -36,7 +36,7 @@
                                         <th> <span class="c-o-light f-w-600">Cleaner Name</span></th>
                                         <th> <span class="c-o-light f-w-600">Review</span></th>
                                         <th> <span class="c-o-light f-w-600">Date</span></th>
-                                        
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -51,7 +51,7 @@
                                         <td>
                                             <div class="product-names">
                                                 <div class="light-product-box"><img class="img-fluid"
-                                                        src="{{ getImageAdmin($rating->cleaner->profile_picture) }}" alt="user"></div>
+                                                        src="{{ getImageAdmin($rating->cleaner?->profile_picture) }}" alt="user"></div>
                                                 <p>{{ $rating->cleaner?->name }}</p>
                                             </div>
                                         </td>
@@ -64,14 +64,14 @@
                                                         <i class="fa-regular fa-star txt-warning"></i>
                                                     @endif
                                                 @endfor
-                                                
+
                                             </div>
                                             <div class="customer-review">
                                                 <span>{{ $rating->comment }}</span>
                                             </div>
                                         </td>
                                         <td>{{ Carbon::parse($rating->created_at)->format('d M Y, H:i A') }}</td>
-                                        
+
                                     </tr>
                                     @endforeach
                                 </tbody>

@@ -23,275 +23,254 @@ input.error, select.error {
     border: 1px solid #e74c3c;
     box-shadow: 0 0 5px rgba(231, 76, 60, 0.4);
 }
+
+/* Single form styling */
+#bookingForm {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+#bookingForm h6 {
+    color: #2196f3 !important;
+    font-weight: 600;
+    border-bottom: 2px solid #e3f2fd;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+#bookingForm h6::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 50px;
+    height: 2px;
+    background: linear-gradient(90deg, #2196f3, #1976d2);
+    border-radius: 1px;
+}
+
+#bookingForm .form-label {
+    font-weight: 500;
+    color: #333;
+}
+
+#bookingForm .form-control,
+#bookingForm .form-select {
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+#bookingForm .form-control:focus,
+#bookingForm .form-select:focus {
+    border-color: #2196f3;
+    box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
+}
+
+
+
+#bookingForm .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+}
+
+.card-wrapper {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.pricing-summary .card {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#subtotal_display, #discount_display, #total_display {
+    font-weight: 600;
+    color: #333;
+}
+
+#total_display {
+    color: #2196f3;
+    font-size: 1.1em;
+}
+
+/* Section spacing */
+#bookingForm .col-12.mt-4 {
+    margin-top: 2rem !important;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+}
 </style>
 @endsection
 <div class="container-fluid dashboard-13">
 <div class="card">
     <div class="card-header">
-        <h5>Booking Form</h5>
-        <p class="f-m-light mt-1"> Fill up your true details and next proceed.</p>
+        <h5>Create New Booking</h5>
+        <p class="f-m-light mt-1">Fill in all the required details below to create a new booking.</p>
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-12">
-                <div class="row shipping-form g-5">
-                    <div class="col-xl-9 shipping-border checkout-cart">
-                        <div class="nav nav-pills horizontal-options shipping-options"
-                            id="cart-options-tab" role="tablist" aria-orientation="vertical"><a
-                                class="nav-link b-r-0 active" id="bill-wizard-tab"
-                                data-bs-toggle="pill" href="#bill-wizard" role="tab"
-                                aria-controls="bill-wizard" aria-selected="true">
-                                <div class="cart-options">
-                                    <div class="stroke-icon-wizard"><i class="fa-solid fa-user"></i>
-                                    </div>
-                                    <div class="cart-options-content">
-                                        <h6>Customer Info</h6>
-                                    </div>
-                                </div>
-                            </a><a class="nav-link b-r-0" id="ship-wizard-tab" data-bs-toggle="pill"
-                                href="#ship-wizard" role="tab" aria-controls="ship-wizard"
-                                aria-selected="false">
-                                <div class="cart-options">
-                                    <div class="stroke-icon-wizard"><i
-                                            class="fa-solid fa-truck"></i></div>
-                                    <div class="cart-options-content">
-                                        <h6>Wash Type & Package</h6>
-                                    </div>
-                                </div>
-                            </a><a class="nav-link b-r-0" id="payment-wizard-tab"
-                                data-bs-toggle="pill" href="#payment-wizard" role="tab"
-                                aria-controls="payment-wizard" aria-selected="false">
-                                <div class="cart-options">
-                                    <div class="stroke-icon-wizard"><i
-                                            class="fa-solid fa-money-bill-1"></i></div>
-                                    <div class="cart-options-content">
-                                        <h6>Payment</h6>
-                                    </div>
-                                </div>
-                            </a><a class="nav-link b-r-0" id="finish-wizard-tab"
-                                data-bs-toggle="pill" href="#finish-wizard" role="tab"
-                                aria-controls="finish-wizard" aria-selected="false">
-                                <div class="cart-options">
-                                    <div class="stroke-icon-wizard"><i
-                                            class="fa-solid fa-check-square"></i></div>
-                                    <div class="cart-options-content">
-                                        <h6>Finish</h6>
-                                    </div>
-                                </div>
-                            </a></div>
-                        <div class="tab-content dark-field shipping-content shipping-wizard basic-wizard"
-                            id="cart-options-tabContent">
-                            <div class="tab-pane fade show active" id="bill-wizard" role="tabpanel"
-                                aria-labelledby="bill-wizard-tab">
-                                <form class="row g-3 needs-validation" novalidate="">
-                                    <div class="col-md-6"><label class="form-label"
-                                            for="customSelectCustomerName">Customer
-                                            Name</label><select class="form-select select2"
-                                            id="customSelectCustomerName" >
-                                            <option selected="" disabled="" value="">Select
-                                                Customer Name</option>
-                                            @foreach ($users as $user)
-                                                <option value="{{ $user->id }}" data-name="{{ $user->name }}" data-email="{{ $user->email }}" data-phone="{{ $user->phone }}"> {{ $user->name }} ({{ $user->phone }}) </option>
-                                            @endforeach
-                                            
-                                        </select>
-                                        <div class="d-flex align-items-center mt-2">
-                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
-                                                + Add Customer
-                                            </button>
-                                        </div>
-                                    </div>
-                                     <div class="col-md-6">
-                                        <label class="form-label" for="customSelectCustomerVehicle">Customer Vehicle</label>
-                                        <select class="form-select" id="customSelectCustomerVehicle">
-                                            <option selected disabled value="">Select Vehicle</option>
-                                            <!-- Options will be populated dynamically -->
-                                        </select>
-                                        <button type="button" class="btn btn-sm btn-primary mt-2" id="addVehicleBtn">+ Add Vehicle</button>
-                                    </div>
-                                    <div class="col-sm-6"><label class="form-label"
-                                            for="customContact">Contact Number</label><input
-                                            class="form-control" id="customContact" type="number"
-                                            placeholder="Enter number"></div>
-                                    <div class="col-sm-6"><label class="form-label"
-                                            for="customEmail">Email</label><input
-                                            class="form-control" id="customEmail" type="email"
-                                            placeholder="pixelstrap@example.com"></div>
-                                   <div id="customerAddressContainer" style="display: none;">
-                                        <label for="customerAddress">Select Address</label>
-                                        <select id="customerAddress" class="form-select">
-                                            <option value="">Select Address</option>
-                                            <!-- Dynamically append options here -->
-                                        </select>
-                                    </div>
-                                    <div class="col-12"> <label class="form-label"
-                                            for="currentAddress1">Customer Booking Address
-                                        </label><textarea class="form-control" id="currentAddress1"
-                                            rows="3"
-                                            placeholder="Enter your Customer booking address"></textarea>
-                                    </div>
-                                    <div class="col-md-4"><label class="form-label"
-                                            for="customSelectCountry">Country</label>
-                                            
-                                            <input
-                                            class="form-control" id="customSelectCountry" type="text"
-                                            placeholder="Enter Country">
-                                            
-                                        </div>
-                                    <div class="col-md-4 col-sm-6"> <label class="form-label"
-                                            for="customstate">State</label><input
-                                            class="form-control" id="customstate" type="text"
-                                            placeholder="Enter state"></div>
-                                    <div class="col-md-4 col-sm-6"><label class="form-label"
-                                            for="customPostalCode">Postal Code</label><input
-                                            class="form-control" id="customPostalCode" type="text"
-                                            placeholder="Enter postal code">
-                                    </div>
-                                    <input type="hidden" name="latitude" id="latitude">
-                                    <input type="hidden" name="longitude" id="longitude">
-                                    <div class="col-12 justify-content-end common-flex">
-                                        <button class="btn btn-primary" type="button"
-                                            onclick="proceedNextButtonClick('ship-wizard-tab')">Proceed
-                                            to Next<i
-                                                class="fa-solid fa-truck proceed-next"></i></button>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="tab-pane fade shipping-wizard" id="ship-wizard"
-                                role="tabpanel" aria-labelledby="ship-wizard-tab">
-                                <div class="row g-md-3 g-4">
-                                    <div class="col-xxl-5 col-md-6 box-col-6">
-                                        <div class="shipping-title">
-                                            <h6>Wash Type</h6>
-                                        </div>
-                                        <div class="row g-3 mt-0 flex-column">
-                                            <div class="col-md-12">
-                                                <label class="form-label" for="washTypeSelect">Select Wash Type</label>
-                                                <select class="form-select" id="washTypeSelect" name="service_id">
-                                                    <option selected disabled>Select Wash Type</option>
-                                                    @foreach($wash_types as $wash_type)
-                                                        <option value="{{ $wash_type->id }}" data-price="{{ $wash_type->price }}">{{ $wash_type->name }}</option>
-                                                    @endforeach
-                                                    
-                                                </select>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <label class="form-label" for="packageSelect">Select Package(s)</label>
-                                                <select class="form-select" id="packageSelect" multiple name="add_ons_id[]">
-                                                    @foreach($services as $service)
-                                                        <option value="{{ $service->id }}" data-price="{{ $service->price }}">{{ $service->name }}</option>
-                                                    @endforeach
-                                                    
-                                                    
-                                                </select>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <label class="form-label" for="packageSelect">Schedule Date & Time</label>
-                                                <input type="text" class="form-control" id="scheduleDatetime" name="schedule_datetime" placeholder="Select date and time">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-12 justify-content-end common-flex">
-                                        <button class="btn btn-primary"
-                                            onclick="proceedNextButtonClick('bill-wizard-tab')"><i
-                                                class="fa-solid fa-truck proceed-prev"></i>Proceed
-                                            to Back</button><button class="btn btn-primary"
-                                            type="button"
-                                            onclick="proceedNextButtonClick('payment-wizard-tab')">Proceed
-                                            to Next<i
-                                                class="fa-solid fa-truck proceed-next"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade shipping-wizard" id="payment-wizard"
-                                role="tabpanel" aria-labelledby="payment-wizard-tab">
-                                <div class="payment-info-wrapper">
-                                    <div class="row shipping-method g-3">
-                                       
-                                        <div class="col-12">
-                                            <div class="card-wrapper border rounded-3 light-card">
-                                                <div>
-                                                    <div class="form-check radio radio-primary">
-                                                        <input
-                                                            class="form-check-input"
-                                                            id="shipping-choose7"
-                                                            type="radio"
-                                                            name="paymentMethod"
-                                                            value="cod"
-                                                            checked
-                                                        >
-                                                        <label class="form-check-label mb-0 f-w-500" for="shipping-choose7">
-                                                            Cash On Delivery
-                                                        </label>
-                                                    </div>
-                                                    <p>After your order is Washed, make a
-                                                        cash payment</p>
-                                                </div>
-                                                <div> <img src="{{ asset('assets/images/shared_image.jpeg') }}"
-                                                        alt="delivery"></div>
-                                            </div>
-                                        </div>
-                                        <div class="common-flex main-custom-form">
-                                            <div class="input-group">
-                                                <label class="input-group-text"
-                                                    for="inputGroupSelect01">Apply Coupon</label>
-                                                    
-                                                <select class="form-select" id="couponSelect">
-                                                    <option selected="" value="">Select Your Coupon code
-                                                    </option>
-                                                    @foreach($coupons as $coupon)
-                                                        <option 
-                                                            value="{{ $coupon->id }}"
-                                                            data-type="{{ $coupon->discount_type }}"
-                                                            data-value="{{ $coupon->discount_value }}"
-                                                        >
-                                                            {{ $coupon->code }} - 
-                                                            {{ $coupon->discount_type == 'fixed' ? '£'.$coupon->discount_value.' Off' : $coupon->discount_value.'% Off' }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 justify-content-end common-flex">
-                                            <button class="btn btn-primary" type="button"
-                                                onclick="proceedNextButtonClick('ship-wizard-tab')">
-                                                <i
-                                                    class="fa-solid fa-truck proceed-prev"></i>Proceed
-                                                to Back</button><button class="btn btn-primary"
-                                                type="button"
-                                                onclick="proceedNextButtonClick('finish-wizard-tab')">
-                                                Proceed to Next<i
-                                                    class="fa-solid fa-truck proceed-next"></i></button>
-                                        </div>
+                <form id="bookingForm" class="row g-4 needs-validation" novalidate="">
+                    <!-- Customer Information Section -->
+                    <div class="col-12">
+                        <h6 class="mb-3 text-primary"><i class="fa-solid fa-user me-2"></i>Customer Information</h6>
+                    </div>
 
+                    <div class="col-md-6">
+                        <label class="form-label" for="customSelectCustomerName">Customer Name *</label>
+                        <select class="form-select select2" id="customSelectCustomerName" required>
+                            <option selected="" disabled="" value="">Select Customer Name</option>
+                            @foreach ($users as $user)
+                                <option value="{{ $user->id }}" data-name="{{ $user->name }}" data-email="{{ $user->email }}" data-phone="{{ $user->phone }}"> {{ $user->name }} ({{ $user->phone }}) </option>
+                            @endforeach
+                        </select>
+                        <div class="d-flex align-items-center mt-2">
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+                                + Add Customer
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label" for="customSelectCustomerVehicle">Customer Vehicle *</label>
+                        <select class="form-select" id="customSelectCustomerVehicle" required>
+                            <option selected disabled value="">Select Vehicle</option>
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                        <button type="button" class="btn btn-sm btn-primary mt-2" id="addVehicleBtn">+ Add Vehicle</button>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label" for="customContact">Contact Number *</label>
+                        <input class="form-control" id="customContact" type="number" placeholder="Enter number" required>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label class="form-label" for="customEmail">Email</label>
+                        <input class="form-control" id="customEmail" type="email" placeholder="pixelstrap@example.com" required>
+                    </div>
+
+                    <div id="customerAddressContainer" style="display: none;">
+                        <label for="customerAddress">Select Address</label>
+                        <select id="customerAddress" class="form-select">
+                            <option value="">Select Address</option>
+                            <!-- Dynamically append options here -->
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label" for="currentAddress1">Customer Booking Address *</label>
+                        <textarea class="form-control" id="currentAddress1" rows="3" placeholder="Enter your Customer booking address" required></textarea>
+                    </div>
+                                                        <div class="col-md-4">
+                        <label class="form-label" for="customSelectCountry">Country *</label>
+                        <input class="form-control" id="customSelectCountry" type="text" placeholder="Enter Country" required>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6">
+                        <label class="form-label" for="customstate">State *</label>
+                        <input class="form-control" id="customstate" type="text" placeholder="Enter state" required>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6">
+                        <label class="form-label" for="customPostalCode">Postal Code *</label>
+                        <input class="form-control" id="customPostalCode" type="text" placeholder="Enter postal code" required>
+                    </div>
+
+                    <input type="hidden" name="latitude" id="latitude">
+                    <input type="hidden" name="longitude" id="longitude">
+                    <input type="hidden" name="subtotal_amount" id="subtotal_amount" value="0.00">
+                    <input type="hidden" name="discount_amount" id="discount_amount" value="0.00">
+                    <input type="hidden" name="total_amount" id="total_amount" value="0.00">
+
+                    <!-- Wash Type & Package Section -->
+                    <div class="col-12 mt-4">
+                        <h6 class="mb-3 text-primary"><i class="fa-solid fa-truck me-2"></i>Wash Type & Package</h6>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label" for="washTypeSelect">Select Wash Type *</label>
+                        <select class="form-select" id="washTypeSelect" name="service_id" required>
+                            <option selected disabled value="">Select Wash Type</option>
+                            @foreach($wash_types as $wash_type)
+                                <option value="{{ $wash_type->id }}" data-price="{{ $wash_type->price }}">{{ $wash_type->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label" for="packageSelect">Select Package(s)</label>
+                        <select class="form-select" id="packageSelect" multiple name="add_ons_id[]">
+                            @foreach($services as $service)
+                                <option value="{{ $service->id }}" data-price="{{ $service->price }}">{{ $service->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label" for="scheduleDatetime">Schedule Date & Time *</label>
+                        <input type="text" class="form-control" id="scheduleDatetime" name="schedule_datetime" placeholder="Select date and time" required>
+                    </div>
+
+                    <!-- Payment Section -->
+                    <div class="col-12 mt-4">
+                        <h6 class="mb-3 text-primary"><i class="fa-solid fa-money-bill-1 me-2"></i>Payment Information</h6>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="card-wrapper border rounded-3 light-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="form-check radio radio-primary">
+                                        <input class="form-check-input" id="shipping-choose7" type="radio" name="paymentMethod" value="cod" checked>
+                                        <label class="form-check-label mb-0 f-w-500" for="shipping-choose7">
+                                            Cash On Delivery
+                                        </label>
                                     </div>
+                                    <p class="mb-0">After your order is Washed, make a cash payment</p>
                                 </div>
-                            </div>
-                            <div class="tab-pane fade shipping-wizard finish-wizard1"
-                                id="finish-wizard" role="tabpanel"
-                                aria-labelledby="finish-wizard-tab">
-                                <div class="finish-shipping"><svg>
-                                        <use href="{{ asset('assets/svg/icon-sprite.svg#ord-success') }}">
-                                        </use>
-                                    </svg>
-                                    <div class="mt-sm-3">
-                                        <h5>Order Placed Successfully</h5>
-                                        <p class="mb-0 c-o-light">A confirmation email with
-                                            your order details has been sent to you.</p>
-                                    </div>
+                                <div>
+                                    <img src="{{ asset('assets/images/shared_image.jpeg') }}" alt="delivery" style="max-height: 60px;">
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label" for="couponSelect">Apply Coupon</label>
+                        <select class="form-select" id="couponSelect">
+                            <option selected="" value="">Select Your Coupon code</option>
+                            @foreach($coupons as $coupon)
+                                <option
+                                    value="{{ $coupon->id }}"
+                                    data-type="{{ $coupon->discount_type }}"
+                                    data-value="{{ $coupon->discount_value }}"
+                                >
+                                    {{ $coupon->code }} -
+                                    {{ $coupon->discount_type == 'fixed' ? '£'.$coupon->discount_value.' Off' : $coupon->discount_value.'% Off' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Pricing Summary -->
+                    <div class="col-12 mt-4">
+                        <h6 class="mb-3 text-primary"><i class="fa-solid fa-calculator me-2"></i>Pricing Summary</h6>
+                        <div class="row">
+                                <div class="col-md-6">
                         <div class="shipping-info">
-                            <h5>Current Cart </h5>
+
                             <div class="overflow-auto custom-scrollbar">
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            
+
                                             <th scope="col">Product Detail </th>
                                             <th scope="col">Price </th>
                                         </tr>
@@ -317,7 +296,7 @@ input.error, select.error {
                                             <td>Discount :</td>
                                             <td colspan="2" id="discount">£0.00</td>
                                         </tr>
-                                        
+
                                         <tr>
                                             <td>Total (£) :</td>
                                             <td colspan="2" id="total">£0.00</td>
@@ -332,6 +311,25 @@ input.error, select.error {
                             </div>
                         </div>
                     </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="col-12 mt-4">
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary px-5">
+                                <i class="fa-solid fa-check me-2"></i>Create Booking
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -424,19 +422,19 @@ input.error, select.error {
         $('.close').on('click', function () {
             $('#vehicleModal').modal('hide');
         });
-        
+
         $('#customSelectCustomerName').on('change', function () {
             var selected = $(this).find('option:selected');
             var customerId = selected.val();
-    
+
             // Fill name, email, phone
             $('#customName').val(selected.data('name'));
             $('#customContact').val(selected.data('phone'));
             $('#customEmail').val(selected.data('email'));
-    
+
             // Clear vehicle dropdown
             $('#customSelectCustomerVehicle').html('<option selected disabled>Loading...</option>');
-    
+
             // Fetch vehicle data
             $.ajax({
                 url: `${site_url}/admin/bookings/get-customer-vehicles/${customerId}`,
@@ -497,7 +495,7 @@ input.error, select.error {
         });
         let geocoder = new google.maps.Geocoder();
         $('#customerAddress').on('change', function () {
-            
+
             const selectedAddress = $(this).find('option:selected').text();
             if (!selectedAddress) return;
             geocoder.geocode({ address: selectedAddress }, function (results, status) {
@@ -543,40 +541,40 @@ input.error, select.error {
             // $('#latitude').val(address.latitude);
             // $('#longitude').val(address.longitude);
             // $('#currentAddress1').val(address.address);
-            
+
         });
     });
 
     let autocomplete;
-    
+
     function initAutocomplete() {
         const addressInput = document.getElementById('currentAddress1');
-    
+
         if (!addressInput) return;
-    
+
         autocomplete = new google.maps.places.Autocomplete(addressInput, {
             types: ['geocode']
         });
-    
+
         autocomplete.setFields(['address_component', 'geometry']);
-    
+
         autocomplete.addListener('place_changed', function () {
             const place = autocomplete.getPlace();
-    
+
             if (!place.geometry || !place.geometry.location) {
                 toastr.error("Location not found. Please select a valid address.");
                 return;
             }
-    
+
             let addressComponents = {
                 country: '',
                 state: '',
                 postal_code: ''
             };
-    
+
             place.address_components.forEach(component => {
                 const types = component.types;
-    
+
                 if (types.includes('country')) {
                     addressComponents.country = component.long_name;
                 }
@@ -587,12 +585,12 @@ input.error, select.error {
                     addressComponents.postal_code = component.long_name;
                 }
             });
-    
+
             // Fill form fields
             $('#customSelectCountry').val(addressComponents.country);
             $('#customstate').val(addressComponents.state);
             $('#customPostalCode').val(addressComponents.postal_code);
-    
+
             // Set coordinates
             $('#latitude').val(place.geometry.location.lat());
             $('#longitude').val(place.geometry.location.lng());
@@ -600,63 +598,116 @@ input.error, select.error {
     }
 
 
-// Initialize on page load
+    // Initialize on page load
 $(window).on('load', function () {
     initAutocomplete();
+
+    // Initialize pricing calculation
+    calculatePricing();
+
+    // Initialize datetime picker
+    $('#scheduleDatetime').flatpickr({
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        minDate: "today",
+        time_24hr: true,
+        placeholder: "Select date and time"
+    });
+
+    // Add event listeners for pricing updates
+    $('#washTypeSelect, #packageSelect, #couponSelect').on('change', function() {
+        calculatePricing();
+    });
 });
 
-function proceedNextButtonClick(targetTabId) {
-    const currentTabId = $('.nav-link.active').attr('id');
+// Customer selection handler
+$('#customSelectCustomerName').on('change', function() {
+    const selectedOption = $(this).find('option:selected');
+    if (selectedOption.val()) {
+        const customerName = selectedOption.data('name');
+        const customerEmail = selectedOption.data('email');
+        const customerPhone = selectedOption.data('phone');
 
-    // Step 1: Validate customer info
-    if (currentTabId === 'bill-wizard-tab') {
-        const customerId = $('#customSelectCustomerName').val();
-        const vehicle = $('#customSelectCustomerVehicle').val();
-        const address = $('#currentAddress1').val();
+        // Populate contact fields
+        $('#customContact').val(customerPhone);
+        $('#customEmail').val(customerEmail);
 
-        if (!customerId) {
-            toastr.error("Please select a customer.");
-            return;
-        }
-
-        if (!vehicle) {
-            toastr.error("Please select a customer vehicle.");
-            return;
-        }
-
-        if (!address || address.trim().length === 0) {
-            toastr.error("Please enter the customer address.");
-            return;
-        }
+        // Load customer vehicles
+        loadCustomerVehicles(selectedOption.val());
     }
+});
 
-    // Step 2: Validate Wash Type
-    if (currentTabId === 'ship-wizard-tab') {
-        const washType = $('#washTypeSelect').val();
-        const scheduleDatetime = $('#scheduleDatetime').val();
-        if (!washType) {
-            toastr.error("Please select a wash type.");
-            return;
-        }
-        if (!scheduleDatetime) {
-            toastr.error("Please select a schedule date and time.");
-            return;
-        }
-    }
-
-    // Step 3: Handle Payment to Finish (Submit Form)
-    if (currentTabId === 'payment-wizard-tab' && targetTabId === 'finish-wizard-tab') {
-        submitBookingForm();
-        return;
-    }
-
-    // Proceed to next tab for other steps
-    $(`#${targetTabId}`).tab('show');
+// Function to load customer vehicles
+function loadCustomerVehicles(customerId) {
+    // This would typically make an AJAX call to get customer vehicles
+    // For now, we'll just enable the vehicle select
+    $('#customSelectCustomerVehicle').prop('disabled', false);
 }
+
+// Function to calculate pricing
+function calculatePricing() {
+    let subtotal = 0;
+
+    // Get wash type price
+    const washTypeSelect = $('#washTypeSelect');
+    if (washTypeSelect.val()) {
+        const washTypePrice = parseFloat(washTypeSelect.find('option:selected').data('price')) || 0;
+        subtotal += washTypePrice;
+    }
+
+    // Get package prices
+    const packageSelect = $('#packageSelect');
+    if (packageSelect.val()) {
+        packageSelect.find('option:selected').each(function() {
+            const packagePrice = parseFloat($(this).data('price')) || 0;
+            subtotal += packagePrice;
+        });
+    }
+
+    // Calculate discount
+    let discount = 0;
+    const couponSelect = $('#couponSelect');
+    if (couponSelect.val()) {
+        const couponType = couponSelect.find('option:selected').data('type');
+        const couponValue = parseFloat(couponSelect.find('option:selected').data('value')) || 0;
+
+        if (couponType === 'fixed') {
+            discount = couponValue;
+        } else if (couponType === 'percentage') {
+            discount = (subtotal * couponValue) / 100;
+        }
+    }
+
+    // Calculate total
+    const total = Math.max(0, subtotal - discount);
+
+    // Update display
+    $('#subtotal_display').text('£' + subtotal.toFixed(2));
+    $('#discount_display').text('£' + discount.toFixed(2));
+    $('#total_display').text('£' + total.toFixed(2));
+
+    // Update hidden fields for form submission
+    $('#subtotal_amount').val(subtotal.toFixed(2));
+    $('#discount_amount').val(discount.toFixed(2));
+    $('#total_amount').val(total.toFixed(2));
+}
+
+// Form submission handler for single form
+$(document).ready(function() {
+    $('#bookingForm').on('submit', function(e) {
+        e.preventDefault();
+
+        // Validate form before submission
+        // if (validateForm()) {
+            submitBookingForm();
+        // }
+    });
+});
+
 
 function submitBookingForm() {
     // Show loading state
-    const submitButton = $('button[onclick*="finish-wizard-tab"]');
+    const submitButton = $('#bookingForm button[type="submit"]');
     const originalText = submitButton.html();
     submitButton.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Processing...');
 
@@ -703,8 +754,20 @@ function submitBookingForm() {
         return;
     }
 
-    if (!formData.total_amount || parseFloat(formData.total_amount) <= 0) {
-        toastr.error('Invalid total amount');
+    if (!formData.scheduleDatetime) {
+        toastr.error('Please select a schedule date and time');
+        resetSubmitButton(submitButton);
+        return;
+    }
+
+    if (!formData.address || formData.address.trim().length === 0) {
+        toastr.error('Please enter the customer address');
+        resetSubmitButton(submitButton, originalText);
+        return;
+    }
+
+    if (!formData.country || !formData.state || !formData.postal_code) {
+        toastr.error('Please fill in all address fields');
         resetSubmitButton(submitButton, originalText);
         return;
     }
@@ -716,26 +779,24 @@ function submitBookingForm() {
         data: formData,
         success: function(response) {
             if(response.success) {
-                // Move to finish tab
-                $('#finish-wizard-tab').tab('show');
-                
-                // Update success message with booking details if available
-                if(response.booking_id) {
-                    $('.finish-shipping h5').text(`Booking #${response.booking_id} Created Successfully`);
-                }
-                
                 toastr.success(response.message || 'Booking created successfully!');
-                
-                // Optionally redirect after a delay
-                setTimeout(function() {
+
+                // Show success message
+                Swal.fire({
+                    title: 'Success!',
+                    text: response.message || 'Booking created successfully!',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    // Redirect after user clicks OK
                     if(response.redirect_url) {
                         window.location.href = response.redirect_url;
                     } else {
                         // Default redirect to dashboard
                         window.location.href = "{{ route('dashboard.dashboard') }}";
                     }
-                }, 3000);
-                
+                });
+
             } else {
                 toastr.error(response.message || 'Error creating booking');
                 resetSubmitButton(submitButton, originalText);
@@ -743,7 +804,7 @@ function submitBookingForm() {
         },
         error: function(xhr) {
             let errorMessage = 'Error creating booking';
-            
+
             if(xhr.responseJSON) {
                 if(xhr.responseJSON.message) {
                     errorMessage = xhr.responseJSON.message;
@@ -753,7 +814,7 @@ function submitBookingForm() {
                     errorMessage = Object.values(errors).flat().join('<br>');
                 }
             }
-            
+
             toastr.error(errorMessage);
             resetSubmitButton(submitButton, originalText);
         }
@@ -782,7 +843,7 @@ function updateCart() {
         subTotal += washPrice;
         cartItemsHtml += `
             <tr>
-                <td><h6>${washOption.text()}</h6></td>
+                <td><h5>${washOption.text()}</h5></td>
                 <td><p>£${washPrice.toFixed(2)}</p></td>
             </tr>
         `;
@@ -795,7 +856,7 @@ function updateCart() {
         subTotal += pkgPrice;
         cartItemsHtml += `
             <tr>
-                <td><h6>${pkgName}</h6></td>
+                <td><h5>${pkgName}</h5></td>
                 <td><p>£${pkgPrice.toFixed(2)}</p></td>
             </tr>
         `;
@@ -836,7 +897,7 @@ $(document).on('change', '#couponSelect', function () {
     const couponId = $(this).val();
     const customerId = $('#customSelectCustomerName').val();
     const zipCode = $('#customPostalCode').val();
-    
+
     // If user selects "none" or blank, remove coupon
     if (!couponId) {
         selectedCoupon = { type: null, value: 0, id: null, code: null };
@@ -844,7 +905,7 @@ $(document).on('change', '#couponSelect', function () {
         toastr.info("Coupon removed.");
         return;
     }
-    
+
     if (!couponId || !customerId || !zipCode) {
         toastr.error("Please ensure customer and address are selected before applying coupon.");
         $(this).val('');
@@ -938,7 +999,7 @@ $(document).ready(function () {
                         const customer = res.data;
 
                         $('#customSelectCustomerName').append(`<option value="${customer.id}" data-name="${ customer.name }" data-email="${ customer.email }" data-phone="${ customer.phone }" selected>${customer.name} (${customer.phone})</option>`).trigger('change');
-                        
+
                         $('#addCustomerModal').modal('hide');
                         $('#addCustomerForm')[0].reset();
                         toastr.success("Customer added successfully!");
@@ -961,7 +1022,7 @@ $(document).ready(function () {
 
     $('#addVehicleBtn').on('click', function() {
         const customerId = $('#customSelectCustomerName').val();
-        
+
         if (!customerId) {
             toastr.error("Please select a customer before adding a vehicle.");
             return;
@@ -1011,12 +1072,12 @@ $(document).ready(function () {
             }
         });
     });
-    
+
     $('#addThisVehicle').on('click', function () {
         const customerId = $('#customSelectCustomerName').val();
         const vehicle = JSON.stringify($('#vehicleDetails').data('vehicle'), null, 2);
         const parsedVehicle = JSON.parse(vehicle);
-        
+
         if (!customerId) {
             toastr.error('Please select a customer first.');
             return;

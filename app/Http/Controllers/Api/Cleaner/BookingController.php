@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api\Cleaner;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Cleaner\AddWashTimeRequest;
 use App\Http\Requests\Api\Cleaner\BookingDetailsRequest;
 use App\Http\Requests\Api\Cleaner\UpdateBookingStatusRequest;
-use App\Http\Requests\Api\Cleaner\UpdateLocationRequest;
 use App\Http\Resources\Api\Cleaner\BookingDetailsResource;
 use App\Http\Resources\Api\Cleaner\BookingListResource;
 use App\Models\Booking;
@@ -96,6 +96,19 @@ class BookingController extends Controller
                     config('code.SUCCESS_CODE')
                 );
         } catch(Exception $e){
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+    }
+
+    public function addCleanerWashTime(AddWashTimeRequest $request)
+    {
+        try {
+            $cleanerWashTime = $this->bookingService->addCleanerWashTime($request);
+            return success(
+                $cleanerWashTime,trans('messages.update', ['attribute' => 'Cleaner Wash Time']),
+                config('code.SUCCESS_CODE')
+            );
+        } catch (Exception $e) {
             return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
         }
     }

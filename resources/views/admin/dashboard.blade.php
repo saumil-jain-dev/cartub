@@ -10,7 +10,8 @@
 ])
 <div class="container-fluid dashboard-13">
     <div class="row">
-        <div class="col-xl-3 col-sm-6">
+        <div class="col-xl-3 col-sm-6 d-none d-md-flex">
+             <a href="{{ route('bookings.index') }}" class="text-decoration-none">
             <div class="card widget-13 widget-hover">
                 <div class="card-body">
                     <div>
@@ -35,8 +36,10 @@
                     </div> --}}
                 </div>
             </div>
+             </a>
         </div>
-        <div class="col-xl-3 col-sm-6">
+        <div class="col-xl-3 col-sm-6 d-none d-md-flex">
+            <a href="{{ route('payment.index') }}" class="text-decoration-none">
             <div class="card widget-13 widget-hover">
                 <div class="card-body">
                     <div>
@@ -64,8 +67,10 @@
                     </div> --}}
                 </div>
             </div>
+            </a>
         </div>
-        <div class="col-xl-3 col-sm-6">
+        <div class="col-xl-3 col-sm-6 d-none d-md-flex">
+             <a href="{{ route('users.index') }}" class="text-decoration-none">
             <div class="card widget-13 widget-hover">
                 <div class="card-body">
                     <div>
@@ -90,8 +95,10 @@
                     </div> --}}
                 </div>
             </div>
+             </a>
         </div>
-        <div class="col-xl-3 col-sm-6">
+        <div class="col-xl-3 col-sm-6 d-none d-md-flex">
+             <a href="{{ route('cleaners.index') }}" class="text-decoration-none">
             <div class="card widget-13 widget-hover">
                 <div class="card-body">
                     <div>
@@ -116,6 +123,7 @@
                     </div> --}}
                 </div>
             </div>
+            </a>
         </div>
         <div class="col-xl-7">
             <div class="card heading-space">
@@ -195,7 +203,7 @@
             </div>
         </div>
 
-        <div class="col-xl-4 col-md-6">
+        <div class="col-xl-4 col-md-6 d-none d-md-flex">
             <div class="card">
                 <div class="card-header card-no-border">
                     <div class="header-top">

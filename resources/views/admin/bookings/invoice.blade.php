@@ -70,9 +70,9 @@
                     style="font-size: 18px; display:block; color: #52526C; opacity: 0.8; margin-bottom: 8px;">Phone :
                     ({{ $bookingDetails->customer?->country_code }}) {{ $bookingDetails->customer?->phone }}</span><span
                     style="font-size: 18px; display:block; color: #52526C; opacity: 0.8; margin-bottom: 8px;">Email :
-                    {{ $bookingDetails->customer?->email }}</span><span
+                    Info@cartub.uk</span><span
                     style="font-size: 18px; display:block; color: #52526C; opacity: 0.8; margin-bottom: 8px;">Website:
-                    www.websites.com</span></td>
+                    Cartub.uk</span></td>
                 <td>
                   <h4 style="font-size:42px; font-weight: 600;color: #000248; margin:0 0 12px 0;">INVOICE</h4>
                   {{-- <span
@@ -156,7 +156,7 @@
                   <span style="color: #000248; font-weight: 600;opacity: 0.9;">£{{ $bookingDetails->gross_amount }}</span>
                 </td>
               </tr>
-              
+
               <tr>
                 <td> </td>
                 <td> </td>
@@ -170,7 +170,7 @@
                 <td> </td>
                 <td> </td>
                 <td> </td>
-                
+
               </tr>
               <tr>
                 <td></td>

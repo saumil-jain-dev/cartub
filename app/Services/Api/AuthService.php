@@ -56,7 +56,7 @@ class AuthService {
             //Send Otp SMS
             $message = "Your login OTP is: ".$otp.". It is valid for 10 minutes. Please do not share this OTP with anyone.";
             SendSMSJob::dispatch($country_code.$request->phone,$message);
-            
+
 
             //Send otp mail
             // $otpData = [

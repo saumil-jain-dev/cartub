@@ -21,12 +21,23 @@ class Booking extends Model
         static::creating(function ($booking) {
             $booking->booking_number = self::generateUniqueOrderNumber();
         });
+
+        static::deleting(function ($booking) {
+            $booking->payment()->delete();
+            $booking->tip()->delete();
+            $booking->rating()->delete();
+            $booking->beforePhoto()->delete();
+            $booking->afterPhoto()->delete();
+            BookingCancellation::where('booking_id',$booking->id)->delete();
+        });
+
     }
      public static function generateUniqueOrderNumber()
     {
         do {
-            $bookingNumber = (string) random_int(100000000000000, 999999999999999); // 15-digit
-        } while (self::where('booking_number', $bookingNumber)->exists());
+            // Generate a 6-digit random number
+            $bookingNumber = str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
+        } while (Booking::where('booking_number', $bookingNumber)->exists());
 
         return $bookingNumber;
     }
@@ -55,6 +66,7 @@ class Booking extends Model
         'notes',
         'device_id',
         'invoice_url',
+        'wash_time'
     ];
 
     protected $casts = [

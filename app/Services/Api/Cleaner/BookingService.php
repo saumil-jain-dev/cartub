@@ -106,10 +106,10 @@ class BookingService {
                 case 'start_job':
                     $booking->status = 'in_progress';
                     $booking->job_start_time = Carbon::now();
-                    
+
                     if($request->hasFile('before_image')){
                         $before_image = uploadMultipleImages($request->file('before_image'), 'job_image/'.$booking->id.'/before') ?? [];
-                        
+
                     }
                     if(isset($before_image) && $before_image) {
                         foreach ($before_image as $image) {
@@ -138,17 +138,17 @@ class BookingService {
                     // $this->save_notification($booking->customer_id,$notificationData);
                     break;
                 case 'finish_job':
-                    
+
                     $booking->job_end_time = Carbon::now();
                     $booking->job_duration = Carbon::parse($booking->job_start_time)->diffInMinutes(Carbon::now());
                     break;
                 case 'complete':
                     $booking->status = 'completed';
                     $booking->cleaner_note = $request->input('cleaner_note', null);
-                    
+
                     if($request->hasFile('after_image')){
                         $after_image = uploadMultipleImages($request->file('after_image'), 'job_image/'.$booking->id.'/after');
-                        
+
                     }
                     if(isset($after_image) && $after_image) {
                         foreach ($after_image as $image) {
@@ -218,7 +218,7 @@ class BookingService {
                         'booking_id' => $booking->id,
                         'cleaner_id' => Auth::id(),
                     ]);
-                    
+
                     break;
                 default:
                     throw new Exception('Invalid action.');
@@ -248,6 +248,17 @@ class BookingService {
         } catch (Exception $e) {
             throw new Exception('Error listing bookings: ' . $e->getMessage());
         }
+    }
+
+    public function addCleanerWashTime($request)
+    {
+        $booking = Booking::findOrFail($request->booking_id);
+
+        if($booking){
+            $booking->wash_time = $request->time;
+            $booking->save();
+        }
+        return $booking;
     }
 
 }

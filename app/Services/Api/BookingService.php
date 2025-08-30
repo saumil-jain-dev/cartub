@@ -135,7 +135,7 @@ class BookingService {
                 "Address: {$booking->address}. " .
                 "Scheduled for: " .
                 Carbon::parse($booking->scheduled_date)->format('d M Y') . " at " .
-                Carbon::parse($booking->scheduled_time)->format('h:i A') . 
+                Carbon::parse($booking->scheduled_time)->format('h:i A') .
                 ". Please check the admin panel for details.";
                 $adminUser = User::where('role','super_admin')->first();
                 $admin_phone = $adminUser->country_code.$adminUser->phone;
@@ -259,7 +259,7 @@ class BookingService {
                 ]
             );
             DB::commit();
-            
+
             //Send notification to cleaner
             $notificationData = [
                 'title' => "Customer Feedback Received",
@@ -322,7 +322,7 @@ class BookingService {
 
             Stripe::setApiKey(config('constants.STRIPE_SECRET'));
             $currency = 'gbp';
-            
+
 
             $customer_id = Auth::user()->customer_stripe_id;
             if(!$customer_id) {
@@ -363,7 +363,7 @@ class BookingService {
         } catch (Exception $e) {
             // General error
             throw new Exception($e->getMessage());
-            
+
         }
     }
 
@@ -381,7 +381,7 @@ class BookingService {
         } catch (Exception $e) {
             // General error
             throw new Exception($e->getMessage());
-            
+
         }
     }
 }

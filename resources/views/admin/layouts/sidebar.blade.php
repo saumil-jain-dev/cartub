@@ -74,7 +74,7 @@
                     @endif
                     <li class="sidebar-list">
                         <i class="fa-solid fa-thumbtack"> </i>
-                        
+
                         <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                             <svg class="stroke-icon">
                                 <use href="{{ asset('assets/svg/icon-sprite.svg#project-users') }}"></use>
@@ -84,7 +84,7 @@
                             </svg>
                             <span> Cleaners  </span>
                         </a>
-                        
+
                         <ul class="sidebar-submenu">
                             @if(hasPermission('cleaners.create'))
                             <li><a href="{{ route('cleaners.create') }}">Add Cleaners</a></li>
@@ -290,7 +290,7 @@
                             <span>App Setting</span>
                         </a>
                     </li>
-                    
+
                     {{-- <li class="sidebar-main-title">
                         <div>
                             <h6>Booking Management</h6>

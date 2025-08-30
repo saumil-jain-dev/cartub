@@ -82,7 +82,7 @@ Route::prefix('v1')->group(function () {
                 Route::post('profile/update','updateProfile');
                 Route::post('logout','logout');
                 Route::post('delete-account', 'deleteAccount');
-                
+
                 //notification routes
                 Route::post('notification/list', 'listNotifications');
                 Route::post('notification/mark-as-read', 'markNotificationAsRead');
@@ -97,6 +97,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('actions', 'updateBookingStatus');
                     Route::post('details', 'bookingDetails');
                     Route::post('assign-booking','assignBooking');
+                    Route::post('add-wash-time','addCleanerWashTime');
                 });
             });
         });

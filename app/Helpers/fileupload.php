@@ -55,7 +55,7 @@ function    getImage($file)
     if (file_exists(public_path($file)) && $file) {
         return asset($file);
     } else {
-        return asset('images/no-image.jpg');
+        return asset('images/no-image.png');
     }
 }
 
@@ -64,7 +64,7 @@ function    getImageAdmin($file)
     if (file_exists(public_path($file)) && $file) {
         return asset('/' . $file);
     } else {
-        return asset('/images/no-image.jpg');
+        return asset('/images/no-image.png');
     }
 }
 
