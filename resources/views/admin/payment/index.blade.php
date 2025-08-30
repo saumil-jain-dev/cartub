@@ -40,9 +40,17 @@
                                         <option value="google_pay" {{ request()->input('payment_method') == 'google_pay' ? 'selected' : '' }}>Google Pay</option>
                                         <option value="card" {{ request()->input('payment_method') == 'card' ? 'selected' : '' }}>Credit Card</option>
                                     </select></div>
-                            <div class="col d-flex justify-content-start align-items-center m-t-40">
-                                    <button type="submit" class="btn btn-primary f-w-500">Submit</button>
-                                </div>
+                                            <div class="col d-flex justify-content-end align-items-center m-t-40 gap-2">
+                                <button type="submit" class="btn btn-primary f-w-500 d-flex align-items-center px-4">
+                                    <i class="fa fa-search me-2"></i> Submit
+                                </button>
+
+                                <a href="{{ route('payment.export', request()->all()) }}"
+                                class="btn btn-success f-w-500 d-flex align-items-center px-4">
+                                    <i class="fa fa-download me-2"></i> Export
+                                </a>
+                            </div>
+
                         </div>
                     </div>
                 </form>
@@ -52,7 +60,7 @@
             <div class="card heading-space">
                 <div class="card-header card-no-border">
                     <div class="header-top">
-                        <h5>New Orders</h5>
+                        <h5>New Payments</h5>
                     </div>
                 </div>
                 <div class="card-body pt-0 px-0">
