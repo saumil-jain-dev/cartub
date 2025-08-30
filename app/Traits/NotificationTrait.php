@@ -10,19 +10,19 @@ use Google\Auth\Credentials\ServiceAccountCredentials;
 
 trait NotificationTrait
 {
-    
+
     public static function push_notification($to, $title, $message, $extra = null)
     {
         Log::info('Sending notification', ['to' => is_array($to) ? implode(', ', $to) : $to]);
-    
+
         $firebaseUrl = config('constants.FIREBASE_URL');
         $fcmKey = config('constants.FIREBASE_SERVER_KEY');
         $projectId = config('constants.FCM_PROJECT_ID');
-        $credentialsFilePath = public_path('notification/cartub-7a7b5-firebase-adminsdk-fbsvc-59277d53fc.json');
+        $credentialsFilePath = public_path('notification/cartub-5d584-firebase-adminsdk-fbsvc-539bad2f5f.json');
         $scopes = ['https://www.googleapis.com/auth/firebase.messaging'];
         $googleCreds = new ServiceAccountCredentials($scopes, $credentialsFilePath);
         $access_token = $googleCreds->fetchAuthToken()['access_token'] ?? null;
-        
+
         // dd($access_token);
         // $client = new GoogleClient();
         // $client->setAuthConfig($credentialsFilePath);
@@ -31,12 +31,12 @@ trait NotificationTrait
         // $token = $client->getAccessToken();
 
         // $access_token = $token['access_token'];
-        
+
         $headers = [
             "Authorization: Bearer $access_token",
             'Content-Type: application/json'
         ];
-
+        // dd($to,$title,$message,$extra,$access_token);
         $fields = [
             'message' => [
                 'token' => $to,
@@ -47,9 +47,9 @@ trait NotificationTrait
                 'data' => $extra
             ]
         ];
-   
+        // dd($fields);
         $payload = json_encode($fields);
-    
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "https://fcm.googleapis.com/v1/projects/".config('constants.FCM_PROJECT_ID')."/messages:send");
         curl_setopt($ch, CURLOPT_POST, true);
@@ -59,27 +59,27 @@ trait NotificationTrait
         curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($ch, CURLOPT_VERBOSE, true); // Enable verbose output for debugging
         $result = curl_exec($ch);
-        
+        // dd($result);
         if ($result === false) {
-            
+
             Log::error('cURL error: ' . curl_error($ch));
             curl_close($ch);
-            return false; 
+            return false;
         }
-        
+
         curl_close($ch);
-        
-        
+
+
         $resultArr = json_decode($result, true);
         Log::info('FCM Response', ['response' => $resultArr]);
-        
-        
+
+
         if (isset($resultArr['name'])) {
-            
+
             return true;
         }
-        
-        
+
+
         if (isset($resultArr['error'])) {
             Log::error('FCM error', [
                 'code' => $resultArr['error']['code'] ?? 'Unknown Code',
@@ -87,7 +87,7 @@ trait NotificationTrait
                 'status' => $resultArr['error']['status'] ?? 'Unknown Status',
             ]);
         }
-        
+
         return false;
     }
 
@@ -95,6 +95,7 @@ trait NotificationTrait
     {
         $user = User::find($receiverId);
         $send_notification = false;
+        // dd($user->devices->device_token);
         if ($user && $user->devices && $user->devices->device_token) {
             $send_notification = self::push_notification($user->devices->device_token, $notification['title'], $notification['message'], $notification['payload']);
         }
