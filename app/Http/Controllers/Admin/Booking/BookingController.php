@@ -443,7 +443,6 @@ class BookingController extends Controller
             return response()->json(['success' => false, 'message' => 'Vehicle number is required'], 400);
         }
 
-        $vehicleNumber = $request->vehicle_number;
         $apikey = env('APP_ENV') == "local" ? config('constants.CAR_CHECK_TEST_API_KEY') : config('constants.CAR_CHECK_LIVE_API_KEY');
         $curl = curl_init();
 
