@@ -53,8 +53,8 @@
                             <div class="mb-3"><label class="form-label">Confirm Password</label><input
                                     class="form-control" type="password" name="password_confirmation" placeholder="Confirm Password"></div>
 
-                           
-                        
+
+
                     </div>
                 </div>
             </div>
@@ -125,7 +125,7 @@
                                 <div class="mb-3"><label class="form-label"
                                         for="customPostalCode">Postal
                                         Code</label><input class="form-control" id="customPostalCode"
-                                        type="number" placeholder="Postal code" name="zipcode" value="{{ old('zipcode') }}"> @error('zipcode')
+                                        type="text" placeholder="Postal code" name="zipcode" value="{{ old('zipcode') }}"> @error('zipcode')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror</div>
                             </div>
@@ -138,7 +138,7 @@
                                         @enderror</div>
                                 </div>
                             </div>
-                                
+
                         </div>
                     </div>
                     <div class="card-footer text-end"><button class="btn btn-primary"

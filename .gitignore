@@ -25,3 +25,5 @@ yarn-error.log
 /.zed
 composer.lock
 /public/notification
+!/public/images/no-image.png
+!/public/images/

@@ -79,7 +79,7 @@ class BookingController extends Controller
                 'customer_id' => 'required|exists:users,id',
                 'vehicle_id' => 'required|exists:vehicles,id',
                 'contact' => 'required|string|max:20',
-                'email' => 'required|email|max:255',
+                'email' => 'nullable|email|max:255',
                 'address' => 'required|string|max:500',
                 'country' => 'required|string|max:100',
                 'state' => 'required|string|max:100',
@@ -283,11 +283,12 @@ class BookingController extends Controller
     private function generateUniqueOrderNumber()
     {
         do {
-            // Generate booking number format: BK + YYYYMMDD + XXXX (4 random digits)
-            $bookingNumber = 'BK' . date('Ymd') . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            // Generate a 6-digit random number
+            $bookingNumber = str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
         } while (Booking::where('booking_number', $bookingNumber)->exists());
 
         return $bookingNumber;
+
     }
 
 

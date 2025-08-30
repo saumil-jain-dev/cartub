@@ -1194,30 +1194,311 @@
       autoWidth: false,
     });
 
-    // Order history
-    $("#order-history-table").DataTable({
-      columnDefs: [
-        {
-          orderable: false,
-          render: $.fn.dataTable.render.select(),
-          targets: 0,
+    // Order history - Bookings table
+   var table = $("#order-history-table").DataTable({
+        columnDefs: [
+            {
+                orderable: false,
+                targets: 0,
+                className: 'select-checkbox'
+            },
+        ],
+        fixedColumns: {
+            leftColumns: 2,
         },
-      ],
-      fixedColumns: {
-        leftColumns: 2,
-      },
-      order: [[1, "asc"]],
-      scrollCollapse: true,
-      select: {
-        style: "multi",
-        selector: "td:first-child",
-      },
-      searchable: true,
-      pageLength: 10,
-      responsive: true,
-      lengthMenu: [10, 15, 20, 25],
-      autoWidth: false,
+        order: [[1, "asc"]],
+        scrollCollapse: true,
+        select: {
+            style: "multi",
+            selector: "td:first-child",
+            headerCheckbox: 'select-page'
+        },
+        searchable: true,
+        pageLength: 10,
+        responsive: true,
+        lengthMenu: [10, 15, 20, 25],
+        autoWidth: false,
+        initComplete: function() {
+            console.log('DataTable initialization complete');
+            console.log('Total rows:', this.api().rows().count());
+
+            // Hide checkbox and delete button if no data
+            const rowCount = this.api().rows().count();
+            if (rowCount === 0) {
+                $('#select-all').hide();
+                $('#bulk-delete-btn').hide();
+            } else {
+                $('#select-all').show();
+                $('#bulk-delete-btn').hide(); // Initially hidden until selection
+            }
+        },
+        drawCallback: function() {
+            // Update UI after each draw (pagination, search, etc.)
+            if (typeof updateTableUI === 'function') {
+                updateTableUI();
+            }
+        }
     });
+
+    // Make table globally accessible for delete functionality
+    window.bookingsTable = table;
+
+    console.log('Bookings datatable initialized:', table);
+    console.log('Table element:', $("#order-history-table"));
+    console.log('Table rows:', table.rows().count());
+
+    // Ensure delete functionality is properly bound after table initialization
+    setTimeout(function() {
+        console.log('Checking delete buttons after table init...');
+        console.log('Delete buttons found:', $('.delete-booking').length);
+        $('.delete-booking').each(function(index) {
+            console.log(`Delete button ${index}:`, $(this).data('id'));
+        });
+
+        // Update table UI after initialization
+        if (typeof updateTableUI === 'function') {
+            updateTableUI();
+        }
+    }, 1000);
+
+   table.on("select deselect", function () {
+        console.log(table.rows,"Rows");
+        let selectedRows = table.rows({ selected: true }).count();
+        console.log(selectedRows,"selectedRows");
+
+        // Update bulk delete button visibility
+        if (selectedRows > 0) {
+            $("#bulk-delete-btn").removeClass("d-none").addClass("show");  // show button
+        } else {
+            $("#bulk-delete-btn").addClass("d-none").removeClass("show");     // hide button
+        }
+
+        // Also trigger manual selection update if function exists
+        if (typeof updateBulkDeleteButton === 'function') {
+            updateBulkDeleteButton();
+        }
+    });
+
+    // Handle individual row delete for bookings table
+    $(document).ready(function() {
+        // Ensure delete functionality is available
+        if (typeof window.bookingsTable === 'undefined') {
+            console.log('Bookings table not found, initializing...');
+            window.bookingsTable = $("#order-history-table").DataTable();
+        }
+
+        // Test if delete buttons are properly bound
+        console.log('Delete buttons found:', $('.delete-booking').length);
+        $('.delete-booking').each(function(index) {
+            console.log(`Delete button ${index}:`, $(this).data('id'));
+        });
+    });
+
+    $(document).on('click', '.delete-booking', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const row = $(this).closest('tr');
+        const bookingId = $(this).data('id');
+
+        console.log('Delete clicked for booking ID:', bookingId);
+        console.log('Row element:', row);
+
+        // Get the table reference
+        const table = window.bookingsTable || $("#order-history-table").DataTable();
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will delete the booking and all its details.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log('Delete confirmed, sending AJAX request...');
+
+                // Check if CSRF token is available
+                const csrfToken = $('meta[name="csrf-token"]').attr('content');
+                if (!csrfToken) {
+                    console.error('CSRF token not found');
+                    Swal.fire('Error!', 'Security token not found. Please refresh the page.', 'error');
+                    return;
+                }
+
+                $.ajax({
+                    url: `${site_url}/admin/bookings/${bookingId}`,
+                    type: 'DELETE',
+                    data: {
+                        _token: csrfToken
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    success: function (response) {
+                        console.log('Delete response:', response);
+                        if (response.success) {
+                            // Remove the row from datatable
+                            const dtRow = table.row(row);
+                            if (dtRow.any()) {
+                                dtRow.remove().draw();
+                                console.log('Row removed from datatable');
+                            } else {
+                                console.log('Row not found in datatable, reloading page');
+                                location.reload();
+                            }
+
+                            Swal.fire(
+                                'Deleted!',
+                                response.message,
+                                'success'
+                            );
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message || 'Delete operation failed',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Delete error:', {xhr, status, error});
+
+                        let errorMessage = 'Something went wrong.';
+                        if (xhr.status === 403) {
+                            errorMessage = 'Access denied. You may not have permission to delete this booking.';
+                        } else if (xhr.status === 404) {
+                            errorMessage = 'Booking not found.';
+                        } else if (xhr.status === 500) {
+                            errorMessage = 'Server error. Please try again later.';
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+
+                        Swal.fire(
+                            'Error!',
+                            errorMessage,
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    });
+
+    // Handle bulk delete for bookings table
+    $(document).on('click', '#bulk-delete-btn', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Get the table reference
+    const table = window.bookingsTable || $("#order-history-table").DataTable();
+
+    // Try DataTable selection first, fallback to manual selection
+    let selectedRows = table.rows({ selected: true });
+    let selectedCount = selectedRows.count();
+
+    // If no DataTable selection, use manual selection
+    if (selectedCount === 0) {
+        const manualSelectedRows = $('tr.selected');
+        selectedCount = manualSelectedRows.length;
+        console.log('Using manual selection, selected rows:', selectedCount);
+    } else {
+        console.log('Using DataTable selection, selected rows:', selectedCount);
+    }
+
+    console.log('Bulk delete clicked, total selected rows:', selectedCount);
+
+    if (selectedCount === 0) {
+        Swal.fire('Warning', 'Please select at least one booking to delete.', 'warning');
+        return;
+    }
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `This will delete ${selectedCount} selected booking(s) and all their details.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete them!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            console.log('Bulk delete confirmed, processing...');
+
+            // Check if CSRF token is available
+            const csrfToken = $('meta[name="csrf-token"]').attr('content');
+            if (!csrfToken) {
+                console.error('CSRF token not found');
+                Swal.fire('Error!', 'Security token not found. Please refresh the page.', 'error');
+                return;
+            }
+
+            let deletePromises = [];
+
+            if (selectedRows.count() > 0) {
+                // Use DataTable selection
+                deletePromises = selectedRows.nodes().toArray().map(function(node) {
+                    const row = $(node);
+                    const bookingId = row.find('.delete-booking').data('id');
+                    console.log('Processing delete for booking ID (DataTable):', bookingId);
+                    return $.ajax({
+                        url: `${site_url}/admin/bookings/${bookingId}`,
+                        type: 'DELETE',
+                        data: { _token: csrfToken },
+                        headers: { 'X-CSRF-TOKEN': csrfToken }
+                    });
+                });
+            } else {
+                // Use manual selection
+                const manualSelectedRows = $('tr.selected');
+                deletePromises = Array.from(manualSelectedRows).map(function(node) {
+                    const row = $(node);
+                    const bookingId = row.find('.delete-booking').data('id');
+                    console.log('Processing delete for booking ID (Manual):', bookingId);
+                    return $.ajax({
+                        url: `${site_url}/admin/bookings/${bookingId}`,
+                        type: 'DELETE',
+                        data: { _token: csrfToken },
+                        headers: { 'X-CSRF-TOKEN': csrfToken }
+                    });
+                });
+            }
+
+            Promise.all(deletePromises)
+                .then(function(responses) {
+                    console.log('All deletes successful:', responses);
+
+                    // Remove rows from both selection methods
+                    if (selectedRows.count() > 0) {
+                        // Remove from DataTable
+                        selectedRows.remove().draw();
+                    } else {
+                        // Remove from manual selection and DOM
+                        $('tr.selected').remove();
+                    }
+
+                    // Hide bulk delete button
+                    $('#bulk-delete-btn').addClass('d-none').removeClass('show');
+
+                    Swal.fire(
+                        'Deleted!',
+                        `${selectedCount} booking(s) have been deleted successfully.`,
+                        'success'
+                    );
+                })
+                .catch(function(error) {
+                    console.error('Bulk delete error:', error);
+                    Swal.fire(
+                        'Error!',
+                        'Some bookings could not be deleted. Please try again.',
+                        'error'
+                    );
+                });
+        }
+    });
+});
 
     // Subscribed user
     $("#subscribed-user-wrapper").DataTable({

@@ -1,5 +1,102 @@
 @extends('admin.layouts.app')
 @section('pageTitle', $pageTitle)
+@section('styles')
+<style>
+    table.dataTable tr th.select-checkbox.selected::after {
+    content: "✔";
+    margin-top: -11px;
+    margin-left: -4px;
+    text-align: center;
+    text-shadow: rgb(176, 190, 217) 1px 1px, rgb(176, 190, 217) -1px -1px, rgb(176, 190, 217) 1px -1px, rgb(176, 190, 217) -1px 1px;
+}
+
+    /* Selected row styling */
+    tr.selected {
+        background-color: #e3f2fd !important;
+        border-left: 4px solid #2196f3 !important;
+    }
+
+    tr.selected td {
+        background-color: #e3f2fd !important;
+    }
+
+        /* Checkbox styling */
+    .select-checkbox input[type="checkbox"] {
+        cursor: pointer;
+    }
+
+    #select-all {
+        cursor: pointer;
+    }
+
+        /* Delete button styling */
+    #bulk-delete-btn {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        border: none;
+        border-radius: 6px;
+        padding: 10px 20px;
+        font-weight: 600;
+        font-size: 14px;
+        color: white;
+        box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 140px;
+        justify-content: center;
+    }
+
+    #bulk-delete-btn:hover {
+        background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4);
+    }
+
+    #bulk-delete-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+    }
+
+    /* Remove the pseudo-element since we're using FontAwesome icon */
+
+        /* Hide elements when no data */
+    .no-data #select-all,
+    .no-data #bulk-delete-btn {
+        display: none !important;
+    }
+
+    /* Initially hide delete button until selection */
+    #bulk-delete-btn {
+        display: none;
+    }
+
+    #bulk-delete-btn.show {
+        display: inline-flex !important;
+    }
+
+        /* Styling for empty table state */
+    .no-data .dataTables_wrapper {
+        opacity: 0.7;
+    }
+
+    .no-data .dataTables_info {
+        color: #6c757d;
+        font-style: italic;
+    }
+
+    /* Header layout improvements */
+    .header-top h5 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .header-top {
+        padding: 15px 0;
+    }
+</style>
+@endsection
 @section('content')
 @include('admin.components.breadcrumb', [
     'title' => $pageTitle,
@@ -51,8 +148,11 @@
         <div class="col-sm-12">
             <div class="card heading-space">
                 <div class="card-header card-no-border">
-                    <div class="header-top">
-                        <h5>New Orders</h5>
+                    <div class="header-top d-flex justify-content-between align-items-center">
+                        <h5 class="mt-4">New Orders</h5>
+                        <button id="bulk-delete-btn" class="btn btn-danger d-none">
+                            <i class="fa-solid fa-trash me-2"></i>Delete
+                        </button>
                     </div>
                 </div>
                 <div class="card-body pt-0 px-0">
@@ -63,7 +163,7 @@
                                     <table class="table" id="order-history-table">
                                         <thead>
                                             <tr>
-                                                <th></th>
+                                                    <th><input type="checkbox" id="select-all"></th>
                                                 <th> <span class="f-light f-w-600">Order Number</span>
                                                 </th>
                                                 <th> <span class="f-light f-w-600">Order Date</span>
@@ -252,54 +352,9 @@
 @endsection
 @section('scripts')
 <script type="text/javascript">
-    $(document).on('click', '.delete-booking', function () {
-        const bookingId = $(this).data('id');
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "This will delete the booking and all its details.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: `${site_url}/admin/bookings/${bookingId}`,
-                    type: 'DELETE',
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            Swal.fire(
-                                'Deleted!',
-                                response.message,
-                                'success'
-                            ).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire(
-                                'Error!',
-                                response.message,
-                                'error'
-                            );
-                        }
-                    },
-                    error: function (xhr) {
-                        Swal.fire(
-                            'Error!',
-                            xhr.responseJSON.message || 'Something went wrong.',
-                            'error'
-                        );
-                    }
-                });
-            }
-        });
-    });
+    // Delete functionality is now handled in datatable.custom.js
 
-    //Cancel booking 
+    //Cancel booking
     $(document).on('click', '.cancel-booking', function () {
         const bookingId = $(this).data('id');
         Swal.fire({
@@ -358,7 +413,7 @@
             $select.html('<option>Loading...</option>');
 
             $.ajax({
-                
+
                 url: `${site_url}/admin/bookings/${bookingId}/available-cleaners`,
                 type: 'GET',
                 dataType: 'json',
@@ -403,6 +458,263 @@
             unhighlight: function(element) {
                 $(element).removeClass('is-invalid');
             }
+        });
+
+        // Handle select-all checkbox functionality
+        $('#select-all').on('change', function() {
+            const isChecked = $(this).is(':checked');
+            const table = window.bookingsTable || $("#order-history-table").DataTable();
+
+            console.log('Select-all checkbox changed:', isChecked);
+            console.log('Table reference:', table);
+
+            if (isChecked) {
+                // Select all rows on current page
+                table.rows({ page: 'current' }).select();
+                console.log('Selected all rows on current page');
+            } else {
+                // Deselect all rows
+                table.rows().deselect();
+                console.log('Deselected all rows');
+            }
+        });
+
+        // Update select-all checkbox state when individual rows are selected/deselected
+        $(document).on('change', 'input[type="checkbox"]:not(#select-all)', function() {
+            const table = window.bookingsTable || $("#order-history-table").DataTable();
+            const totalRows = table.rows({ page: 'current' }).count();
+            const selectedRows = table.rows({ selected: true, page: 'current' }).count();
+
+            console.log('Individual checkbox changed. Total rows:', totalRows, 'Selected rows:', selectedRows);
+
+            if (selectedRows === 0) {
+                $('#select-all').prop('indeterminate', false).prop('checked', false);
+            } else if (selectedRows === totalRows) {
+                $('#select-all').prop('indeterminate', false).prop('checked', true);
+            } else {
+                $('#select-all').prop('indeterminate', true);
+            }
+        });
+
+        // Debug: Check if checkboxes are properly rendered
+        setTimeout(function() {
+            console.log('Checking checkboxes after page load...');
+            console.log('Select-all checkbox:', $('#select-all').length);
+            console.log('Individual checkboxes:', $('input[type="checkbox"]:not(#select-all)').length);
+            console.log('DataTable checkboxes:', $('.select-checkbox input[type="checkbox"]').length);
+
+            // Log current selection state
+            console.log('Current selected rows (manual):', $('tr.selected').length);
+            console.log('Current selected rows (DataTable):', window.bookingsTable ? window.bookingsTable.rows({ selected: true }).count() : 'N/A');
+
+            // Update table UI after page load
+            updateTableUI();
+
+                    // Test delete button visibility
+        console.log('Testing delete button visibility...');
+        // $('#bulk-delete-btn').removeClass('d-none').addClass('show');
+        setTimeout(() => {
+            // $('#bulk-delete-btn').addClass('d-none').removeClass('show');
+            console.log('Delete button test completed');
+        }, 2000);
+
+        // Add a global function for debugging
+        window.debugSelection = function() {
+            console.log('=== SELECTION DEBUG ===');
+            console.log('Manual selected rows:', $('tr.selected').length);
+            console.log('DataTable selected rows:', window.bookingsTable ? window.bookingsTable.rows({ selected: true }).count() : 'N/A');
+            console.log('All checkboxes:', $('input[type="checkbox"]:not(#select-all)').length);
+            console.log('Checked checkboxes:', $('input[type="checkbox"]:not(#select-all):checked').length);
+            console.log('Delete button visible:', $('#bulk-delete-btn').hasClass('show'));
+            console.log('Delete button display:', $('#bulk-delete-btn').css('display'));
+            console.log('Delete button classes:', $('#bulk-delete-btn').attr('class'));
+            console.log('=====================');
+        };
+
+        // Add a function to force show the delete button
+        window.forceShowDeleteButton = function() {
+            $('#bulk-delete-btn').removeClass('d-none').addClass('show').show().css({
+                'display': 'inline-flex !important',
+                'visibility': 'visible',
+                'opacity': '1'
+            });
+            console.log('Delete button forced to show');
+        };
+
+        // Call debug function
+        window.debugSelection();
+
+        // Check if any checkboxes are already checked and show delete button if needed
+        const checkedCheckboxes = $('input[type="checkbox"]:not(#select-all):checked');
+        if (checkedCheckboxes.length > 0) {
+            console.log('Found', checkedCheckboxes.length, 'already checked checkboxes');
+            checkedCheckboxes.each(function() {
+                $(this).closest('tr').addClass('selected');
+            });
+            updateBulkDeleteButton();
+        }
+
+        // Set up periodic check to ensure delete button visibility
+        setInterval(function() {
+            const selectedRows = $('tr.selected').length;
+            if (selectedRows > 0 && !$('#bulk-delete-btn').is(':visible')) {
+                console.log('Periodic check: Found selected rows but delete button not visible, forcing show');
+                $('#bulk-delete-btn').removeClass('d-none').addClass('show').show().css({
+                    'display': 'inline-flex !important',
+                    'visibility': 'visible',
+                    'opacity': '1'
+                });
+            }
+        }, 1000);
+        }, 2000);
+
+                                // Function to update bulk delete button visibility
+        function updateBulkDeleteButton() {
+            // Count selected rows from both methods
+            const manualSelectedRows = $('tr.selected').length;
+            const table = window.bookingsTable || $("#order-history-table").DataTable();
+            let dtSelectedRows = 0;
+
+            try {
+                dtSelectedRows = table.rows({ selected: true }).count();
+            } catch (e) {
+                console.log('DataTable selection count failed, using manual count only');
+            }
+
+            const totalSelected = manualSelectedRows + dtSelectedRows;
+
+            console.log('Selection update - Manual:', manualSelectedRows, 'DataTable:', dtSelectedRows, 'Total:', totalSelected);
+
+            if (totalSelected > 0) {
+                $('#bulk-delete-btn').removeClass('d-none').addClass('show').show();
+                console.log('Bulk delete button shown, total selected:', totalSelected);
+
+                // Force the button to be visible
+                $('#bulk-delete-btn').css({
+                    'display': 'inline-flex !important',
+                    'visibility': 'visible',
+                    'opacity': '1'
+                });
+            } else {
+                $('#bulk-delete-btn').addClass('d-none').removeClass('show').hide();
+                console.log('Bulk delete button hidden, no rows selected');
+            }
+        }
+
+        // Function to check if table has data and update UI accordingly
+        function updateTableUI() {
+            const table = window.bookingsTable || $("#order-history-table").DataTable();
+            const rowCount = table.rows().count();
+            const tableContainer = $('.order-history-wrapper');
+
+            if (rowCount === 0) {
+                // No data - hide checkbox and delete button, add no-data class
+                $('#select-all').hide();
+                $('#bulk-delete-btn').hide();
+                tableContainer.addClass('no-data');
+                console.log('No data in table, hiding UI elements');
+            } else {
+                // Has data - show checkbox, hide delete button initially, remove no-data class
+                $('#select-all').show();
+                $('#bulk-delete-btn').hide();
+                tableContainer.removeClass('no-data');
+                console.log('Table has data, showing checkbox, hiding delete button');
+            }
+        }
+
+                        // Simplified checkbox selection handler - this should work for all checkboxes
+        $(document).on('change', 'input[type="checkbox"]', function(e) {
+            // Skip the select-all checkbox for this handler
+            if ($(this).attr('id') === 'select-all') {
+                return;
+            }
+
+            const row = $(this).closest('tr');
+            const isChecked = $(this).is(':checked');
+
+            console.log('Checkbox changed:', isChecked, 'Row:', row.length > 0 ? 'found' : 'not found');
+            console.log('Checkbox element:', this);
+            console.log('Row element:', row);
+
+            if (isChecked) {
+                row.addClass('selected');
+                console.log('Row selected, added selected class');
+
+                // Directly show the delete button
+                $('#bulk-delete-btn').removeClass('d-none').addClass('show').show().css({
+                    'display': 'inline-flex !important',
+                    'visibility': 'visible',
+                    'opacity': '1'
+                });
+                console.log('Delete button directly shown');
+            } else {
+                row.removeClass('selected');
+                console.log('Row deselected, removed selected class');
+            }
+
+            // Force update the delete button visibility
+            setTimeout(() => {
+                updateBulkDeleteButton();
+            }, 100);
+
+            console.log('Total selected rows after change:', $('tr.selected').length);
+        });
+
+        // Also add a click handler as backup
+        $(document).on('click', 'input[type="checkbox"]:not(#select-all)', function(e) {
+            const isChecked = $(this).is(':checked');
+            console.log('Checkbox clicked, will be:', !isChecked);
+
+            // Use setTimeout to wait for the checkbox state to change
+            setTimeout(() => {
+                const newState = $(this).is(':checked');
+                console.log('Checkbox state after click:', newState);
+
+                if (newState) {
+                    const row = $(this).closest('tr');
+                    row.addClass('selected');
+                    console.log('Row selected via click handler');
+
+                    // Force show delete button
+                    $('#bulk-delete-btn').removeClass('d-none').addClass('show').show().css({
+                        'display': 'inline-flex !important',
+                        'visibility': 'visible',
+                        'opacity': '1'
+                    });
+                    console.log('Delete button shown via click handler');
+                }
+            }, 50);
+        });
+
+                // Manual select-all functionality
+        $('#select-all').on('change', function() {
+            const isChecked = $(this).is(':checked');
+            const checkboxes = $('input[type="checkbox"]:not(#select-all)');
+
+            // Update all checkboxes
+            checkboxes.prop('checked', isChecked);
+
+            // Update row selection classes
+            if (isChecked) {
+                $('tbody tr').addClass('selected');
+            } else {
+                $('tbody tr').removeClass('selected');
+            }
+
+            // Also update DataTable selection if available
+            const table = window.bookingsTable || $("#order-history-table").DataTable();
+            if (table && typeof table.rows === 'function') {
+                if (isChecked) {
+                    table.rows({ page: 'current' }).select();
+                } else {
+                    table.rows().deselect();
+                }
+            }
+
+            // Update bulk delete button visibility
+            updateBulkDeleteButton();
+
+            console.log('Manual select-all:', isChecked ? 'All selected' : 'All deselected');
         });
     });
 </script>
