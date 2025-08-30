@@ -69,6 +69,20 @@ class User extends Authenticatable
         ];
     }
 
+     protected static function boot()
+    {
+        parent::boot();
+        static::deleting(function ($user) {
+            $user->bookings()->delete();
+            $user->bookingCancellations()->delete();
+            $user->vehicles()->delete();
+            $user->booking()->delete();
+            $user->ratings()->delete();
+            $user->earnings()->delete();
+            $user->devices()->delete();
+        });
+    }
+
     public function bookings()
     {
         return $this->hasMany(Booking::class, 'cleaner_id');
@@ -152,5 +166,5 @@ class User extends Authenticatable
         return $this->hasOne(UserDevice::class, 'user_id', 'id');
     }
 
-    
+
 }

@@ -21,6 +21,16 @@ class Booking extends Model
         static::creating(function ($booking) {
             $booking->booking_number = self::generateUniqueOrderNumber();
         });
+
+        static::deleting(function ($booking) {
+            $booking->payment()->delete();
+            $booking->tip()->delete();
+            $booking->rating()->delete();
+            $booking->beforePhoto()->delete();
+            $booking->afterPhoto()->delete();
+            BookingCancellation::where('booking_id',$booking->id)->delete();
+        });
+
     }
      public static function generateUniqueOrderNumber()
     {

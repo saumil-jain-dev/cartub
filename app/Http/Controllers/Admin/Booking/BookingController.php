@@ -388,7 +388,7 @@ class BookingController extends Controller
             ],
 
         ];
-        // $this->save_notification($request->cleaner_id,$notificationData);
+        $this->save_notification($request->cleaner_id,$notificationData);
         Session::flash('success', "Cleaner assigned successfully");
         if($request->type == 'dashboard'){
             return redirect()->route('dashboard.dashboard');
