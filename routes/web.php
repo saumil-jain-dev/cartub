@@ -29,12 +29,12 @@ Route::get('test-notification', function () {
     $extra = ['key' => 'value']; // Optional extra data
 
     $result = \App\Traits\NotificationTrait::push_notification($to, $title, $message, $extra);
-    
+
     return response()->json(['success' => $result]);
 })->name('test.notification');
 
 Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(function () {
-    
+
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/profile', [LoginController::class, 'getProfile'])->name('profile');
     Route::post('/profile/update', [LoginController::class, 'updateProfile'])->name('profile.update');
@@ -144,6 +144,8 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
 
     //Payment Route
     Route::get('payment-history',[PaymentController::class,'index'])->name('payment.index');
+    Route::get('payments/export', [PaymentController::class, 'export'])
+     ->name('payment.export');
 
     //Customer Feedback Route
     Route::get('customer-feedback', [FeedbackController::class,'index'])->name('customer-feedback.index');

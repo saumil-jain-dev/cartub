@@ -1,5 +1,71 @@
 @extends('admin.layouts.app')
 @section('pageTitle', $pageTitle)
+@section('styles')
+<style>
+<style>
+  .avatars {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping */
+    column-gap: 10px; /* horizontal spacing */
+    row-gap: 15px;    /* vertical spacing between rows */
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+}
+
+
+    .avatar {
+        flex: 0 0 auto; /* Prevent stretching */
+        margin: 2px;
+    }
+
+    .avatar img {
+        width: 100px; /* Default image width */
+        height: auto; /* Maintain aspect ratio */
+        border-radius: 8px; /* Match b-r-8 class */
+        object-fit: cover; /* Ensure images fit without distortion */
+    }
+
+    /* Responsive adjustments for mobile */
+    @media (max-width: 767px) {
+        .recent-images {
+            width: 100%; /* Full width */
+            overflow-x: hidden; /* Remove horizontal scrolling */
+        }
+
+        .avatars {
+            flex-direction: row; /* Ensure horizontal flow */
+            flex-wrap: wrap; /* Wrap into new rows */
+            gap: 10px;
+            padding: 10px 0; /* Add padding for better spacing */
+        }
+
+        .avatar {
+            flex: 0 0 calc(50% - 5px); /* Two images per row, adjust for gap */
+            max-width: calc(50% - 5px); /* Match flex basis */
+        }
+
+        .avatar img {
+            width: 100%; /* Full width of the avatar container */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        /* Ensure the card body takes full width */
+        .card-body.pt-0 {
+            padding: 10px !important; /* Adjust padding for mobile */
+        }
+    }
+
+    /* Ensure the column takes full width on mobile */
+    @media (max-width: 767px) {
+        .col-6 {
+            flex: 0 0 100% !important; /* Full width on mobile */
+            max-width: 100% !important;
+        }
+    }
+
+</style>
+@endsection
 @section('content')
     @include('admin.components.breadcrumb', [
         'title' => $pageTitle,
@@ -143,7 +209,7 @@
                                                                                     </div>
                                                                                 </div>
                                                                                 <ul class="seller-details">
-                                                                                   
+
                                                                                     <li>
                                                                                         <div><i
                                                                                                 class="fa-solid fa-phone"></i>
@@ -266,7 +332,7 @@
                                                                         </span></p>
                                                                     <div class="recent-images">
                                                                         <div class="avatars">
-                                                                            
+
                                                                             @foreach($bookingDetails->afterPhoto as $image)
                                                                             <div class="avatar"><img
                                                                                     class="b-r-8 img-100" src="{{ getImageAdmin($image->photo_path) }}" alt="#">
