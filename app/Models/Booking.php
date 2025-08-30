@@ -56,6 +56,7 @@ class Booking extends Model
         'notes',
         'device_id',
         'invoice_url',
+        'wash_time'
     ];
 
     protected $casts = [
