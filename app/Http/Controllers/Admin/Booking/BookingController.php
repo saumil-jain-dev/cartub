@@ -383,7 +383,7 @@ class BookingController extends Controller
             "message" =>  "A new car wash job has been assigned. Check your app for location and time.",
             'type' => 'booking',
             'payload' => [
-                'booking_id' => $booking->id,
+                'booking_id' => (string)$booking->id,
                 'cleaner_id' => $request->cleaner_id,
             ],
 
