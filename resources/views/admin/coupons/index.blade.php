@@ -30,7 +30,7 @@
                                     <thead>
                                         <tr>
                                             <th></th>
-                                            
+
                                             <th> <span class="c-o-light f-w-600">Code</span></th>
                                             <th> <span class="c-o-light f-w-600">Discount</span></th>
                                             <th> <span class="c-o-light f-w-600">Start Date</span></th>
@@ -48,7 +48,7 @@
                                         @foreach ($couponData as $coupons)
                                             <tr class="product-removes inbox-data">
                                             <td></td>
-                                            
+
                                             <td>
                                                 <p class="f-light">{{ $coupons->code }}</p>
                                             </td>
@@ -60,7 +60,7 @@
                                                 @endif
                                                 </p>
                                             </td>
-                                            
+
                                             <td>
                                                 <p class="f-light">{{ Carbon::parse($coupons->valid_from)->format('d F, Y') }}</p>
                                             </td>
@@ -196,13 +196,13 @@
                 <!-- Populate from DB -->
             </select>
         </div>
-          
+
 
         <!-- Specified Area -->
         <div class="mb-3 d-none" id="areaDiv">
             <label for="zipcodes" class="form-label">Enter Zip Codes</label>
             <textarea class="form-control" id="zipcodes" name="zipcodes" rows="3"></textarea>
-            <small class="text-muted">Enter zip codes like: 369852,14758,40001</small>
+            <small class="text-muted">Enter zip codes like: AB12CD,560001,W1A1AA</small>
         </div>
 
         </div>
