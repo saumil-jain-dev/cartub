@@ -24,11 +24,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('app:bookings-auto-cancel')->everyTenMinutes();
 
         // $schedule->command('command:product-sync')->hourly();
         $schedule->command('queue:work --once')
                  ->withoutOverlapping()   // Ensure the worker doesn't overlap
-                 ->everyMinute(); 
+                 ->everyMinute();
     }
 
     /**

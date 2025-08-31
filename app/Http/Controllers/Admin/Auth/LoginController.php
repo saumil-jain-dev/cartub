@@ -29,18 +29,21 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [  
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
         ]);
-        
-        if ($validator->fails()) { 
+
+        if ($validator->fails()) {
             return back()->withErrors($validator->errors())->withInput();
         }
 
         $user = User::where('email', $request->email)->first();
-        $role = $user->roles()->first(); // assuming 1 role per user
-        
+        $role = null;
+        if($user){
+            $role = $user->roles()->first(); // assuming 1 role per user
+        }
+
         if (! $role || ! $role->status) {
             Session::flash('error', 'Your role is disabled. Please contact administrator.');
             return redirect()->back()->withInput($request->only('email'))
@@ -63,7 +66,7 @@ class LoginController extends Controller
         Auth::logout(); // Log out the user
         $request->session()->invalidate(); // Invalidate the session
         $request->session()->regenerateToken(); // Regenerate the CSRF token
-        return redirect()->route('login')->with('success', 'Logged out successfully.'); 
+        return redirect()->route('login')->with('success', 'Logged out successfully.');
     }
 
     public function getProfile(){
@@ -104,8 +107,8 @@ class LoginController extends Controller
                 'max:5120'
             ],
         ]);
-        
-        if ($validator->fails()) { 
+
+        if ($validator->fails()) {
             return back()->withErrors($validator->errors())->withInput();
         }
         DB::beginTransaction();
@@ -134,7 +137,7 @@ class LoginController extends Controller
             'new_password' => 'required|min:8',
             'cpassword' => 'required|same:new_password',
         ]);
-        if ($validator->fails()) { 
+        if ($validator->fails()) {
             return back()->withErrors($validator->errors())->withInput();
         }
 
