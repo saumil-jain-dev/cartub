@@ -12,7 +12,7 @@ class FirebaseService {
     public function __construct()
     {
         $firebase = (new Factory)
-            ->withServiceAccount(public_path('notification/cartub-7a7b5-firebase-adminsdk-fbsvc-59277d53fc.json'))
+            ->withServiceAccount(public_path('notification/cartub-5d584-firebase-adminsdk-fbsvc-539bad2f5f.json'))
             ->withDatabaseUri(config('constants.FIREBASE_DATABASE_URL'));
 
         $this->database = $firebase->createDatabase();
@@ -24,5 +24,5 @@ class FirebaseService {
             ->getReference('bookings/' . $bookingData['id']) // 'bookings/{booking_id}'
             ->set($bookingData);
     }
-    
+
 }

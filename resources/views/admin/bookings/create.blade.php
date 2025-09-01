@@ -494,8 +494,7 @@ input.error, select.error {
             });
         });
         let geocoder = new google.maps.Geocoder();
-        $('#customerAddress').on('change', function () {
-
+        $(document).on('change', '#customerAddress', function () {
             const selectedAddress = $(this).find('option:selected').text();
             if (!selectedAddress) return;
             geocoder.geocode({ address: selectedAddress }, function (results, status) {

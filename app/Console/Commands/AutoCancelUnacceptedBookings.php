@@ -28,8 +28,10 @@ class AutoCancelUnacceptedBookings extends Command
      */
     public function handle()
     {
-        $bookings = Booking::where('status', 'pending') // assuming status assigned = waiting for cleaner
-            ->whereNotNull('cleaner_id') // assigned_at = timestamp when cleaner was assigned
+        $bookings = Booking::where('status', 'pending')
+            ->whereNotNull('cleaner_id')
+            ->whereNotNull('assigned_at')
+            ->where('assigned_at', '<=', now()->subMinutes(10)) // 10 min old
             ->get();
 
         foreach ($bookings as $booking) {
