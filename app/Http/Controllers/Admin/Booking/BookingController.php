@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use App\Services\Admin\FirebaseService;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BookingController extends Controller
 {
@@ -340,6 +340,12 @@ class BookingController extends Controller
         }
         $this->data['pageTitle'] = 'Booking Invoice';
         $this->data['bookingDetails'] = $bookingDetails;
+
+         $pdf = Pdf::loadView('admin.bookings.invoice', $this->data);
+
+    // Force download instead of view
+        // return $pdf->download('invoice-'.$bookingDetails->booking_number.'.pdf');
+
         return view('admin.bookings.invoice',$this->data);
     }
 

@@ -50111,7 +50111,7 @@ ul.dot-group li {
 
 .login-card {
     align-items: center;
-    background: url(images/login_bg.jpg);
+    /* background: url(images/login_bg.jpg); */
     background-position: 50%;
     display: flex;
     justify-content: center;
