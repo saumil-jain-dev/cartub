@@ -305,15 +305,15 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', function(){
-            const firebaseConfig = {
-                apiKey:     "AIzaSyBL5FYCKi17Bd-WbSxk9MwCSvd2xsYQejY",
-                authDomain: "cartub-7a7b5.firebaseapp.com",
-                databaseURL:"https://cartub-7a7b5-default-rtdb.europe-west1.firebasedatabase.app",
-                projectId:  "cartub-7a7b5",
-                storageBucket:"cartub-7a7b5.firebasestorage.app",
-                messagingSenderId:"188507095259",
-                appId:      "1:188507095259:web:a929d71b852a3423a84cfe",
-                measurementId: "G-TT5M9Y9WWC"
+             const firebaseConfig = {
+                apiKey:     "AIzaSyAEAhr_ofPGlN8iADspxCaZ-GRyQ5JNbkI",
+                authDomain: "cartub-5d584.firebaseapp.com",
+                databaseURL:"https://cartub-5d584-default-rtdb.firebaseio.com",
+                projectId:  "cartub-5d584",
+                storageBucket:"cartub-5d584.firebasestorage.app",
+                messagingSenderId:"1041741383694",
+                appId:      "1:1041741383694:web:91e747e06fa8cfc04d545f",
+                measurementId: "G-LE50W28NGY"
             };
 
             firebase.initializeApp(firebaseConfig);
