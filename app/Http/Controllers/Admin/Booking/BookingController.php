@@ -381,6 +381,7 @@ class BookingController extends Controller
 
         $booking = Booking::findOrFail($request->booking_id);
         $booking->cleaner_id = $request->cleaner_id;
+        $booking->assigned_at = now();
         $booking->save();
 
         //Send notification to cleaner
