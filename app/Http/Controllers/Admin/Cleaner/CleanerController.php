@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Cleaner;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\Customer\SendMailJob;
+use App\Models\CleanerEarning;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -90,8 +91,8 @@ class CleanerController extends Controller
             'zipcode' => 'required|digits_between:4,10',
             'country' => 'required|string',
         ]);
-        
-        if ($validator->fails()) { 
+
+        if ($validator->fails()) {
             return back()->withErrors($validator->errors())->withInput();
         }
 
@@ -126,7 +127,7 @@ class CleanerController extends Controller
             SendMailJob::dispatch($userData);
             Session::flash('success', 'Cleaner Added Successfully');
             return redirect()->route('cleaners.index');
-                            
+
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -176,7 +177,7 @@ class CleanerController extends Controller
             'zipcode' => 'required|digits_between:4,10',
             'country' => 'required|string',
         ]);
-        
+
         if ($validator->fails()) {
             return back()->withErrors($validator->errors())->withInput();
         }
@@ -228,5 +229,39 @@ class CleanerController extends Controller
         $this->data['pageTitle'] = 'Performance Reports';
         $this->data['cleaners'] = $users;
         return view("admin.cleaners.performance-reports", $this->data);
+    }
+
+    public function earningsDetails($id){
+        if(! hasPermission('cleaners.index')){
+            abort(403);
+        }
+
+        $cleaner = User::where('role', 'cleaner')->findOrFail($id);
+
+        // Get all completed bookings with earnings for this cleaner
+        $earnings = CleanerEarning::with([
+        'booking.service' // eager load booking and service
+        ])
+        ->where('cleaner_id', $id)
+        ->whereNull('deleted_at')
+        ->whereHas('booking', function ($q) {
+            $q->where('status', 'completed');
+        })
+        ->orderBy('earned_on', 'desc')
+        ->get();
+        // dd($earnings);
+        // Calculate totals
+        $totalEarnings = $earnings->sum('amount');
+        $totalTips = $earnings->sum('tip');
+        $totalAmount = $totalEarnings + $totalTips;
+
+        $this->data['pageTitle'] = 'Cleaner Earnings Details';
+        $this->data['cleaner'] = $cleaner;
+        $this->data['earnings'] = $earnings;
+        $this->data['totalEarnings'] = $totalEarnings;
+        $this->data['totalTips'] = $totalTips;
+        $this->data['totalAmount'] = $totalAmount;
+
+        return view("admin.cleaners.earnings-details", $this->data);
     }
 }
