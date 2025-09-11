@@ -98,7 +98,9 @@
                     const driverLat = parseFloat(bookingData.latitude);
                     const driverLng = parseFloat(bookingData.longitude);
                     const driverLatLng = { lat: driverLat, lng: driverLng };
-            
+                    console.log(driverLatLng,"driverLatLng");
+                     console.log(driverLat,"driverLat");
+                                console.log(driverLng,"longitude");
                     // Update cleaner marker position
                     cleanerMarker.setPosition(driverLatLng);
                     map.panTo(driverLatLng);
