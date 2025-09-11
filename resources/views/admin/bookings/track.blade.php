@@ -93,7 +93,7 @@
                 const bookingData = data[bookingKey];
             
                 console.log(bookingData, "bookingData");
-            
+                console.log(bookingId,"bookingId");
                 if (bookingData && bookingData.booking_id == bookingId) {
                     const driverLat = parseFloat(bookingData.latitude);
                     const driverLng = parseFloat(bookingData.longitude);
