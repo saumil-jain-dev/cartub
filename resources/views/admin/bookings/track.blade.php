@@ -82,10 +82,10 @@
 
         $(document).ready(function() {
             initMap();
-
+              console.log('cleaner id',cleanerId);
             database.ref('cleaner_locations/' + cleanerId).on('value', (snapshot) => {
                 const data = snapshot.val();
-
+              console.log(data,"data");
                 if (data && data.booking_id == bookingId) { // Optional: Verify it matches the booking
                     const driverLat = parseFloat(data.latitude);
                     const driverLng = parseFloat(data.longitude);
