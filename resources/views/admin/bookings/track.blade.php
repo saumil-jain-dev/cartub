@@ -85,23 +85,31 @@
               console.log('cleaner id',cleanerId);
             database.ref('cleaner_locations/' + cleanerId).on('value', (snapshot) => {
                 const data = snapshot.val();
-              console.log(data,"data");
-                if (data && data.booking_id == bookingId) { // Optional: Verify it matches the booking
-                    const driverLat = parseFloat(data.latitude);
-                    const driverLng = parseFloat(data.longitude);
+            
+                if (!data) return;
+            
+                // Extract the first object (e.g., booking_4)
+                const bookingKey = Object.keys(data)[0];
+                const bookingData = data[bookingKey];
+            
+                console.log(bookingData, "bookingData");
+            
+                if (bookingData && bookingData.booking_id == bookingId) {
+                    const driverLat = parseFloat(bookingData.latitude);
+                    const driverLng = parseFloat(bookingData.longitude);
                     const driverLatLng = { lat: driverLat, lng: driverLng };
-
+            
                     // Update cleaner marker position
                     cleanerMarker.setPosition(driverLatLng);
                     map.panTo(driverLatLng);
-
-                    // Update route line (append to path for historical route)
+            
+                    // Update route line
                     path.push(driverLatLng);
                     routeLine.setPath(path);
-
-                    // Optional: Use other fields, e.g., display info window with speed/heading
+            
+                    // Info window with details
                     const infoWindow = new google.maps.InfoWindow({
-                        content: `Speed: ${data.speed} | Heading: ${data.heading} | Accuracy: ${data.accuracy}`
+                        content: `Speed: ${bookingData.speed} | Heading: ${bookingData.heading} | Accuracy: ${bookingData.accuracy}`
                     });
                     infoWindow.open(map, cleanerMarker);
                 }
