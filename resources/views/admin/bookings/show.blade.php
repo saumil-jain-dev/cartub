@@ -125,7 +125,7 @@
                         </div>
                     </div>
                 </div>
-                @if(in_array($bookingDetails->status, ['pending','accepted','in_route','mark_as_arrived']))
+                @if(in_array($bookingDetails->status, ['accepted','in_route','mark_as_arrived']))
                     <a href="{{ route('bookings.track', $bookingDetails->id) }}"
                         class="btn btn-primary mb-3">
                         Track Booking
