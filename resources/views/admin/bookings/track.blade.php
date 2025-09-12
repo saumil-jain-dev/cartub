@@ -85,7 +85,7 @@
               console.log('cleaner id',cleanerId);
             database.ref('cleaner_locations/' + cleanerId).on('value', (snapshot) => {
                 const data = snapshot.val();
-            
+                console.log(data,"daata");
                 if (!data) return;
             
                 // Extract the first object (e.g., booking_4)
