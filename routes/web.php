@@ -108,6 +108,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::post('update','update')->name('cleaners.update');
             Route::delete('{id}','destroy')->name('cleaners.destroy');
             Route::get('performance-reports','performanceReports')->name('cleaners.performance-reports');
+            Route::get('earnings-details/{id}','earningsDetails')->name('cleaners.earnings-details');
         });
     });
 

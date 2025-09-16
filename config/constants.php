@@ -9,6 +9,6 @@ return [
     'FIREBASE_URL' => 'https://fcm.googleapis.com/fcm/send',
     'FIREBASE_SERVER_KEY' => 'AAAAc_7GWSU:APA91bFIycXxa3YR6zqmqrREVh5pQbsf1J64S2lQYZ4Agfzhvru1ZoNxCPzqbMSKXPSTogz-xDxt6MbuBSCR0QRd9tcYULRiis8GCIlrGx_fmBSPsDXqG30DKUrJPcf4shg0GisqT_ym',
     'FCM_PROJECT_ID' => env('FCM_PROJECT_ID','cartub-5d584'),
-    'STRIPE_SECRET' => "sk_test_51RjPgxIGZU70FaVh5VXMdEEYwdoPTJ6IGtObwkOgn6zpirFUDXDJBo2NUbStz2qhwjhmgB8CIemgGQmJCGAB1z7D00KeLU8cND",
+    'STRIPE_SECRET' => env("STRIPE_API_KEY"),
     "FIREBASE_DATABASE_URL" => env('FIREBASE_DATABASE_URL','https://cartub-5d584-default-rtdb.firebaseio.com/')
 ];

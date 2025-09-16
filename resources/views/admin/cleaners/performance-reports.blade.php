@@ -1,5 +1,20 @@
 @extends('admin.layouts.app')
 @section('pageTitle', $pageTitle)
+@section('styles')
+    <style>
+        .square-white {
+    align-items: center;
+    background-color: #fff;
+    border-radius: 2px;
+    box-shadow: 0 0 28px 6px hsla(0, 0%, 92%, .4);
+    display: flex;
+    height: 34px;
+    justify-content: center;
+    width: 34px
+}
+
+    </style>
+@endsection
 @section('content')
     @include('admin.components.breadcrumb', [
         'title' => $pageTitle,
@@ -40,9 +55,8 @@
                                         <th> <span class="c-o-light f-w-600">Total Earnings</span></th>
                                         <th> <span class="c-o-light f-w-600">Total Tips Earned</span>
                                         </th>
-
-
-                                                                                       </tr>
+                                        <th> <span class="c-o-light f-w-600">Actions</span></th>
+                                       </tr>
 
                                                                                        </thead>
                                 <tbody>
@@ -61,6 +75,21 @@
                                                 <td><i class="fa-solid fa-star txt-warning"></i> {{ number_format($cleaner->average_rating, 2) }} / 5</td>
                                                 <td>£{{ $cleaner->total_earned }}</td>
                                                 <td>£{{ $cleaner->total_tip_earned }}</td>
+                                                <td>
+                                                    {{-- <a href="{{ route('cleaners.earnings-details', $cleaner->id) }}" class="btn btn-primary btn-sm">
+                                                        <i class="fa fa-eye"></i> View Details
+                                                    </a> --}}
+                                                     <a class="square-white"
+                                                            href="{{ route('cleaners.earnings-details', $cleaner->id) }}"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        data-bs-title="View"><svg>
+                                                            <use
+                                                                href="{{ asset('assets/svg/icon-sprite.svg#fill-view') }}">
+                                                            </use>
+                                                        </svg>
+                                                    </a>
+                                                </td>
                                             </tr>
                                     @endforeach
                                     </tbody>
