@@ -27,4 +27,12 @@ class SettingsController extends Controller
         Session::flash("success","Setting Updated Successfully");
         return redirect()->route('settings');
     }
+
+     public function getSettings(){
+        $settings = Setting::where('key','is_testing')->first();
+        $data = [
+            'is_testing' => $settings ? (bool)$settings->value : false,
+        ];
+        return response()->json(['status'=>true,'data'=>$data]);
+    }
 }

@@ -100,6 +100,9 @@ Route::prefix('v1')->group(function () {
                     Route::post('add-wash-time','addCleanerWashTime');
                 });
             });
+            Route::controller(SettingsController::class)->group(function () {
+                  Route::get('settings','getSettings');
+              });
         });
     });
 });
