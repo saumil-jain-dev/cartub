@@ -205,15 +205,18 @@ class BookingService {
                     $bookingDetails = Booking::with(['customer','payment','washType'])->where('id',$bookingId)->first();
                     $pageTitle = "Details";
                     $pdf = Pdf::loadView('admin.bookings.invoice', compact('bookingDetails','pageTitle'));
-                    $pdfPath = storage_path('app/invoices/invoice_' . $bookingId . '.pdf');
-                    $pdf->save($pdfPath);
+                    
                     $paymentData = [
                         'customer_name' => $bookingData->customer->name ?? "",
                         'to_email' => $bookingData->customer->email ?? "",
                         'booking_data' => $bookingData,
                         '_blade' => 'booking-complete',
                         'subject' => '🎉 Car Wash Completed',
-                        'attachment'    => $pdfPath,
+                        'attachment'    => [
+                            'content' => $pdf->output(),
+                            'name'    => 'invoice_' . $bookingId . '.pdf',
+                            'mime'    => 'application/pdf'
+                        ]
                     ];
                     SendMailJob::dispatch($paymentData);
 

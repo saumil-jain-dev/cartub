@@ -41,9 +41,11 @@ class SendMailJob implements ShouldQueue
             }
             $message->subject($event['subject']);
             // 👇 Attach file if exists
-            if (!empty($event['attachment']) && file_exists($event['attachment'])) {
-                $message->attach($event['attachment']);
-            }
+            $message->attachData(
+                $event['attachment']['content'],
+                $event['attachment']['name'],
+                ['mime' => $event['attachment']['mime']]
+            );
         });
     }
 }
