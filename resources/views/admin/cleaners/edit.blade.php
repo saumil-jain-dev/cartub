@@ -125,7 +125,7 @@
                                 <div class="mb-3"><label class="form-label"
                                         for="customPostalCode">Postal
                                         Code</label><input class="form-control" id="customPostalCode"
-                                        type="number" placeholder="Postal code" name="zipcode" value="{{ $cleaner->zipcode ?? old('zipcode') }}"> @error('zipcode')
+                                        type="text" placeholder="Postal code" name="zipcode" value="{{ $cleaner->zipcode ?? old('zipcode') }}"> @error('zipcode')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror</div>
                             </div>
@@ -198,7 +198,7 @@ $(document).ready(function () {
             dob: { required: true, date: true },
             address: { required: true },
             city: { required: true },
-            zipcode: { required: true, digits: true },
+            zipcode: { required: true },
             country: { required: true },
         },
         messages: {

@@ -76,7 +76,7 @@ class CleanerController extends Controller
             'phone'      => [
                 'required',
                 'numeric',
-                'digits:10',
+                'digits:11',
                 Rule::unique('users', 'phone')
                     ->where('role', 'cleaner')
                     ->whereNull('deleted_at') // Ignore soft-deleted users
@@ -88,7 +88,7 @@ class CleanerController extends Controller
             'dob' => 'required|date',
             'address' => 'required|string',
             'city' => 'required|string',
-            'zipcode' => 'required|digits_between:4,10',
+            'zipcode' => 'required|regex:/^[a-zA-Z0-9]{4,10}$/',
             'country' => 'required|string',
         ]);
 
@@ -163,7 +163,7 @@ class CleanerController extends Controller
             'phone'      => [
                 'required',
                 'numeric',
-                'digits:10',
+                'digits:11',
                 Rule::unique('users','phone')->where(function ($query) use ($user){
                     $query->where('role', 'cleaner') ->where('id', '!=', $user->id) ->whereNull('deleted_at'); // Ignore soft-deleted users
                 }),
@@ -174,7 +174,7 @@ class CleanerController extends Controller
             'dob' => 'required|date',
             'address' => 'required|string',
             'city' => 'required|string',
-            'zipcode' => 'required|digits_between:4,10',
+            'zipcode' => 'required|regex:/^[a-zA-Z0-9]{4,10}$/',
             'country' => 'required|string',
         ]);
 

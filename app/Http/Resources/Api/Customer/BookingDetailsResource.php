@@ -39,18 +39,33 @@ class BookingDetailsResource extends JsonResource
                 ];
             }),
             'cleaner' => $this->whenLoaded('cleaner', function () {
-                return [
-                    'id' => $this->cleaner->id,
-                    'name' => $this->cleaner->name,
-                    'phone' => $this->customer->phone,
-                    'profile_picture' => getImage($this->cleaner->profile_picture),
-                    'latitude' => $this->cleaner_location->latitude ?? null,
-                    'longitude' => $this->cleaner_location->longitude ?? null,
-                    'job_duration' => $this->job_duration ?? null,
-                    'rating' => $this->rating->rating ?? 0,
-                    'comment' => $this->rating->comment ?? null,
-                    'tip_amount' => $this->tip->tip ?? 0,
-                ];
+                if ($this->status != 'pending') {
+                    return [
+                        'id' => $this->cleaner->id,
+                        'name' => $this->cleaner->name,
+                        'phone' => $this->customer->phone,
+                        'profile_picture' => getImage($this->cleaner->profile_picture),
+                        'latitude' => $this->cleaner_location->latitude ?? null,
+                        'longitude' => $this->cleaner_location->longitude ?? null,
+                        'job_duration' => $this->job_duration ?? null,
+                        'rating' => $this->rating->rating ?? 0,
+                        'comment' => $this->rating->comment ?? null,
+                        'tip_amount' => $this->tip->tip ?? 0,
+                    ];
+                } else {
+                    return [
+                        'id' => null,
+                        'name' => null,
+                        'phone' => null,
+                        'profile_picture' => null,
+                        'latitude' => null,
+                        'longitude' => null,
+                        'job_duration' =>  null,
+                        'rating' => $this->rating->rating ?? 0,
+                        'comment' => null,
+                        'tip_amount' => $this->tip->tip ?? 0,
+                    ];
+                }
             }),
             'vehicle' => $this->whenLoaded('vehicle', function () {
                 return [
