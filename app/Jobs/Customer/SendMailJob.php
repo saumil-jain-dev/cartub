@@ -40,12 +40,6 @@ class SendMailJob implements ShouldQueue
                 $message->bcc($event['bcc']);
             }
             $message->subject($event['subject']);
-            // 👇 Attach file if exists
-            $message->attachData(
-                $event['attachment']['content'],
-                $event['attachment']['name'],
-                ['mime' => $event['attachment']['mime']]
-            );
         });
     }
 }
