@@ -27,3 +27,4 @@ composer.lock
 /public/notification
 !/public/images/no-image.png
 !/public/images/
+public/images/job_image/

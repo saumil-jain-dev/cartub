@@ -175,7 +175,7 @@ class BookingService {
                     '_blade' => 'payment-confirm',
                     'subject' => '💳 Payment Received'
                 ];
-                SendMailJob::dispatch($paymentData);
+                // SendMailJob::dispatch($paymentData);
                 //send booking mail
                 $emailData = [
                     'customer_name' => Auth::user()->name,
@@ -184,7 +184,7 @@ class BookingService {
                     '_blade' => 'booking',
                     'subject' => '✅ Booking Confirmed!'
                 ];
-                SendMailJob::dispatch($emailData);
+                // SendMailJob::dispatch($emailData);
                 return $booking;
             } else {
                 DB::rollBack();
