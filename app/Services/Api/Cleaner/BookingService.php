@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Stmt\Catch_;
 use App\Traits\NotificationTrait;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BookingService {
 
@@ -201,12 +202,18 @@ class BookingService {
                     // $this->save_notification($booking->customer_id,$notificationData);
 
                     //send booking complete mail
+                    $bookingDetails = Booking::with(['customer','payment','washType'])->where('id',$bookingId)->first();
+                    $pageTitle = "Details";
+                    $pdf = Pdf::loadView('admin.bookings.invoice', compact('bookingDetails','pageTitle'));
+                    $pdfPath = storage_path('app/invoices/invoice_' . $bookingId . '.pdf');
+                    $pdf->save($pdfPath);
                     $paymentData = [
                         'customer_name' => $bookingData->customer->name ?? "",
                         'to_email' => $bookingData->customer->email ?? "",
                         'booking_data' => $bookingData,
                         '_blade' => 'booking-complete',
-                        'subject' => '🎉 Car Wash Completed'
+                        'subject' => '🎉 Car Wash Completed',
+                        'attachment'    => $pdfPath,
                     ];
                     SendMailJob::dispatch($paymentData);
 
