@@ -204,7 +204,7 @@ class BookingController extends Controller
                         'customer_id' => $booking->customer_id,
                     ],
                 ];
-                // $this->save_notification($booking->customer_id, $notificationData);
+                 $this->save_notification($booking->customer_id, $notificationData);
 
                 $paymentNotification = [
                     'title' => "Payment Received!",
@@ -216,7 +216,7 @@ class BookingController extends Controller
                         'customer_id' => $booking->customer_id,
                     ],
                 ];
-                // $this->save_notification($booking->customer_id, $paymentNotification);
+                $this->save_notification($booking->customer_id, $paymentNotification);
 
                 // Send payment mail
                 $paymentData = [
