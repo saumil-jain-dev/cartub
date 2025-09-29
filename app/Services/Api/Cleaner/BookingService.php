@@ -212,12 +212,25 @@ class BookingService {
 
                     break;
                 case 'cancel':
-                    $booking->status = 'pending';
+                    $booking->status = 'cancelled';
                     // Optionally, you can handle any additional logic for cancellation here
                     $bookingCancel = BookingCancellation::create([
                         'booking_id' => $booking->id,
                         'cleaner_id' => Auth::id(),
                     ]);
+
+                    $notificationData = [
+                        'title' => "Booking Cancelled",
+                        "message" =>  "Your booking on ".$booking->scheduled_date." has been cancelled. You can rebook anytime from the app.",
+                        'type' => 'booking',
+                        'payload' => [
+                            'booking_id' => $booking->id,
+                            'cleaner_id' => $booking->cleaner_id ?? null,
+                            'customer_id' => $booking->customer_id,
+                        ],
+
+                    ];
+                    $this->save_notification($booking->customer_id,$notificationData);
 
                     break;
                 default:
