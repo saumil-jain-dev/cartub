@@ -413,7 +413,7 @@ class BookingController extends Controller
             ],
 
         ];
-        $this->save_notification($booking->customer_id,$notificationData);
+        // $this->save_notification($booking->customer_id,$notificationData);
 
         if($booking->cleaner_id){
 
