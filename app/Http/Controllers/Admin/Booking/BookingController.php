@@ -407,9 +407,9 @@ class BookingController extends Controller
             "message" =>  "Your booking on ".$booking->scheduled_date." has been cancelled. You can rebook anytime from the app.",
             'type' => 'booking',
             'payload' => [
-                'booking_id' => $booking->id,
-                'cleaner_id' => $booking->cleaner_id ?? null,
-                'customer_id' => $booking->customer_id,
+                'booking_id' => (string)$booking->id,
+                'cleaner_id' => $booking->cleaner_id !== null ? (string)$booking->cleaner_id : '', // convert null to empty string
+                'customer_id' => (string)$booking->customer_id,
             ],
 
         ];
@@ -423,9 +423,9 @@ class BookingController extends Controller
                 "message" =>  "Your scheduled job on ".$booking->scheduled_date." has been canceled by the customer.",
                 'type' => 'booking',
                 'payload' => [
-                    'booking_id' => $booking->id,
-                    'cleaner_id' => $booking->cleaner_id,
-                    'customer_id' => $booking->customer_id,
+                    'booking_id' => (string)$booking->id,
+                    'cleaner_id' => $booking->cleaner_id !== null ? (string)$booking->cleaner_id : '', // convert null to empty string
+                    'customer_id' => (string)$booking->customer_id,
                 ],
 
             ];
