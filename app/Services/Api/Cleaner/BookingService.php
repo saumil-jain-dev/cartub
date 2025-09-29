@@ -85,10 +85,10 @@ class BookingService {
                         "message" =>  "Your car cleaner ".$booking->cleaner->name." is on the way and will arrive shortly. Track live status in the app.",
                         'type' => 'booking',
                         'payload' => [
-                            'booking_id' => $booking->id,
-                            'booking_number' => $booking->booking_number,
-                            'cleaner_id' => $booking->cleaner_id,
-                            'customer_id' => $booking->customer_id,
+                            'booking_id' => (string)$booking->id,
+                            'booking_number' => (string)$booking->booking_number,
+                            'cleaner_id' => (string)$booking->cleaner_id,
+                            'customer_id' => (string)$booking->customer_id,
                         ],
 
                     ];
@@ -128,10 +128,10 @@ class BookingService {
                         "message" =>  "Your car wash has started. Sit back and relax while we shine your ride.",
                         'type' => 'booking',
                         'payload' => [
-                            'booking_id' => $booking->id,
-                            'booking_number' => $booking->booking_number,
-                            'cleaner_id' => $booking->cleaner_id,
-                            'customer_id' => $booking->customer_id,
+                            'booking_id' => (string)$booking->id,
+                            'booking_number' => (string)$booking->booking_number,
+                            'cleaner_id' => (string)$booking->cleaner_id,
+                            'customer_id' => (string)$booking->customer_id,
                         ],
 
                     ];
@@ -176,10 +176,10 @@ class BookingService {
                         "message" =>  "Your car wash is complete. Hope you loved it! Check your dashboard for details.",
                         'type' => 'booking',
                         'payload' => [
-                            'booking_id' => $booking->id,
-                            'booking_number' => $booking->booking_number,
-                            'cleaner_id' => $booking->cleaner_id,
-                            'customer_id' => $booking->customer_id,
+                            'booking_id' => (string)$booking->id,
+                            'booking_number' => (string)$booking->booking_number,
+                            'cleaner_id' => (string)$booking->cleaner_id,
+                            'customer_id' => (string)$booking->customer_id,
                         ],
 
                     ];
@@ -191,10 +191,10 @@ class BookingService {
                         "message" =>  "We'd love to hear from you! Please rate your recent car wash experience.",
                         'type' => 'booking',
                         'payload' => [
-                            'booking_id' => $booking->id,
-                            'booking_number' => $booking->booking_number,
-                            'cleaner_id' => $booking->cleaner_id,
-                            'customer_id' => $booking->customer_id,
+                            'booking_id' => (string)$booking->id,
+                            'booking_number' => (string)$booking->booking_number,
+                            'cleaner_id' => (string)$booking->cleaner_id,
+                            'customer_id' => (string)$booking->customer_id,
                         ],
 
                     ];
@@ -224,9 +224,9 @@ class BookingService {
                         "message" =>  "Your booking on ".$booking->scheduled_date." has been cancelled. You can rebook anytime from the app.",
                         'type' => 'booking',
                         'payload' => [
-                            'booking_id' => $booking->id,
-                            'cleaner_id' => $booking->cleaner_id ?? null,
-                            'customer_id' => $booking->customer_id,
+                            'booking_id' => (string)$booking->id,
+                            'cleaner_id' => $booking->cleaner_id !== null ? (string)$booking->cleaner_id : '', // convert null to empty string
+                            'customer_id' => (string)$booking->customer_id,
                         ],
 
                     ];
