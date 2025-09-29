@@ -292,7 +292,7 @@ class AuthService {
         try {
             $user = Auth::user();
             $user->update(['is_available' => $request->input('is_available')]);
-
+            DB::commit();
             return $user;
         } catch (Exception $e) {
             DB::rollBack();
