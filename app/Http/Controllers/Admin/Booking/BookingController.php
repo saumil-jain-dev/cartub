@@ -413,7 +413,7 @@ class BookingController extends Controller
             ],
 
         ];
-        // $this->save_notification($booking->customer_id,$notificationData);
+        $this->save_notification($booking->customer_id,$notificationData);
 
         if($booking->cleaner_id){
 
@@ -429,7 +429,7 @@ class BookingController extends Controller
                 ],
 
             ];
-            // $this->save_notification($booking->cleaner_id,$notificationData);
+            $this->save_notification($booking->cleaner_id,$notificationData);
         }
         Session::flash('success', "Booking canceled successfully");
         return response()->json(['success' => true, 'message' => 'Booking canceled successfully.']);
