@@ -92,7 +92,7 @@ class BookingService {
                         ],
 
                     ];
-                    // $this->save_notification($booking->customer_id,$notificationData);
+                    $this->save_notification($booking->customer_id,$notificationData);
                     break;
                 case 'mark_as_arrived':
                     $booking->status = 'mark_as_arrived';
@@ -135,7 +135,7 @@ class BookingService {
                         ],
 
                     ];
-                    // $this->save_notification($booking->customer_id,$notificationData);
+                    $this->save_notification($booking->customer_id,$notificationData);
                     break;
                 case 'finish_job':
 
@@ -183,7 +183,7 @@ class BookingService {
                         ],
 
                     ];
-                    // $this->save_notification($booking->customer_id,$notificationData);
+                    $this->save_notification($booking->customer_id,$notificationData);
 
                     //Send notification to customer Feedback
                     $notificationData = [
@@ -198,7 +198,7 @@ class BookingService {
                         ],
 
                     ];
-                    // $this->save_notification($booking->customer_id,$notificationData);
+                    $this->save_notification($booking->customer_id,$notificationData);
 
                     //send booking complete mail
                     $paymentData = [
@@ -206,7 +206,7 @@ class BookingService {
                         'to_email' => $bookingData->customer->email ?? "",
                         'booking_data' => $bookingData,
                         '_blade' => 'booking-complete',
-                        'subject' => '🎉 Car Wash Completed'
+                        'subject' => 'ðŸŽ‰ Car Wash Completed'
                     ];
                     SendMailJob::dispatch($paymentData);
 
