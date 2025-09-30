@@ -203,22 +203,13 @@
             </div>
         </div>
 
-        <div class="col-xl-4 col-md-6 d-none d-md-flex">
+        {{-- <div class="col-xl-4 col-md-6 d-none d-md-flex">
             <div class="card">
                 <div class="card-header card-no-border">
                     <div class="header-top">
                         <h5>Service Summary</h5>
                         <div class="card-header-right-icon">
-                            {{-- <div class="dropdown icon-dropdown"><button class="btn dropdown-toggle"
-                                    id="referralVisitOption" type="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false"><i class="icon-more-alt"></i></button>
-                                <div class="dropdown-menu dropdown-menu-end"
-                                    aria-labelledby="referralVisitOption"><a class="dropdown-item"
-                                        href="#!">This Month</a><a class="dropdown-item"
-                                        href="#!">Previous Month</a><a class="dropdown-item"
-                                        href="#!">Last 3 Months</a><a class="dropdown-item"
-                                        href="#!">Last 6 Months</a></div>
-                            </div> --}}
+                            
                         </div>
                     </div>
                 </div>
@@ -248,19 +239,15 @@
                                                 </div><span class="f-w-500">{{ $washType->name }}</span>
                                             </div>
                                         </td>
-
-
                                         <td class="f-w-500">{{ $washType->bookings_count }}</td>
                                     </tr>
                                 @endforeach
-
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-        </div>
-
+        </div> --}}
     </div>
 </div>
 
