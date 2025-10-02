@@ -43,7 +43,8 @@ class RegisterRequest extends FormRequest
             'phone'      => [
                 'required',
                 'numeric',
-                'digits:10',
+                'digits:11',
+                'regex:/^0[0-9]{10}$/',
                 Rule::unique('users', 'phone')
                     ->where('role', $this->input('role'))
                     ->whereNull('deleted_at') // Ignore soft-deleted users
