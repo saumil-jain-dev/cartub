@@ -96,10 +96,7 @@ class BookingService {
                     break;
                 case 'mark_as_arrived':
                     $booking->status = 'mark_as_arrived';
-                    $message = "Your CarTub driver has arrived! " .
-                    "Booking #: #{$booking->booking_number}. " .
-                    "Driver: {$booking->cleaner->name} ({$booking->cleaner->phone}). " .
-                    "Please connect with the driver if needed. Thank you for choosing CarTub!";
+                    $message = "Your CarTub specialist has arrived at your location and is ready to begin. We are at your vehicle now. Thank you.";
                     $phone = $booking->customer->country_code.$booking->customer->phone;
                     SendSMSJob::dispatch($phone, $message);
                     break;

@@ -122,10 +122,10 @@ class BookingService {
 
                 //Send Booking SMS
                 $phone = $user->country_code.$user->phone;
-                $message = "Your CarTub booking #{$booking->booking_number} is confirmed for " .
-                    Carbon::parse($booking->scheduled_date)->format('d M Y') . ', ' .
+                $message = "Confirmed! your CarTub mobile wash is scheduled for " .
+                    Carbon::parse($booking->scheduled_date)->format('M j, Y') . ' at ' .
                     Carbon::parse($booking->scheduled_time)->format('h:i A') .
-                    ". Thank you for choosing CarTub.";
+                    ".Booking #{$booking->booking_number}. See you then.";
                 SendSMSJob::dispatch($phone,$message);
 
                 //Send Booking SMS to SuperAdmin
