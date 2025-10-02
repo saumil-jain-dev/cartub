@@ -129,14 +129,14 @@ class BookingService {
                 SendSMSJob::dispatch($phone,$message);
 
                 //Send Booking SMS to SuperAdmin
-                $adminMessage = "New booking alert! " .
-                "Booking #: #{$booking->booking_number}. " .
-                "Customer: {$booking->customer->name} ({$booking->customer->phone}). " .
-                "Address: {$booking->address}. " .
-                "Scheduled for: " .
+                $adminMessage = "New Job " .
+                "#{$booking->booking_number}: " .
+                "{$booking->customer->name} ({$booking->customer->phone})- " .
+                "{$booking->address}. " .
+                
                 Carbon::parse($booking->scheduled_date)->format('d M Y') . " at " .
                 Carbon::parse($booking->scheduled_time)->format('h:i A') .
-                ". Please check the admin panel for details.";
+                ". {$booking->vehicle->license_plate}";
                 $adminUser = User::where('role','super_admin')->first();
                 $admin_phone = $adminUser->country_code.$adminUser->phone;
                 SendSMSJob::dispatch($admin_phone,$adminMessage);
