@@ -147,13 +147,13 @@ class BookingService {
                     "message" =>  "Your car wash has been successfully booked for ".Carbon::parse($booking->scheduled_date)->format('d M Y')." at ".Carbon::parse($booking->scheduled_time)->format('d M Y').". Cleaner details will be shared shortly.",
                     'type' => 'booking',
                     'payload' => [
-                        'booking_id' => $booking->id,
-                        'booking_number' => $booking->booking_number,
-                        'customer_id' => $booking->customer_id,
+                        'booking_id' => (string)$booking->id,
+                        'booking_number' => (string)$booking->booking_number,
+                        'customer_id' => (string)$booking->customer_id,
                     ],
 
                 ];
-                // $this->save_notification($booking->customer_id,$notificationData);
+                $this->save_notification($booking->customer_id,$notificationData);
 
                 $paymentNotification = [
                     'title' => "Payment Received!",
@@ -182,9 +182,9 @@ class BookingService {
                     'to_email' => Auth::user()->email,
                     'booking_data' => $booking,
                     '_blade' => 'booking',
-                    'subject' => '✅ Booking Confirmed!'
+                    'subject' => '🚘 Your Car Wash is Booked - See You Soon!'
                 ];
-                // SendMailJob::dispatch($emailData);
+                SendMailJob::dispatch($emailData);
                 return $booking;
             } else {
                 DB::rollBack();
