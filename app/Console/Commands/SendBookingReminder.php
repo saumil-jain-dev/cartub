@@ -37,7 +37,7 @@ class SendBookingReminder extends Command
 
          foreach ($bookings as $booking) {
             $customerMessage = "Reminder: Your CarTub booking {$booking->booking_number} is scheduled at " .
-                Carbon::parse($booking->scheduled_date)->format('d M Y') . " " .
+                Carbon::parse($booking->scheduled_date)->format('d F Y') . " " .
                 Carbon::parse($booking->scheduled_time)->format('h:i A') . ".";
             $notificationData = [
                 'title' => "Upcoming Car Wash",
@@ -54,7 +54,7 @@ class SendBookingReminder extends Command
             if($booking->cleaner_id) {
                 
                 $cleanerMessage = "Reminder: You have a CarTub cleaning job (Booking {$booking->booking_number}) scheduled at " .
-                    Carbon::parse($booking->schedule_date)->format('d M Y') . " " .
+                    Carbon::parse($booking->schedule_date)->format('d F Y') . " " .
                     Carbon::parse($booking->schedule_time)->format('h:i A') . ".";
     
                 $notificationData = [

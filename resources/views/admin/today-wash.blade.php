@@ -77,7 +77,7 @@
                                                 <td></td>
                                                 <td> <a href="javascript:void(0)">{{ $booking->booking_number }}</a></td>
                                                 <td>
-                                                    <p class="c-o-light">{{ $booking->created_at->format('d M Y h:i:A') }}</p>
+                                                    <p class="c-o-light">{{ $booking->created_at->format('d F Y h:i:A') }}</p>
                                                 </td>
                                                 <td>
                                                     <p class="c-o-light">{{ optional($booking->customer)->name ?? '-' }}</p>
