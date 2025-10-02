@@ -127,7 +127,7 @@
                                                                         class="d-flex justify-content-between mb-2">
                                                                         <span class="date-content light-background">
                                                                         
-                                                                        {{ Carbon::parse($recent_booking->scheduled_date)->format('d M Y') }},
+                                                                        {{ Carbon::parse($recent_booking->scheduled_date)->format('d F Y') }},
                                                                         {{ Carbon::parse($recent_booking->scheduled_time)->format('h:i A') }}
                                                                         {{-- </span><span>Today</span>   --}}
                                                                     </p>
@@ -248,7 +248,7 @@
                                                                         
                                                                         <tr>
                                                                             <th scope="row">{{ $booking->booking_number }}</th>
-                                                                            <td>{{ Carbon::parse($recent_booking->scheduled_date)->format('d M Y') }},
+                                                                            <td>{{ Carbon::parse($recent_booking->scheduled_date)->format('d F Y') }},
                                                                         {{ Carbon::parse($recent_booking->scheduled_time)->format('h:i A') }}</td>
                                                                             <td>{{ $booking->service_name }}</td>
                                                                             <td>{{ $booking->vehicle?->model ?? "-" }}</td>
@@ -378,7 +378,7 @@
                                                                         @foreach($bookings as $booking)
                                                                         <tr>
                                                                             <th scope="row">{{ $booking->payment?->transaction_id }}</th>
-                                                                            <td>{{ Carbon::parse($booking->payment?->created_at)->format('d M Y, H:i A') }}</td>
+                                                                            <td>{{ Carbon::parse($booking->payment?->created_at)->format('d F Y, H:i A') }}</td>
                                                                             <td>${{ $booking->total_amount }}</td>
                                                                             <td>{{ $booking->payment?->payment_type }}</td>
                                                                             <td><span

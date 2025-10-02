@@ -134,7 +134,7 @@ class BookingService {
                 "{$booking->customer->name} ({$booking->customer->phone})- " .
                 "{$booking->address}. " .
                 
-                Carbon::parse($booking->scheduled_date)->format('d M Y') . " at " .
+                Carbon::parse($booking->scheduled_date)->format('d F Y') . " at " .
                 Carbon::parse($booking->scheduled_time)->format('h:i A') .
                 ". {$booking->vehicle->license_plate}";
                 $adminUser = User::where('role','super_admin')->first();
@@ -144,7 +144,7 @@ class BookingService {
                 //Send booking notification
                 $notificationData = [
                     'title' => "Booking Confirmed!",
-                    "message" =>  "Your car wash has been successfully booked for ".Carbon::parse($booking->scheduled_date)->format('d M Y')." at ".Carbon::parse($booking->scheduled_time)->format('d M Y').". Cleaner details will be shared shortly.",
+                    "message" =>  "Your car wash has been successfully booked for ".Carbon::parse($booking->scheduled_date)->format('d F Y')." at ".Carbon::parse($booking->scheduled_time)->format('d F Y').". Cleaner details will be shared shortly.",
                     'type' => 'booking',
                     'payload' => [
                         'booking_id' => (string)$booking->id,

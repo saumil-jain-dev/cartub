@@ -89,7 +89,7 @@ class PaymentController extends Controller
             foreach ($payments as $payment) {
                 fputcsv($handle, [
                     $payment->bookings?->booking_number,
-                    Carbon::parse($payment->created_at)->format('d M Y, H:i A'),
+                    Carbon::parse($payment->created_at)->format('d F Y, H:i A'),
                     $payment->bookings?->customer?->name,
                     $payment->amount,
                     ucfirst($payment->status),

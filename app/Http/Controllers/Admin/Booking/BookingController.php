@@ -173,7 +173,7 @@ class BookingController extends Controller
                 // Send Booking SMS
                 $phone = $customer->country_code . $customer->phone;
                 $message = "Your CarTub booking #{$booking->booking_number} is confirmed for " .
-                    Carbon::parse($booking->scheduled_date)->format('d M Y') . ', ' .
+                    Carbon::parse($booking->scheduled_date)->format('d F Y') . ', ' .
                     Carbon::parse($booking->scheduled_time)->format('h:i A') .
                     ". Thank you for choosing CarTub.";
                 // \App\Jobs\SendSMSJob::dispatch($phone, $message);
@@ -184,7 +184,7 @@ class BookingController extends Controller
                     "Customer: {$customer->name} ({$customer->phone}). " .
                     "Address: {$booking->address}. " .
                     "Scheduled for: " .
-                    Carbon::parse($booking->scheduled_date)->format('d M Y') . " at " .
+                    Carbon::parse($booking->scheduled_date)->format('d F Y') . " at " .
                     Carbon::parse($booking->scheduled_time)->format('h:i A') .
                     ". Please check the admin panel for details.";
                 $adminUser = User::where('role', 'super_admin')->first();
@@ -196,7 +196,7 @@ class BookingController extends Controller
                 // Send booking notification
                 $notificationData = [
                     'title' => "Booking Confirmed!",
-                    'message' => "Your car wash has been successfully booked for " . Carbon::parse($booking->scheduled_date)->format('d M Y') . " at " . Carbon::parse($booking->scheduled_time)->format('h:i A') . ". Cleaner details will be shared shortly.",
+                    'message' => "Your car wash has been successfully booked for " . Carbon::parse($booking->scheduled_date)->format('d F Y') . " at " . Carbon::parse($booking->scheduled_time)->format('h:i A') . ". Cleaner details will be shared shortly.",
                     'type' => 'booking',
                     'payload' => [
                         'booking_id' => $booking->id,
