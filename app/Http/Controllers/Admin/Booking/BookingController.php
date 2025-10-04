@@ -383,11 +383,25 @@ class BookingController extends Controller
             'type' => 'booking',
             'payload' => [
                 'booking_id' => (string)$booking->id,
-                'cleaner_id' => $request->cleaner_id,
+                'cleaner_id' => (string)$request->cleaner_id,
             ],
 
         ];
         $this->save_notification($request->cleaner_id,$notificationData);
+
+        //Send notification to customer
+        $notificationData = [
+            'title' => "Cleaner Assigned",
+            "message" =>  "Your wash request #{$booking->booking_number} now has a cleaner assigned. Service will begin soon.",
+            'type' => 'booking',
+            'payload' => [
+                'booking_id' => (string)$booking->id,
+                'cleaner_id' => (string)$request->cleaner_id,
+            ],
+
+        ];
+        $this->save_notification($request->customer_id,$notificationData);
+
         Session::flash('success', "Cleaner assigned successfully");
         if($request->type == 'dashboard'){
             return redirect()->route('dashboard.dashboard');
