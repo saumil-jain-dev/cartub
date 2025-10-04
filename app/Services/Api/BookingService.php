@@ -144,7 +144,7 @@ class BookingService {
                 //Send booking notification
                 $notificationData = [
                     'title' => "Booking Confirmed!",
-                    "message" =>  "Your car wash has been successfully booked for ".Carbon::parse($booking->scheduled_date)->format('d F Y')." at ".Carbon::parse($booking->scheduled_time)->format('d F Y').". Cleaner details will be shared shortly.",
+                    "message" =>  "Your car wash has been successfully booked for ".Carbon::parse($booking->scheduled_date)->format('d F Y')." at ".Carbon::parse($booking->scheduled_time)->format('h:i A').". Cleaner details will be shared shortly.",
                     'type' => 'booking',
                     'payload' => [
                         'booking_id' => (string)$booking->id,
