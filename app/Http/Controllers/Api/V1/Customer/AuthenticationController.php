@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Customer\FeedbackRequest;
 use App\Http\Requests\Api\Customer\MarkNotificationReadRequest;
 use App\Http\Requests\Api\Customer\OtpRequest;
 use App\Http\Requests\Api\Customer\OtpVerificationRequest;
@@ -188,7 +189,7 @@ class AuthenticationController extends Controller
                 $query->where('device_id', $request->device_id);
             } else {
                 return fail([], 'No identifier provided.', config('code.NO_RECORD_CODE'));
-                
+
             }
             $ongoingBooking = $query->latest()->first();
             if ($ongoingBooking) {
@@ -208,5 +209,16 @@ class AuthenticationController extends Controller
         } catch (Exception $e) {
             return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
         }
+    }
+
+    public function feedback(FeedbackRequest $request){
+
+        try {
+            $feedback = $this->authService->feedback($request);
+            return success($request->all(), trans('messages.create',['attribute' => 'Feedback']), config('code.SUCCESS_CODE'));
+        } catch (Exception $e) {
+            return fail([], $e->getMessage(), config('code.EXCEPTION_ERROR_CODE'));
+        }
+
     }
 }

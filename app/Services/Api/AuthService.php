@@ -39,6 +39,18 @@ class AuthService {
         }
     }
 
+    public function feedback($request){
+        DB::beginTransaction();
+        try{
+            $feedback = Feedback::create($request->all());
+            DB::commit();
+            return $feedback;
+
+        }catch(Exception $e){
+            DB::rollBack();
+            throw new Exception('Failed to create feedback: ' . $e->getMessage());
+        }
+    }
     public function sendOtp($request){
 
         DB::beginTransaction();

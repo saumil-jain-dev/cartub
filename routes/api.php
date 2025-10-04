@@ -27,6 +27,7 @@ Route::prefix('v1')->group(function () {
                 Route::post('service/list', 'listServices');
                 Route::post('wash-type/list', 'listWashTypes');
                 Route::post('delete-account', 'deleteAccount');
+                Route::post('feedback', 'feedback');
                 Route::post('logout', 'logout');
 
                 //notification routes
