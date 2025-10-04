@@ -26,13 +26,7 @@ class FeedbackRequest extends FormRequest
     {
         return [
             //
-            'user_id' => [
-                'required',
-                'numeric',
-                Rule::exists('users', 'id')->where(function ($query) {
-                    $query->where('role', 'customer');
-                }),
-            ],
+
             'title' => 'required',
             'feedback' => 'required'
         ];

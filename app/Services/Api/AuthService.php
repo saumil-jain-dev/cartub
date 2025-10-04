@@ -42,7 +42,14 @@ class AuthService {
     public function feedback($request){
         DB::beginTransaction();
         try{
-            $feedback = Feedback::create($request->all());
+            $user = Auth::user();
+            $user_id = $user->id;
+            $data = [
+                'user_id' => $user_id,
+                'title' => $request->title,
+                'feedback' => $request->feedback,
+            ];
+            $feedback = Feedback::create($data);
             DB::commit();
             return $feedback;
 
