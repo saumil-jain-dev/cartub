@@ -133,7 +133,7 @@ class BookingService {
                 "#{$booking->booking_number}: " .
                 "{$booking->customer->name} ({$booking->customer->phone})- " .
                 "{$booking->address}. " .
-                
+
                 Carbon::parse($booking->scheduled_date)->format('d F Y') . " at " .
                 Carbon::parse($booking->scheduled_time)->format('h:i A') .
                 ". {$booking->vehicle->license_plate}";
@@ -266,12 +266,12 @@ class BookingService {
                 "message" =>  "You received a rating of ".$rating."⭐ from your last customer. View details in your profile.",
                 'type' => 'booking',
                 'payload' => [
-                    'booking_id' => $booking->id,
-                    'cleaner_id' => $request->input('cleaner_id'),
+                    'booking_id' => (string)$booking->id,
+                    'cleaner_id' => (string)$request->input('cleaner_id'),
                 ],
 
             ];
-            // $this->save_notification($request->input('cleaner_id'),$notificationData);
+            $this->save_notification($request->input('cleaner_id'),$notificationData);
             return $booking;
         } catch (Exception $e) {
             DB::rollBack();
@@ -305,6 +305,19 @@ class BookingService {
             }
 
             DB::commit();
+
+            //Send notification to cleaner
+            $notificationData = [
+                'title' => "Customer Feedback Received",
+                "message" =>  "You received a rating of ".$rating."⭐ from your last customer. View details in your profile.",
+                'type' => 'booking',
+                'payload' => [
+                    'booking_id' => (string)$booking->id,
+                    'cleaner_id' => (string)$request->input('cleaner_id'),
+                ],
+
+            ];
+            $this->save_notification($booking->cleaner_id,$notificationData);
             return $booking;
         } catch (Exception $e) {
             DB::rollBack();
