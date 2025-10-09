@@ -28,7 +28,9 @@ class BookingService {
     {
         try {
             $perPage = $request->input('per_page', 10);
-            $query = Booking::with(['vehicle','service','washType'])->where('cleaner_id', Auth::id())->where('status', 'pending');
+            $cancelledBookingIds = BookingCancellation::where('cleaner_id', Auth::id())
+            ->pluck('booking_id');
+            $query = Booking::with(['vehicle','service','washType'])->where('cleaner_id', Auth::id())->where('status', 'pending')->whereNotIn('id', $cancelledBookingIds);
 
             if ($request->has('booking_date')) {
                 $bookingDate = Carbon::parse($request->input('booking_date'));
@@ -247,7 +249,9 @@ class BookingService {
     {
         try {
             $perPage = $request->input('per_page', 10);
-            $query = Booking::with(['vehicle','service','washType'])->where('cleaner_id', Auth::id())->where('status', "!=",'pending');
+            $cancelledBookingIds = BookingCancellation::where('cleaner_id', Auth::id())
+            ->pluck('booking_id');
+            $query = Booking::with(['vehicle','service','washType'])->where('cleaner_id', Auth::id())->where('status', "!=",'pending')->whereNotIn('id', $cancelledBookingIds);
 
             if ($request->has('booking_date')) {
                 $bookingDate = Carbon::parse($request->input('booking_date'));
