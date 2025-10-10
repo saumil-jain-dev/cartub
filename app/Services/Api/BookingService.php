@@ -296,12 +296,20 @@ class BookingService {
             }
 
             if (!empty($tipAmount)) {
-                $cleanerEarnings = new CleanerEarning();
-                $cleanerEarnings->cleaner_id = $booking->cleaner_id;
-                $cleanerEarnings->booking_id = $booking->id;
-                $cleanerEarnings->tip = $tipAmount;
-                $cleanerEarnings->tip_earned_on = Carbon::now();
-                $cleanerEarnings->save();
+
+                $cleanerEarnings = CleanerEarning::updateOrCreate([
+                    'cleaner_id' => $booking->cleaner_id,
+                    'booking_id' => $booking->id,
+                ],[
+                    'tip' => $tipAmount ?? 0,
+                    'tip_earned_on' => Carbon::now()
+                ]);
+                // $cleanerEarnings = new CleanerEarning();
+                // $cleanerEarnings->cleaner_id = $booking->cleaner_id;
+                // $cleanerEarnings->booking_id = $booking->id;
+                // $cleanerEarnings->tip = $tipAmount;
+                // $cleanerEarnings->tip_earned_on = Carbon::now();
+                // $cleanerEarnings->save();
             }
 
             DB::commit();
