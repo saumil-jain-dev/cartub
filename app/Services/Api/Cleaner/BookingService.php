@@ -160,12 +160,19 @@ class BookingService {
                         }
                     }
                     $cleaner_commission = getSettingsData('cleaner_commission');
-                    $cleanerEarnings = new CleanerEarning();
-                    $cleanerEarnings->cleaner_id = $booking->cleaner_id;
-                    $cleanerEarnings->booking_id = $booking->id;
-                    $cleanerEarnings->amount = $cleaner_commission ?? 0;
-                    $cleanerEarnings->earned_on = Carbon::now();
-                    $cleanerEarnings->save();
+                    $cleanerEarnings = CleanerEarning::updateOrCreate([
+                        'cleaner_id' => $booking->cleaner_id,
+                        'booking_id' => $booking->id,
+                    ],[
+                        'amount' => $cleaner_commission ?? 0,
+                        'earned_on' => Carbon::now()
+                    ]);
+                    // $cleanerEarnings = new CleanerEarning();
+                    // $cleanerEarnings->cleaner_id = $booking->cleaner_id;
+                    // $cleanerEarnings->booking_id = $booking->id;
+                    // $cleanerEarnings->amount = $cleaner_commission ?? 0;
+                    // $cleanerEarnings->earned_on = Carbon::now();
+                    // $cleanerEarnings->save();
 
                     $bookingData = Booking::with(['cleaner','customer','afterPhoto'])->where('id', $bookingId)->first();
 
