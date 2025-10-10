@@ -263,7 +263,7 @@ class BookingService {
             //Send notification to cleaner
             $notificationData = [
                 'title' => "Customer Feedback Received",
-                "message" =>  "You received a rating of ".$rating."⭐ from your last customer. View details in your profile.",
+                "message" =>  "You received a rating of ".$request->input('rating')."⭐ from your last customer. View details in your profile.",
                 'type' => 'booking',
                 'payload' => [
                     'booking_id' => (string)$booking->id,
