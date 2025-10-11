@@ -35,7 +35,7 @@ class BookingRattingRequest extends FormRequest
                 }),
             ],
             'rating' => 'nullable|numeric|min:1|max:5',
-            'comment' => 'required_with:rating|string',
+            'comment' => 'nullable',
         ];
     }
 
