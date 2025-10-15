@@ -34,14 +34,48 @@ class BookingService {
             $couponCode = $request->input('coupon_code');
             $user = Auth::user();
             $userZip = $request->input('zipcode');
-            $coupon = Coupon::where('code', $couponCode)
-            ->where('is_active', true)
-            ->whereDate('valid_from', '<=', Carbon::now())
-            ->whereDate('valid_until', '>=', Carbon::now())
-            ->first();
-            if (!$coupon) {
-                return null;
+
+            if ($couponCode == 'SPARKLE1234') {
+                $coupon = Coupon::where('code', $couponCode)
+                    ->where('is_active', true)
+                    ->first();
+
+                // If coupon not found or inactive
+                if (!$coupon) {
+                    return null;
+                }
+
+                // Check if user has already used this coupon in bookings
+                $alreadyUsed = DB::table('bookings')
+                    ->where('customer_id', $user->id)
+                    ->where('coupon_id', $coupon->id)
+                    ->exists();
+
+                if ($alreadyUsed) {
+                    return null; // user already used this coupon once
+                }
+            } else {
+                // Normal coupon logic for all other coupons
+                $coupon = Coupon::where('code', $couponCode)
+                    ->where('is_active', true)
+                    ->whereDate('valid_from', '<=', Carbon::now())
+                    ->whereDate('valid_until', '>=', Carbon::now())
+                    ->first();
+
+                if (!$coupon) {
+                    return null;
+                }
             }
+
+
+            // $coupon = Coupon::where('code', $couponCode)
+            // ->where('is_active', true)
+            // ->whereDate('valid_from', '<=', Carbon::now())
+            // ->whereDate('valid_until', '>=', Carbon::now())
+            // ->first();
+            // if (!$coupon) {
+            //     return null;
+            // }
             // if ($coupon->usage_limit !== null && $coupon->used_count >= $coupon->usage_limit) {
             //     return null;
             // }

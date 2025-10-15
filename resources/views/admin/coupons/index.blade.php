@@ -91,13 +91,15 @@
                                                     </a>
                                                     @endif
                                                     @if(hasPermission('coupons.destroy'))
-                                                    <a class="square-white trash-3 delete-coupon"
-                                                        href="javascript:void(0)" data-bs-title="Delete" data-id="{{ $coupons->id }}"><svg>
-                                                            <use
-                                                                href="{{ asset('assets/svg/icon-sprite.svg#trash1') }}">
-                                                            </use>
-                                                        </svg>
-                                                    </a>
+                                                        @if($coupons->code != 'SPARKLE1234')
+                                                            <a class="square-white trash-3 delete-coupon"
+                                                                href="javascript:void(0)" data-bs-title="Delete" data-id="{{ $coupons->id }}"><svg>
+                                                                    <use
+                                                                        href="{{ asset('assets/svg/icon-sprite.svg#trash1') }}">
+                                                                    </use>
+                                                                </svg>
+                                                            </a>
+                                                        @endif
                                                     @endif
                                                 </div>
                                             </td>
