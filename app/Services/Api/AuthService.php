@@ -7,6 +7,7 @@ use App\Http\Resources\Api\Auth\VerificationResource;
 use App\Jobs\Customer\SendMailJob;
 use App\Jobs\SendSMSJob;
 use App\Models\Booking;
+use App\Models\Coupon;
 use App\Models\Feedback;
 use App\Models\HelpCenter;
 use App\Models\Notification;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use PhpParser\Node\Stmt\Catch_;
+use Illuminate\Support\Str;
 
 class AuthService {
 
@@ -30,6 +32,30 @@ class AuthService {
         try{
             $user = User::create($request->all());
             $user->assignRole($request->role);
+
+            $user = User::where('id',$user->id)->first();
+            $namePart = strtoupper(Str::substr(preg_replace('/\s+/', '', $user->name), 0, 5));
+            $remainingLength = 10 - strlen($namePart);
+            $randomPart = strtoupper(Str::random($remainingLength));
+            $promoCode = $namePart . $randomPart;
+
+            // Ensure promo code uniqueness
+            while (User::where('promocode', $promoCode)->exists()) {
+                $promoCode = $namePart . strtoupper(Str::random($remainingLength));
+            }
+
+            $user->promocode = $promoCode;
+            $user->save();
+
+            $coupon = new Coupon();
+            $coupon->code = $promoCode;
+            $coupon->type = 'promo';
+            $coupon->discount_type = 'fixed';
+            $coupon->discount_value = 5;
+            $coupon->valid_from = now();
+            $coupon->valid_until = now();
+            $coupon->save();
+            
             DB::commit();
             return $user;
 
