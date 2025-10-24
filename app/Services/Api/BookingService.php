@@ -34,14 +34,22 @@ class BookingService {
             $couponCode = $request->input('coupon_code');
             $user = Auth::user();
             $userZip = $request->input('zipcode');
-
-            if ($couponCode == 'SPARKLE1234') {
+            $coupon = Coupon::where('code', $couponCode)
+                    ->where('is_active', true)
+                    ->first();
+            if ($coupon->type == 'promo') {
                 $coupon = Coupon::where('code', $couponCode)
                     ->where('is_active', true)
                     ->first();
 
                 // If coupon not found or inactive
                 if (!$coupon) {
+                    return null;
+                }
+
+                //Check User not applied own code
+                $sameUser = User::where('promocode',$couponCode)->first();
+                if ($sameUser && $sameUser->id == $user->id) {
                     return null;
                 }
 
