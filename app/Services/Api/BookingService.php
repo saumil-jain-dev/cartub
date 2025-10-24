@@ -37,7 +37,7 @@ class BookingService {
             $coupon = Coupon::where('code', $couponCode)
                     ->where('is_active', true)
                     ->first();
-            if ($coupon->type == 'promo') {
+            if ($coupon && $coupon->type == 'promo') {
                 $coupon = Coupon::where('code', $couponCode)
                     ->where('is_active', true)
                     ->first();
