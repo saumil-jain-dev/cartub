@@ -20,7 +20,7 @@ class CouponController extends Controller
         }
         $this->data['pageTitle'] = 'All Coupons';
         
-        $couponData = Coupon::orderBy('id','desc')->get();
+        $couponData = Coupon::where('type','coupon')->orderBy('id','desc')->get();
         $userData = User::where('role','customer')->get();
 
         $this->data['couponData'] = $couponData;
