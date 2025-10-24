@@ -37,19 +37,12 @@ class BookingService {
             $coupon = Coupon::where('code', $couponCode)
                     ->where('is_active', true)
                     ->first();
-            if ($coupon && $coupon->type == 'promo') {
-                $coupon = Coupon::where('code', $couponCode)
-                    ->where('is_active', true)
-                    ->first();
-
-                // If coupon not found or inactive
-                if (!$coupon) {
-                    return null;
-                }
-
-                //Check User not applied own code
-                $sameUser = User::where('promocode',$couponCode)->first();
-                if ($sameUser && $sameUser->id == $user->id) {
+            if (!$coupon) {
+                return null; // coupon not found or inactive
+            }
+            if ($coupon->type == 'promo') {
+                // Check if user is trying to use their own promo code
+                if ($user->promocode == $couponCode) {
                     return null;
                 }
 
