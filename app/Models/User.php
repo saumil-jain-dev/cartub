@@ -36,6 +36,7 @@ class User extends Authenticatable
         'email_verified_at',
         'is_active',
         'promocode',
+        'promo_bonus_amount',
         'is_available',
         'gender',
         'address',
