@@ -152,7 +152,7 @@ class BookingService {
                 // Update user promo bonus amount if promo code used
                 if (!empty($request->input('coupon_id'))) {
                     $Coupon = Coupon::where('id', $request->input('coupon_id'))->first();
-                    if($Coupon && $Coupon->type == 'promo'){
+                    if($Coupon && $Coupon->type == 'promo' && $user->promocode == $Coupon->code) {
                         $user->promo_bonus_amount += $Coupon->discount_value;
                         $user->save();
                     }
