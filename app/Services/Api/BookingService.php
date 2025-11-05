@@ -149,10 +149,23 @@ class BookingService {
                 $payment->paid_at = $request->input('payment_status') === 'paid' ? Carbon::now() : null;
                 $payment->save();
 
-                // // Increment the used count for the coupon if it exists
-                // if (!empty($request->input('coupon_id'))) {
-                //     Coupon::where('id', $request->input('coupon_id'))->increment('used_count');
-                // }
+                // Update user promo bonus amount if promo code used
+                if (!empty($request->input('coupon_id'))) {
+                    $Coupon = Coupon::where('id', $request->input('coupon_id'))->first();
+                    if($Coupon && $Coupon->type == 'promo' && $user->promocode == $Coupon->code) {
+                        $user->promo_bonus_amount += $Coupon->discount_value;
+                        $user->save();
+                    }
+                }
+
+                if(!empty($request->promo_used_amount)){
+                    $user->promo_bonus_amount -= $request->promo_used_amount;
+                    if($user->promo_bonus_amount < 0){
+                        $user->promo_bonus_amount = 0;
+                    }
+                    $user->save();
+
+                }
                 DB::commit();
 
                 //Send Booking SMS
