@@ -1,247 +1,490 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description"
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Wash Invoice</title>
+     <meta name="description"
     content="Cuba admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
   <meta name="keywords"
     content="admin template, Cuba admin template, dashboard template, flat admin template, responsive admin template, web app">
   <meta name="author" content="pixelstrap">
-  <link rel="icon" href="assets/images/favicon.png" type="image/x-icon">
-  <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon">
+    <link rel="icon" href="assets/images/favicon.png" type="image/x-icon">
+ <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon">
   <title>{{ $pageTitle }}</title>
-  <!-- Themify icon-->
-  <link rel="stylesheet" type="text/css" href="assets/css/vendors/themify.css">
-  <!-- Google font-->
-  <link href="https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,500,600,700,800,900" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i,900&amp;display=swap"
-    rel="stylesheet">
   <!-- html2pdf.js CDN for PDF generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <style type="text/css">
-    body {
-      font-family: Rubik, sans-serif;
-      display: block;
-      color: #000248;
-      width: 1160px; /* Fixed width to match design */
-      margin: 0 auto;
-      box-sizing: border-box;
-      padding: 0;
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #2196F3;
+            padding-bottom: 20px;
+        }
+        
+        .company-info h1 {
+            color: #2196F3;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .company-info p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .invoice-title {
+            text-align: right;
+        }
+        
+        .invoice-title h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .invoice-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .detail-block h3 {
+            color: #2196F3;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .detail-block p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 5px;
+        }
+        
+        .services-section {
+            margin-bottom: 40px;
+        }
+        
+        .services-section h3 {
+            color: #2196F3;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        thead {
+            background: #f9f9f9;
+            border-top: 2px solid #2196F3;
+            border-bottom: 2px solid #2196F3;
+        }
+        
+        th {
+            padding: 12px;
+            text-align: left;
+            color: #2196F3;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .quantity, .price, .total {
+            text-align: right;
+        }
+        
+        tbody tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .summary {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 40px;
+        }
+        
+        .summary-box {
+            width: 300px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .summary-row.subtotal {
+            border-bottom: 1px solid #eee;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+        }
+        
+        .summary-row.total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2196F3;
+            margin-top: 8px;
+            padding-top: 8px;
+        }
+        
+        .notes {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        
+        .notes h4 {
+            color: #2196F3;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .notes p {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .thank-you {
+            text-align: center;
+            color: #2196F3;
+            font-weight: 600;
+        }
+        
+        .promo-section {
+        display: block;
+        margin-bottom: 30px;
+        padding: 15px;
+        background: rgba(41, 197, 246, 1);
+        border-left: 5px solid rgba(41, 197, 246, 1);
+        }
+    
+    .promo-icon {
+        display: inline-block;
+        font-size: 28px;
+        margin-right: 15px;
     }
-    table {
-      width: 100% !important; /* Ensure table respects the body width */
-      box-sizing: border-box;
+    
+    .promo-content {
+        display: inline-block;
+        width: calc(100% - 50px);
     }
-    /* Ensure all content is included in the PDF */
-    * {
-      box-sizing: border-box;
+    
+    .promo-code {
+        display: inline-block;
+        background: white;
+        padding: 6px 12px;
+        border-radius: 3px;
+        font-weight: bold;
+        color: rgba(41, 197, 246, 1);
+        font-size: 12px;
+        margin-right: 10px;
+        border: 2px dashed rgba(41, 197, 246, 1);
+        letter-spacing: 1px;
     }
-    @page {
-      size: A4;
-      margin: 0;
+    
+    .promo-text {
+        display: inline-block;
+        color: #333;
+        font-size: 13px;
+        font-weight: bold;
     }
-    @media print {
-      body {
-        width: 1160px !important;
-        margin: 0 auto;
-      }
+
+    .summary-row.discount {
+        color: #4CAF50;
+        font-weight: bold;
     }
-    /* Responsive adjustments for mobile */
-    @media (max-width: 768px) {
-      body {
-        width: 100%;
-        padding: 10px;
-      }
-      table {
-        width: 100% !important;
-      }
+        
+        @media (max-width: 600px) {
+            .invoice-container {
+                padding: 20px;
+            }
+            
+            .invoice-header {
+                flex-direction: column;
+                border-bottom: 2px solid #2196F3;
+            }
+            
+            .invoice-title {
+                text-align: left;
+                margin-top: 20px;
+            }
+            
+            .invoice-details {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .invoice-container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+        }
+        /* Action Buttons Container */
+.action-buttons {
+    max-width: 800px;
+    margin: 0 auto 20px;
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+/* Base Button Styles */
+.btn {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Download Button */
+.btn-download {
+    background: #2196F3;
+    color: white;
+}
+
+.btn-download:hover {
+    background: #1976D2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+/* Print Button */
+.btn-print {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-print:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+    .action-buttons {
+        flex-direction: column;
     }
-  </style>
-  <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
+}
+
+/* Print Media - Hide buttons when printing */
+@media print {
+    .action-buttons {
+        display: none;
+    }
+}
+    </style>
 </head>
-
 <body>
-  <div id="invoice-content">
-    <table style="width:1160px;margin:0 auto;">
-      <tbody>
-        <tr>
-          <td>
-            <table style="width: 100%;">
-              <tbody>
-                <tr style="padding: 28px 0 5px; display: flex; justify-content: space-between; align-items: center;">
-                  <td><img src="{{ asset('assets/images/logo.png') }}" alt="logo"></td>
-                  <td>
-                    <ul
-                      style="list-style: none; display: flex; align-items: center; background: linear-gradient(291deg, #29C5F6 21.2%, #29C5F6 83.92%); padding: 31px 80px; border-bottom-left-radius: 100px; gap:28px;">
-                      <li> <svg class="stroke-icon"
-                          style="height:14px; width: 14px; fill:#fff; margin-right: 10px; vertical-align:-2px;">
-                          <use href="assets/svg/icon-sprite.svg#call"></use>
-                        </svg><span style="color: #FFFFFF; font-weight: 500; font-size: 16px;">(239) 555-0108</span></li>
-                      <li
-                        style="border-left: 1px solid rgba(255, 255, 255, 0.3); border-right: 1px solid rgba(255, 255, 255, 0.3); padding: 0 22px;">
-                        <svg class="stroke-icon"
-                          style="height:16px; width: 16px; fill:#fff; margin-right: 10px; vertical-align:-2px;">
-                          <use href="assets/svg/icon-sprite.svg#email-box"></use>
-                        </svg><span
-                          style="color: #FFFFFF; font-weight: 500; font-size: 16px;">Info@cartub.uk</span>
-                      </li>
-                      <li> <svg class="stroke-icon"
-                          style="height:16px; width: 16px; fill:#fff; margin-right: 10px; vertical-align:-2px;">
-                          <use href="assets/svg/icon-sprite.svg#web"></use>
-                        </svg><span style="color: #FFFFFF; font-weight: 500; font-size: 16px;">Website:
-                          Cartub.uk</span></li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr style="display: flex; justify-content: space-between;">
-                  <td> <span
-                      style="font-size: 18px; display:block; font-weight: 600; color:rgba(41, 197, 246, 1); margin-bottom: 14px;">Invoice
-                      to :</span><span
-                      style="font-size: 18px; display:block; font-weight: 600; color:rgba(0, 2, 72, 1); margin-bottom: 8px;">
-                      {{ $bookingDetails->customer?->name }}
-                      </span><span
-                      style="font-size: 18px; display:block; color: #52526C; opacity: 0.8; margin-bottom: 8px; width: 72%; line-height: 1.4;">{{ $bookingDetails->address }} </span><span
-                      style="font-size: 18px; display:block; color: #52526C; opacity: 0.8; margin-bottom: 8px;">Phone :
-                      ({{ $bookingDetails->customer?->country_code }}) {{ $bookingDetails->customer?->phone }}</span><span
-                      style="font-size: 18px; display:block; color: #52526C; opacity: 0.8; margin-bottom: 8px;">Email :
-                      Info@cartub.uk</span><span
-                      style="font-size: 18px; display:block; color: #52526C; opacity: 0.8; margin-bottom: 8px;">Website:
-                      Cartub.uk</span></td>
-                  <td>
-                    <h4 style="font-size:42px; font-weight: 600;color: #000248; margin:0 0 12px 0;">INVOICE</h4>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <table style="width: 100%; border-spacing: 4px; margin-bottom: 20px;">
-              <tbody>
-                <tr>
-                  <td style="background: #F5F6F9;padding: 15px 25px;">
-                    <p style="font-size:16px; font-weight:500; color:#52526C; opacity:0.8; margin:0;line-height: 2;">Date
-                      :</p><span style="font-size: 18px; font-weight: 600;">{{ $bookingDetails->created_at->format('d M, Y') }}</span>
-                  </td>
-                  <td style="background: #F5F6F9;padding: 15px 25px;">
-                    <p style="font-size:16px; font-weight:500; color:#52526C; opacity:0.8; margin:0;line-height: 2;">
-                      Booking No :</p><span style="font-size: 18px; font-weight: 600;">#{{ $bookingDetails->booking_number }}</span>
-                  </td>
-                  <td style="background: #F5F6F9;padding: 15px 25px;">
-                    <p style="font-size:16px; font-weight:500; color:#52526C; opacity:0.8; margin:0;line-height: 2;">
-                      Amount :</p><span style="font-size: 18px; font-weight: 600;">£{{ $bookingDetails->total_amount }} </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <table style="width: 100%; border-spacing:0;">
-              <thead>
-                <tr style="background: #29C5F6;">
-                  <th style="padding: 18px 15px;text-align: center; position: relative; border-top-left-radius: 10px;">
-                    <span style="color: #fff; font-size: 18px; font-weight: 600;">No.</span>
-                  </th>
-                  <th style="padding: 18px 16px;text-align: left;"><span
-                      style="color: #fff; font-size: 18px; font-weight: 600;">Description</span></th>
-                  <th style="padding: 18px 15px;text-align: center"><span
-                      style="color: #fff; font-size: 18px; font-weight: 600;">Unite Price</span></th>
-                  <th style="padding: 18px 15px;text-align: center"><span
-                      style="color: #fff; font-size: 18px; font-weight: 600;">Quantity</span></th>
-                  <th style="padding: 18px 15px;text-align: center;position: relative; border-top-right-radius: 10px;">
-                    <span style="color: #fff; font-size: 18px; font-weight: 600;">Subtotal</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td
-                    style="width: 12%; text-align: center; border-bottom: 1px solid rgba(82, 82, 108, 0.2);background: #F5F6F9;">
-                    <span style="color: #52526C;opacity: 0.8; font-weight: 600;">1</span>
-                  </td>
-                  <td style="padding: 16px; border-bottom: 1px solid rgba(82, 82, 108, 0.2);">
-                    <h4 style="font-weight:600; margin:4px 0px; font-size: 18px; color: #000248;">{{ $bookingDetails->service?->name }}
-                      </h4><span style="color: #52526C;opacity: 0.8; font-size: 16px;">{{ $bookingDetails->addOnsNames }}</span>
-                  </td>
-                  <td
-                    style="width: 12%; text-align: center;border-bottom: 1px solid rgba(82, 82, 108, 0.2);background: #F5F6F9;">
-                    <span style="color: #52526C;font-weight: 600;">£{{ $bookingDetails->gross_amount }}</span>
-                  </td>
-                  <td style="width: 12%; text-align: center; border-bottom: 1px solid rgba(82, 82, 108, 0.2);"> <span
-                      style="color: #52526C;font-weight: 600;">1</span></td>
-                  <td
-                    style="width: 12%; text-align: center; border-bottom: 1px solid rgba(82, 82, 108, 0.2);background: #F5F6F9;">
-                    <span style="color: #000248; font-weight: 600;opacity: 0.9;">£{{ $bookingDetails->gross_amount }}</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td> </td>
-                  <td> </td>
-                  <td> </td>
-                  <td style="text-align: center; padding:35px 0 18px;"> <span
-                      style="color: #52526C;opacity: 0.8;font-weight: 600;">Subtotal </span></td>
-                  <td style=" text-align: center;background: #F5F6F9; display: block; padding:35px 0 18px;"> <span
-                      style="color: #000248; font-weight: 600;opacity: 0.9;">£{{ $bookingDetails->gross_amount }}</span></td>
-                </tr>
-                <tr>
-                  <td> </td>
-                  <td> </td>
-                  <td> </td>
-                  <td style="width: 12%; text-align: center;"> <span
-                      style="color: #52526C;opacity: 0.8;font-weight: 600;">Discount </span></td>
-                  <td style="text-align: center;background: #F5F6F9; display: block; padding-bottom: 18px;"> <span
-                      style="color: #000248; font-weight: 600;opacity: 0.9;">£{{ $bookingDetails->discount_amount }}</span></td>
-                </tr>
-                <tr>
-                  <td> </td>
-                  <td> </td>
-                  <td> </td>
-                  <td style="width: 12%; text-align: center;"> <span
-                      style="color: #52526C;opacity: 0.8;font-weight: 600;">Total </span></td>
-                  <td style="text-align: center;background: #F5F6F9;"> <span
-                      style="color: #ffffff; font-weight: 600;opacity: 0.9;background: #52526C; padding: 12px 37px; margin-top: 0px; display: block;">£{{ $bookingDetails->total_amount }}</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-        <tr style="width: 100%; display: flex; justify-content: space-between; margin-top: 36px;">
-          <td> <img src="{{ asset('assets/images/email-template/invoice-3/sign.png') }}" alt="sign"><span
-              style="color: #000248;display: block;font-size: 18px;font-weight: 600;">Laurine T. Ebbert</span><span
-              style="color: #52526C; display: block; font-size: 14px; padding-top: 5px;">( Designer )</span></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div style="margin-top: 20px; text-align: right;">
-    <a style="background: rgba(41, 197, 246, 1); color:rgba(255, 255, 255, 1);border-radius: 10px;padding: 18px 27px;font-size: 16px;font-weight: 600;outline: 0;border: 0; text-decoration: none;"
-      href="#!" onclick="window.print();">Print Invoice<i class="icon-arrow-right"
-        style="font-size:13px;font-weight:bold; margin-left: 10px;"></i></a>
-    <a style="background: rgba(41, 197, 246, 0.1);color: rgba(41, 197, 246, 1);border-radius: 10px;padding: 18px 27px;font-size: 16px;font-weight: 600;outline: 0;border: 0; text-decoration: none; margin-left: 10px;"
-      href="#!" onclick="downloadInvoice()">Download<i class="icon-arrow-right"
-        style="font-size:13px;font-weight:bold; margin-left: 10px;"></i></a>
-  </div>
-  <script>
-    function downloadInvoice() {
-      const element = document.getElementById('invoice-content'); // Target only the invoice content
-      const opt = {
-        margin: [0.5, 0.5, 0.5, 0.5], // Top, Right, Bottom, Left margins in inches
-        filename: 'invoice-{{ $bookingDetails->booking_number }}.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, width: 1160 }, // Explicitly set width to match design
-        jsPDF: { unit: 'in', format: [11.7, 16.5], orientation: 'portrait' }, // Custom size to accommodate content
-        pagebreak: { mode: ['css', 'legacy'], avoid: ['table', 'tr'] } // Avoid breaking tables
-      };
-      html2pdf().set(opt).from(element).save();
-    }
-  </script>
-</body>
+    <div class="invoice-container">
+        <!-- Header -->
+        <div class="invoice-header">
+            <div class="company-info">
+                <img src="{{ asset('assets/images/logo.png') }}" alt="CarTub Logo" style="height: 50px; margin-bottom: 10px;">
+                <p>Mobile Car Wash & Detailing</p>
+                <p>Phone: 020 8200 7777</p>
+                <p>Email: info@cartub.uk</p>
+            </div>
+            <div class="invoice-title">
+                <h2>INVOICE</h2>
+                <p><strong>Invoice #:</strong> {{ $bookingDetails->booking_number }}</p>
+                <p><strong>Date:</strong> {{ $bookingDetails->created_at->format('d M, Y') }}</p>
+            </div>
+        </div>
+        
+        <!-- Details -->
+        <div class="invoice-details">
+            <div class="detail-block">
+                <h3>Bill To</h3>
+                <p><strong> {{ $bookingDetails->customer?->name }}</strong></p>
+                <p>{{ $bookingDetails->address }}</p>
+                <p>Phone: ({{ $bookingDetails->customer?->country_code }}) {{ $bookingDetails->customer?->phone }}</p>
+            </div>
+            <div class="detail-block">
+                <h3>Service Details</h3>
+                <p><strong>Service Date:</strong> {{ $bookingDetails->created_at->format('d M, Y') }}</p>
+                <p><strong>Service Location:</strong> {{ $bookingDetails->address }} </p>
+                 <p><strong>Vehicle:</strong> {{ $bookingDetails->vehicle->year }} {{ $bookingDetails->vehicle->make }} {{ $bookingDetails->vehicle->model }}</p>
+                <p><strong>License Plate:</strong> {{  $bookingDetails->vehicle->license_plate }} </p>
+            </div>
+        </div>
+        
+        <!-- Services -->
+        <div class="services-section">
+            <h3>Services Provided</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Description</th>
+                        <th class="total">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
 
+                    @if($bookingDetails->service)
+                        <tr>
+                          <td>{{ $bookingDetails->service->name ?? 'N/A' }}</td>
+                          <td>{{ $bookingDetails->service->description ?? 'N/A' }}</td>
+                          <td class="total">£{{ $bookingDetails->service->price ?? '0.00' }}</td>
+                        </tr>
+                    @endif
+                        
+                   
+                    <!-- Add-ons/Package -->
+                    @if($bookingDetails->addOns)
+                        <tr>
+                            <td>{{ $bookingDetails->addOns->name ?? 'N/A' }}</td>
+                            <td>{{ $bookingDetails->addOns->description ?? 'N/A' }}</td>
+                            <td class="total">£{{ $bookingDetails->addOns->price ?? '0.00' }}</td>
+                        </tr>
+                    @endif
+                    
+                </tbody>
+            </table>
+        </div>
+        
+        
+        <!-- Summary -->
+        <div class="summary">
+            <div class="summary-box">
+                <div class="summary-row subtotal">
+                    <span class="summary-row-label">Subtotal:</span>
+                    <span class="summary-row-value">${{ number_format($bookingDetails->gross_amount ?? 00.00, 2) }}</span>
+                </div>
+                @if($bookingDetails->discount_amount ?? false)
+                <div class="summary-row discount">
+                    <span class="summary-row-label">Discount ({{ $bookingDetails->discount_amount ?? 'SUMMER20' }}):</span>
+                    <span class="summary-row-value">-${{ number_format($bookingDetails->discount_amount, 2) }}</span>
+                </div>
+                @endif
+                <div class="summary-row total">
+                    <span class="summary-row-label">TOTAL:</span>
+                    <span class="summary-row-value">${{ number_format($bookingDetails->total_amount ?? 00, 2) }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notes -->
+        <div class="notes">
+            <h4>Notes</h4>
+            <p>Thank you for choosing Cartub! We appreciate your business. Payment is due upon completion of service. We accept cash, credit cards, and digital payments.</p>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div>Invoice Date:  {{ $bookingDetails->created_at->format('d M, Y') }}</div>
+            <div class="thank-you">Thank You for Your Business!</div>
+            <div>www.cartub.uk</div>
+        </div>
+    </div>
+    
+        <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button class="btn btn-download" onclick="downloadInvoice()">
+            <span>📥</span> Download PDF
+        </button>
+        <button class="btn btn-print" onclick="printInvoice()">
+            <span>🖨️</span> Print Invoice
+        </button>
+    </div>
+</body>
+  <script>
+// Download function
+function downloadInvoice() {
+    const element = document.getElementById('invoice-content');
+    const opt = {
+        margin: [0.5, 0.5, 0.5, 0.5],
+        filename: 'invoice-INV-2024-001.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, width: 1160 },
+        jsPDF: { unit: 'in', format: [8.5, 11], orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'], avoid: ['table', 'tr'] }
+    };
+    html2pdf().set(opt).from(element).save();
+}
+
+// Print function
+function printInvoice() {
+    window.print();
+}
+  </script>
 </html>

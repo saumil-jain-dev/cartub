@@ -31,19 +31,24 @@ class AutoCancelUnacceptedBookings extends Command
         $bookings = Booking::where('status', 'pending')
             ->whereNotNull('cleaner_id')
             ->whereNotNull('assigned_at')
-            ->where('assigned_at', '<=', now()->subMinutes(10)) // 10 min old
+            ->where('assigned_at', '<=', now()->subMinutes(5)) // 5 min old
             ->get();
+            
+            
 
         foreach ($bookings as $booking) {
-
-            $booking->update([
-                'status' => 'cancelled',
-            ]);
-
+            
             BookingCancellation::create([
                 'booking_id' => $booking->id,
                 'cleaner_id' => $booking->cleaner_id,
             ]);
+
+            $booking->update([
+                'cleaner_id' => null,
+                'assigned_at' =>null,
+            ]);
+
+            
 
             Log::info("Booking #{$booking->id} auto-cancelled due to timeout.");
         }

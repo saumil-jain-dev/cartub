@@ -102,7 +102,7 @@
                                                     <p class="c-o-light">{{ $payment->bookings?->customer?->name }}</p>
                                                 </td>
                                                 <td>
-                                                    <p class="c-o-light">${{ $payment->amount }} </p>
+                                                    <p class="c-o-light">£{{ $payment->amount }} </p>
                                                 </td>
                                                 <td>
                                                     @if ($payment->status === 'pending')

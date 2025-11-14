@@ -56,7 +56,7 @@
                                                 <p class="f-light">@if ($coupons->discount_type === 'percentage')
                                                     {{ $coupons->discount_value }}%
                                                 @elseif ($coupons->discount_type === 'fixed')
-                                                    ${{ $coupons->discount_value }}
+                                                    £{{ $coupons->discount_value }}
                                                 @endif
                                                 </p>
                                             </td>

@@ -36,7 +36,7 @@ class Booking extends Model
     {
         do {
             // Generate a 6-digit random number
-            $bookingNumber = str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
+        $bookingNumber = str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
         } while (Booking::where('booking_number', $bookingNumber)->exists());
 
         return $bookingNumber;
@@ -138,7 +138,7 @@ class Booking extends Model
 
     public function getServiceNameAttribute(){
         $service = Service::find($this->service_id);
-        return $service->name;
+        return $service ? $service->name : null;
     }
 
     public function addOnsNames(): Attribute
@@ -161,4 +161,11 @@ class Booking extends Model
             }
         );
     }
+    
+    public function addOns()
+    {
+        return $this->belongsTo(Service::class, 'add_ons_id');
+    }
+    
+    
 }

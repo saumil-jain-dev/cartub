@@ -168,8 +168,8 @@
                                                 </ul>
                                             </td>
                                             <td>{{ $bookingDetails->service_name ?? '-' }}</td>
-                                            <td>£{{ number_format($bookingDetails->total_amount,2) }}</td>
-                                            <td>£{{ number_format($bookingDetails->gross_amount,2) }}</td>
+                                            <td>Â£{{ number_format($bookingDetails->total_amount,2) }}</td>
+                                            <td>Â£{{ number_format($bookingDetails->gross_amount,2) }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -205,7 +205,8 @@
                                                                                         src="{{ getImageAdmin($bookingDetails->cleaner?->profile_picture) }}"
                                                                                         alt="#">
                                                                                     <div>
-                                                                                        <h5>{{ $bookingDetails->cleaner?->name }}</h5>
+                                                                                        <h5>
+                                                                                        {{ optional($bookingDetails->cleaner)->name ?? '-' }}</h5>
                                                                                     </div>
                                                                                 </div>
                                                                                 <ul class="seller-details">
@@ -225,9 +226,8 @@
                                                                                         <span>{{ $bookingDetails->cleaner?->email }}</span>
                                                                                     </li>
                                                                                     <li>
-                                                                                        <div><i
-                                                                                                class="fa-solid fa-euro-sign"></i>
-                                                                                            <h6>Order Tips</h6>
+                                                                                        <div>
+                                                                                            <h6>ðŸ’µ Tips </h6>
                                                                                         </div>
                                                                                         <span><strong>{{ $bookingDetails->tip?->tip }}</strong></span>
                                                                                     </li>
@@ -264,7 +264,7 @@
                                                                                                             class="date-time">
                                                                                                             <h6
                                                                                                                 class="text-content">
-                                                                                                                {{ $bookingDetails->service->name }}
+                                                                                                                {{ $bookingDetails->service_name }}
                                                                                                             </h6>
                                                                                                             <div
                                                                                                                 class="product-rating">
@@ -367,7 +367,7 @@
                         <div class="card-body pt-0">
                             <ul class="tracking-total">
                                 <li>
-                                    <h6>Subtotal </h6><span> £
+                                    <h6>Subtotal </h6><span> Â£
                                         {{ number_format($bookingDetails->gross_amount,2) }}</span>
                                 </li>
                                 <li>
@@ -377,7 +377,7 @@
                                     <h6>Extra </h6><span class="txt-primary">0.00</span>
                                 </li>
                                 <li>
-                                    <h6>Total</h6><span>£{{ number_format($bookingDetails->total_amount ?? 0 ,2) }}</span>
+                                    <h6>Total</h6><span>Â£{{ number_format($bookingDetails->total_amount ?? 0 ,2) }}</span>
                                 </li>
                             </ul>
                         </div>

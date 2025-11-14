@@ -53,6 +53,7 @@
                                         <th> <span class="c-o-light f-w-600">Name</span></th>
                                         <th> <span class="c-o-light f-w-600">Phone No.</span></th>
                                         <th> <span class="c-o-light f-w-600">Email</span></th>
+                                        <th> <span class="c-o-light f-w-600">Prom bonus amount</span></th>
                                         <th> <span class="c-o-light f-w-600">Total Bookings</span></th>
                                         <th> <span class="c-o-light f-w-600">Creation Date</span></th>
                                         <th> <span class="c-o-light f-w-600">Status</span></th>
@@ -70,6 +71,9 @@
                                         </td>
                                         <td>
                                             <p>{{ $user->email }}</p>
+                                        </td>
+                                        <td>
+                                            <p>{{ $user->promo_bonus_amount }}</p>
                                         </td>
                                         <td>
                                             <p>{{ $user->booking_count }}</p>

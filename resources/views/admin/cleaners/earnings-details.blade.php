@@ -72,7 +72,7 @@
                                                         {{ $earning->booking->booking_number }}
                                                     </a>
                                                 </td>
-                                                <td>{{ $earning->booking->service->name }}</td>
+                                                <td>{{ $earning->booking->service->name ?? 'N/A' }}</td>
                                                 <td>
                                                     @if($earning->booking->job_start_time && $earning->booking->job_end_time)
                                                         {{ \Carbon\Carbon::parse($earning->booking->job_start_time)->format('H:i') }} -

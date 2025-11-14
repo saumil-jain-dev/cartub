@@ -170,6 +170,7 @@ class BookingController extends Controller
                 ]);
                 DB::commit();
                 $customer = User::find($booking->customer_id);
+                
                 // Send Booking SMS
                 $phone = $customer->country_code . $customer->phone;
                 $message = "Your CarTub booking #{$booking->booking_number} is confirmed for " .
@@ -225,7 +226,7 @@ class BookingController extends Controller
                     'booking_data' => $booking,
                     'payment_data' => $payment,
                     '_blade' => 'payment-confirm',
-                    'subject' => '💳 Payment Received'
+                    'subject' => 'Payment Received'
                 ];
                 // \App\Jobs\SendMailJob::dispatch($paymentData);
 
@@ -235,7 +236,7 @@ class BookingController extends Controller
                     'to_email' => $customer->email,
                     'booking_data' => $booking,
                     '_blade' => 'booking',
-                    'subject' => '✅ Booking Confirmed!'
+                    'subject' => 'Booking Confirmed!'
                 ];
                 // \App\Jobs\SendMailJob::dispatch($emailData);
 
@@ -334,7 +335,7 @@ class BookingController extends Controller
     }
 
     public function invoice($id){
-        $bookingDetails = Booking::with(['customer','payment','washType'])->where('id',$id)->first();
+        $bookingDetails = Booking::with(['customer','payment','washType','vehicle','service'])->where('id',$id)->first();
         if(!$bookingDetails){
             abort(404);
         }
