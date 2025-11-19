@@ -168,8 +168,8 @@
                                                 </ul>
                                             </td>
                                             <td>{{ $bookingDetails->service_name ?? '-' }}</td>
-                                            <td>Â£{{ number_format($bookingDetails->total_amount,2) }}</td>
-                                            <td>Â£{{ number_format($bookingDetails->gross_amount,2) }}</td>
+                                            <td>£{{ number_format($bookingDetails->total_amount,2) }}</td>
+                                            <td>£{{ number_format($bookingDetails->gross_amount,2) }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -227,7 +227,7 @@
                                                                                     </li>
                                                                                     <li>
                                                                                         <div>
-                                                                                            <h6>ðŸ’µ Tips </h6>
+                                                                                            <h6>£ Tips </h6>
                                                                                         </div>
                                                                                         <span><strong>{{ $bookingDetails->tip?->tip }}</strong></span>
                                                                                     </li>
@@ -367,7 +367,7 @@
                         <div class="card-body pt-0">
                             <ul class="tracking-total">
                                 <li>
-                                    <h6>Subtotal </h6><span> Â£
+                                    <h6>Subtotal </h6><span> £
                                         {{ number_format($bookingDetails->gross_amount,2) }}</span>
                                 </li>
                                 <li>
@@ -377,7 +377,7 @@
                                     <h6>Extra </h6><span class="txt-primary">0.00</span>
                                 </li>
                                 <li>
-                                    <h6>Total</h6><span>Â£{{ number_format($bookingDetails->total_amount ?? 0 ,2) }}</span>
+                                    <h6>Total</h6><span>£{{ number_format($bookingDetails->total_amount ?? 0 ,2) }}</span>
                                 </li>
                             </ul>
                         </div>

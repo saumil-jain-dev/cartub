@@ -74,6 +74,8 @@
                                                 <th></th>
                                                 <th> <span class="f-light f-w-600">Order Number</span>
                                                 </th>
+                                                <th> <span class="f-light f-w-600">Transaction ID</span>
+                                                </th>
                                                 <th> <span class="f-light f-w-600">Order Date</span>
                                                 </th>
                                                 <th> <span class="f-light f-w-600">Customer Name</span>
@@ -95,6 +97,9 @@
                                             <tr class="inbox-data">
                                                 <td></td>
                                                 <td> <a href="{{ route('bookings.show',$payment->booking_id) }}">{{ $payment->bookings?->booking_number }}</a></td>
+                                                <td>
+                                                    <p class="c-o-light">{{ $payment->transaction_id ?? '-' }}</p>
+                                                </td>
                                                 <td>
                                                     <p class="c-o-light">{{ Carbon::parse($payment->created_at)->format('d M Y, H:i A') }}</p>
                                                 </td>
