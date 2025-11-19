@@ -27,85 +27,171 @@ use Stripe\EphemeralKey;
 class BookingService {
     use NotificationTrait;
 
+    // public function applyCoupon($request)
+    // {
+    //     try {
+    //         // Assuming you have a Coupon model and logic to validate the coupon
+    //         $couponCode = $request->input('coupon_code');
+    //         $user = Auth::user();
+    //         $userZip = $request->input('zipcode');
+    //         $coupon = Coupon::where('code', $couponCode)
+    //                 ->where('is_active', true)
+    //                 ->first();
+    //         if (!$coupon) {
+    //             return null; // coupon not found or inactive
+    //         }
+    //         if ($coupon->type == 'promo') {
+    //             // Check if user is trying to use their own promo code
+    //             if ($user->promocode == $couponCode) {
+    //                 return null;
+    //             }
+
+    //             // Check if user has already used this coupon in bookings
+    //             $alreadyUsed = DB::table('bookings')
+    //                 ->where('customer_id', $user->id)
+    //                 ->where('coupon_id', $coupon->id)
+    //                 ->exists();
+
+    //             if ($alreadyUsed) {
+    //                 return null; // user already used this coupon once
+    //             }
+    //         } else {
+    //             // Normal coupon logic for all other coupons
+    //             $coupon = Coupon::where('code', $couponCode)
+    //                 ->where('is_active', true)
+    //                 ->whereDate('valid_from', '<=', Carbon::now())
+    //                 ->whereDate('valid_until', '>=', Carbon::now())
+    //                 ->first();
+
+    //             if (!$coupon) {
+    //                 return null;
+    //             }
+                
+    //         $alreadyUsed = DB::table('bookings')
+    //                 ->where('customer_id', $user->id)
+    //                 ->where('coupon_id', $coupon->id)
+    //                 ->exists();
+    //         }
+
+
+    //         // $coupon = Coupon::where('code', $couponCode)
+    //         // ->where('is_active', true)
+    //         // ->whereDate('valid_from', '<=', Carbon::now())
+    //         // ->whereDate('valid_until', '>=', Carbon::now())
+    //         // ->first();
+    //         // if (!$coupon) {
+    //         //     return null;
+    //         // }
+    //         // if ($coupon->usage_limit !== null && $coupon->used_count >= $coupon->usage_limit) {
+    //         //     return null;
+    //         // }
+    //         if (!is_null($coupon->user_ids)) {
+    //             $userIds = json_decode($coupon->user_ids, true) ?? [];
+    //             if (!in_array($user->id, $userIds)) {
+    //                 return null;
+    //             }
+                
+    //         }
+
+    //         elseif (!is_null($coupon->zipcodes)) {
+    //             $zipcodes = json_decode($coupon->zipcodes, true) ?? [];
+    //             if (!in_array($userZip, $zipcodes)) {
+    //                 return null; // invalid: area not allowed
+    //             }
+    //         }
+    //         //Send notification for coupon applied
+    //         $notificationData = [
+    //             'title' => "Promo Code Applied!",
+    //             "message" =>  "Coupon code ".$coupon->code." applied successfully! Discount added to your booking",
+    //             'type' => 'booking',
+    //             'payload' => [
+    //                 'coupon_id' => $coupon->id,
+    //                 'customer_id' => $user->id,
+    //             ],
+
+    //         ];
+    //         // $this->save_notification($user->id,$notificationData);
+    //         return $coupon;
+    //     } catch (Exception $e) {
+    //         throw new Exception('Error applying coupon: ' . $e->getMessage());
+    //     }
+    // }
     public function applyCoupon($request)
     {
         try {
-            // Assuming you have a Coupon model and logic to validate the coupon
             $couponCode = $request->input('coupon_code');
             $user = Auth::user();
             $userZip = $request->input('zipcode');
+            
             $coupon = Coupon::where('code', $couponCode)
                     ->where('is_active', true)
                     ->first();
+            
             if (!$coupon) {
                 return null; // coupon not found or inactive
             }
-            if ($coupon->type == 'promo') {
-                // Check if user is trying to use their own promo code
-                if ($user->promocode == $couponCode) {
-                    return null;
-                }
-
-                // Check if user has already used this coupon in bookings
-                $alreadyUsed = DB::table('bookings')
-                    ->where('customer_id', $user->id)
-                    ->where('coupon_id', $coupon->id)
-                    ->exists();
-
-                if ($alreadyUsed) {
-                    return null; // user already used this coupon once
-                }
-            } else {
-                // Normal coupon logic for all other coupons
-                $coupon = Coupon::where('code', $couponCode)
-                    ->where('is_active', true)
-                    ->whereDate('valid_from', '<=', Carbon::now())
-                    ->whereDate('valid_until', '>=', Carbon::now())
-                    ->first();
-
-                if (!$coupon) {
-                    return null;
+            
+            // Check if user is trying to use their own promo code
+            if ($coupon->type == 'promo' && $user->promocode == $couponCode) {
+                return null;
+            }
+            
+            // Check if user has already used this coupon (one-time use for all coupon types)
+            $alreadyUsed = DB::table('bookings')
+                ->where('customer_id', $user->id)
+                ->where('coupon_id', $coupon->id)
+                ->exists();
+            
+            if ($alreadyUsed) {
+                return null; // user already used this coupon
+            }
+            
+            // Date validation for regular coupons only
+            if ($coupon->type != 'promo') {
+                $isValidDate = Carbon::now()->between(
+                    Carbon::parse($coupon->valid_from),
+                    Carbon::parse($coupon->valid_until)
+                );
+                
+                if (!$isValidDate) {
+                    return null; // coupon expired or not yet valid
                 }
             }
-
-
-            // $coupon = Coupon::where('code', $couponCode)
-            // ->where('is_active', true)
-            // ->whereDate('valid_from', '<=', Carbon::now())
-            // ->whereDate('valid_until', '>=', Carbon::now())
-            // ->first();
-            // if (!$coupon) {
-            //     return null;
-            // }
-            // if ($coupon->usage_limit !== null && $coupon->used_count >= $coupon->usage_limit) {
-            //     return null;
-            // }
+            
+            // Usage limit check
+            if (!is_null($coupon->usage_limit) && $coupon->used_count >= $coupon->usage_limit) {
+                return null; // usage limit reached
+            }
+            
+            // User restrictions check
             if (!is_null($coupon->user_ids)) {
                 $userIds = json_decode($coupon->user_ids, true) ?? [];
                 if (!in_array($user->id, $userIds)) {
-                    return null;
+                    return null; // user not allowed to use this coupon
                 }
             }
-
+            // Zipcode restrictions check
             elseif (!is_null($coupon->zipcodes)) {
                 $zipcodes = json_decode($coupon->zipcodes, true) ?? [];
                 if (!in_array($userZip, $zipcodes)) {
                     return null; // invalid: area not allowed
                 }
             }
-            //Send notification for coupon applied
+            
+            // Send notification for coupon applied
             $notificationData = [
                 'title' => "Promo Code Applied!",
-                "message" =>  "Coupon code ".$coupon->code." applied successfully! Discount added to your booking",
+                'message' => "Coupon code " . $coupon->code . " applied successfully! Discount added to your booking",
                 'type' => 'booking',
                 'payload' => [
                     'coupon_id' => $coupon->id,
                     'customer_id' => $user->id,
                 ],
-
             ];
-            // $this->save_notification($user->id,$notificationData);
+            // $this->save_notification($user->id, $notificationData);
+            
             return $coupon;
+            
         } catch (Exception $e) {
             throw new Exception('Error applying coupon: ' . $e->getMessage());
         }
@@ -150,14 +236,20 @@ class BookingService {
                 $payment->save();
 
                 // Update user promo bonus amount if promo code used
+                
                 if (!empty($request->input('coupon_id'))) {
                     $Coupon = Coupon::where('id', $request->input('coupon_id'))->first();
-                    if($Coupon && $Coupon->type == 'promo' && $user->promocode == $Coupon->code) {
-                        $user->promo_bonus_amount += $Coupon->discount_value;
-                        $user->save();
+
+                    if ($Coupon && $Coupon->type == 'promo') {
+                        // Find the user who has this promo code
+                        $userWithPromo = User::where('promocode', $Coupon->code)->first();
+
+                        if ($userWithPromo) {
+                            $userWithPromo->promo_bonus_amount += $Coupon->discount_value;
+                            $userWithPromo->save();
+                        }
                     }
                 }
-
                 if(!empty($request->promo_used_amount)){
                     $user->promo_bonus_amount -= $request->promo_used_amount;
                     if($user->promo_bonus_amount < 0){

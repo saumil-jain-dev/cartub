@@ -64,7 +64,8 @@
                                         <tr class="product-removes inbox-data">
                                             <td></td>
                                             <td>
-                                                <div class="customer-details"><img class="{{ $cleaner->profile_image_url }}" alt="user">
+                                                <div class="customer-details">
+                                                   
                                                     <div><a href="{{ route('cleaners.edit', $cleaner->id) }}">{{ $cleaner->name }}</a>
                                                         <p class="c-o-light">{{ $cleaner->email }}</p>
                                                     </div>

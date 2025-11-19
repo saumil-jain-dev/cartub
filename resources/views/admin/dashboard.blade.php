@@ -125,7 +125,7 @@
             </div>
             </a>
         </div>
-        <div class="col-xl-7">
+        <div class="col-xl-12">
             <div class="card heading-space">
                 <div class="card-header card-no-border">
                     <div class="header-top">
@@ -142,6 +142,7 @@
                         <table class="table" id="shipment-tracking-table liveWashTable">
                             <thead>
                                 <tr>
+                                    
                                     <th>Vehicle</th>
                                     <th>Status</th>
                                     <th style="display: block;">Action</th>
@@ -150,7 +151,7 @@
                             <tbody id="liveWashTableBody">
                                 @foreach($live_wash_data as $booking)
                                 <tr class="inbox-data">
-                                    <td></td>
+                                    
                                     <td><a href="{{ route('bookings.show',$booking->id) }}" target="_blank">{{ $booking->vehicle?->model }}
                                             ({{ $booking->vehicle?->license_plate }})</a></td>
 

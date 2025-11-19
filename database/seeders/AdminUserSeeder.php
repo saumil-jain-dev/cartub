@@ -20,7 +20,7 @@ class AdminUserSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'email' => 'admin@example.com',
-                'phone' => '1234567890',
+                'phone' => '7960595810',
                 'password' => Hash::make('Password'),
                 'role' => 'super_admin',  // optional, if your users table has role column
                 'is_active' => true,

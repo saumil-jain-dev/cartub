@@ -56,7 +56,7 @@
                             <thead>
                                 <tr>
                                     <th> </th>
-                                    <th> Photo / Name</th>
+                                    <th> Name</th>
                                     <th> Phone</th>
                                     <th> Email</th>
                                     <th> Availability</th>
@@ -72,15 +72,14 @@
                                         <td>
                                             <div class="common-flex align-items-center">
                                                 <div class="position-relative">
-                                                    <img class="img-fluid rounded-circle"
-                                                        src="{{ $cleaner->profile_image_url }}" alt="user">
-                                                    <div class="status">
-                                                        @if($cleaner->is_available)
-                                                        <div class="inner-dot bg-success"></div>
-                                                        @else
-                                                        <div class="inner-dot bg-danger"></div>
-                                                        @endif
-                                                    </div>
+                                                    
+                                                    <!--<div class="status">-->
+                                                    <!--    @if($cleaner->is_available)-->
+                                                    <!--    <div class="inner-dot bg-success"></div>-->
+                                                    <!--    @else-->
+                                                    <!--    <div class="inner-dot bg-danger"></div>-->
+                                                    <!--    @endif-->
+                                                    <!--</div>-->
                                                 </div>
                                                 <div><a class="f-w-500" href="javascript:void(0)">{{ $cleaner->name }}</a>
                                                    

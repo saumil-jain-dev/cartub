@@ -50,8 +50,7 @@
                                         <td>{{ $rating->customer?->name }}</td>
                                         <td>
                                             <div class="product-names">
-                                                <div class="light-product-box"><img class="img-fluid"
-                                                        src="{{ getImageAdmin($rating->cleaner?->profile_picture) }}" alt="user"></div>
+                                                
                                                 <p>{{ $rating->cleaner?->name }}</p>
                                             </div>
                                         </td>
