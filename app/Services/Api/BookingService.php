@@ -197,7 +197,7 @@ class BookingService {
         }
     }
 
-    public function createBooking($request)
+    public function createBooking($request,$firebaseService)
     {
         try {
             DB::beginTransaction();
@@ -325,6 +325,22 @@ class BookingService {
                     'subject' => '🚘 Your Car Wash is Booked - See You Soon!'
                 ];
                 SendMailJob::dispatch($emailData);
+
+                //Store to database
+                $firebaseService->storeBooking([
+                    'id' => $booking->id,
+                    'booking_number' => $booking->booking_number,
+                    'customer_name' => $booking->customer->name,
+                    'status' => $booking->status,
+                    'scheduled_date' => $booking->scheduled_date,
+                    'scheduled_time' => $booking->scheduled_time,
+                    'vehicle_number' => $booking->vehicle->license_plate,
+                    'vehicle_model' => $booking->vehicle->model,
+                    'total_amount' => $booking->total_amount,
+                    'payment_status' => $booking->payment_status,
+                    'created_at' => $booking->created_at->toIso8601String(),
+                    'payment_method' => $booking->payment->payment_method,
+                ]);
                 return $booking;
             } else {
                 DB::rollBack();

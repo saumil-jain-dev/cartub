@@ -16,6 +16,7 @@ use App\Http\Resources\Api\Customer\BookingListResource;
 use App\Http\Resources\Api\Customer\BookingResource;
 use Illuminate\Http\Request;
 use App\Services\Api\BookingService;
+use App\Services\Admin\FirebaseService;
 use Exception;
 
 class BookingController extends Controller
@@ -46,10 +47,10 @@ class BookingController extends Controller
         }
     }
 
-    public function createBooking(BookingRequest $request)
+    public function createBooking(BookingRequest $request,FirebaseService $firebaseService)
     {
         try {
-            $booking = $this->bookingService->createBooking($request);
+            $booking = $this->bookingService->createBooking($request,$firebaseService);
             return success(
                 new BookingResource($booking),
                 trans('messages.create', ['attribute' => 'Booking']),
