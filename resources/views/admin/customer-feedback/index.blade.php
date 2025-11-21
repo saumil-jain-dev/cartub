@@ -92,7 +92,7 @@ $(document).on('click', '.delete-feedback', function () {
     const ratingId = $(this).data('id');
     Swal.fire({
         title: 'Are you sure?',
-        text: "This will delete the user and all its details.",
+        text: "This will delete the customer ratting and feedback.",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
