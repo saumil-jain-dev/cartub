@@ -364,7 +364,7 @@
                         `;
                         const row = `
                         <tr>
-                            <td><a href="/bookings/details/${b.id}" target="_blank">${b.vehicle}</a></td>
+                            <td><a href="/admin/bookings/details/${b.id}" target="_blank">${b.vehicle}</a></td>
                             <td><span class="badge f-14 f-w-400 txt-dark">${b.status}</span></td>
                             <td style="display: contents;">${b.booking_date}</td>
                             <td style="display: contents;">${b.schedule_date}</td>
