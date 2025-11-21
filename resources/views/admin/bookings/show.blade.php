@@ -195,7 +195,6 @@
                                                                                 data-bs-target="#panelsStayOpen-collapseOne"
                                                                                 aria-expanded="true"
                                                                                 aria-controls="panelsStayOpen-collapseOne">Cleaner
-                                                                                Details
                                                                                 Details</button></div>
                                                                         <div class="accordion-collapse collapse show"
                                                                             id="panelsStayOpen-collapseOne">

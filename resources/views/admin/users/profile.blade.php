@@ -160,7 +160,7 @@
                                                                                     <th scope="row">{{ $recent_booking->booking_number }}</th>
                                                                                     <td> {{ $recent_booking->vehicle?->model }} ({{ $recent_booking->vehicle?->license_plate }})</td>
                                                                                     <td>{{ $recent_booking->address }}</td>
-                                                                                    <td>${{ $recent_booking->total_amount }} via {{ $recent_booking->payment?->payment_type ?? "-" }}</td>
+                                                                                    <td>£{{ $recent_booking->total_amount }} via {{ $recent_booking->payment?->payment_type ?? "-" }}</td>
                                                                                     <td> @php
                                                                                             if ($recent_booking->status === 'pending' && $recent_booking->cleaner_id) {
                                                                                                 $badgeText = 'Assigned';
@@ -183,6 +183,10 @@
                                                                                                         $badgeText = 'Completed';
                                                                                                         $badgeClass = 'badge-success';
                                                                                                         break;
+                                                                                                    case 'mark_as_arrived':
+                                                                                                        $badgeText = 'Marked As Arrived';
+                                                                                                        $badgeClass = 'badge-dark';
+                                                                                                        break;
                                                                                                     case 'cancelled':
                                                                                                         $badgeText = 'Cancelled';
                                                                                                         $badgeClass = 'badge-danger';
@@ -194,7 +198,7 @@
                                                                                             }
                                                                                         @endphp
 
-                                                                                        <span class="badge {{ $badgeClass }}">{{ $badgeText }}</span>
+                                                                                        <span class="badge {{ $badgeClass }}" style="color: white;">{{ $badgeText }}</span>
                                                                                     </td>
                                                                                     <td> {{ $recent_booking->cleaner?->name ?? '-' }}</td>
                                                                                 </tr>
@@ -239,6 +243,7 @@
                                                                         </th>
                                                                         <th scope="col">Vehicle</th>
                                                                         <th scope="col">Amount</th>
+                                                                        <th scope="col">Cleaner</th>
                                                                         <th scope="col">Status</th>
                                                                     </tr>
                                                                 </thead>
@@ -252,7 +257,8 @@
                                                                         {{ Carbon::parse($recent_booking->scheduled_time)->format('h:i A') }}</td>
                                                                             <td>{{ $booking->service_name }}</td>
                                                                             <td>{{ $booking->vehicle?->model ?? "-" }}</td>
-                                                                            <td>${{ $booking->total_amount }}</td>
+                                                                            <td>£{{ $booking->total_amount }}</td>
+                                                                            <td>{{ optional($booking->cleaner)->name ?? '-' }}</td>
                                                                             <td>
                                                                                 @php
                                                                                     if ($booking->status === 'pending' && $booking->cleaner_id) {
@@ -275,6 +281,10 @@
                                                                                             case 'completed':
                                                                                                 $badgeText = 'Completed';
                                                                                                 $badgeClass = 'badge-success';
+                                                                                                break;
+                                                                                            case 'mark_as_arrived':
+                                                                                                $badgeText = 'Marked As Arrived';
+                                                                                                $badgeClass = 'badge-dark';
                                                                                                 break;
                                                                                             case 'cancelled':
                                                                                                 $badgeText = 'Cancelled';
@@ -354,7 +364,7 @@
                                         aria-labelledby="payment-history-tab">
                                         <div class="card">
                                             <div class="card-header">
-                                                <h5>Settings</h5>
+                                                <h5>Payment History</h5>
                                             </div>
                                             <div class="card-body setting-wrapper">
                                                 <div class="row g-4">
@@ -376,10 +386,10 @@
                                                                     
                                                                     @if(count($bookings) > 0 )
                                                                         @foreach($bookings as $booking)
-                                                                        <tr>
+                                                                        <tr class="{{ $booking->coupon_id ? 'bg-warning text-dark' : '' }}">
                                                                             <th scope="row">{{ $booking->payment?->transaction_id }}</th>
                                                                             <td>{{ Carbon::parse($booking->payment?->created_at)->format('d F Y, H:i A') }}</td>
-                                                                            <td>${{ $booking->total_amount }}</td>
+                                                                            <td>£{{ $booking->total_amount }}</td>
                                                                             <td>{{ $booking->payment?->payment_type }}</td>
                                                                             <td><span
                                                                                     class="badge badge-light-success">{{ ucfirst($booking->payment_status) }}</span>
@@ -405,6 +415,44 @@
                         </div>
                     </div>
                 </div><!-- user profile menu end-->
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header card-no-border">
+                    <div class="card-body pt-0 px-0">
+                        <div class="list-product user-list-table">
+                            <div class="table-responsive custom-scrollbar">
+                                <h4>Customers who used promo: {{ $user->promocode }}</h4>
+
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Customer Name</th>
+                                            <th>Booking No</th>
+                                            <th>Date</th>
+                                            <th>Booking Amount</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @forelse($promoUsage as $row)
+                                            <tr>
+                                                <td>{{ $row['customer_name'] }}</td>
+                                                <td>{{ $row['booking_number'] }}</td>
+                                                <td>{{ $row['date'] }}</td>
+                                                <td>£{{ $row['amount'] }}</td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="4">No bookings found for this promo.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div><!-- Container-fluid Ends-->

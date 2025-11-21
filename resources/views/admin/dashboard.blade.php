@@ -51,7 +51,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="c-o-light mb-1">Total Revenue</p>
+                                <p class="c-o-light mb-1">Total</p>
                                 <h4><span id="totalRevenue" class="counter" data-target="{{ $total_revenue }}">{{ $total_revenue }}</span></h4>
                             </div>
                         </div>
