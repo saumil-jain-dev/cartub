@@ -350,6 +350,15 @@ class BookingController extends Controller
         return view('admin.bookings.invoice',$this->data);
     }
 
+    public function downloadInvoice($id){
+        $bookingDetails = Booking::with(['customer','payment','washType','vehicle','service'])->where('id',$id)->first();
+        $pdf = Pdf::loadView('admin.bookings.invoice_pdf', compact('bookingDetails'))
+                ->setPaper('a4')
+                ->setWarnings(false)
+                ->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        return $pdf->download('Invoice-'.$bookingDetails->booking_number.'.pdf');
+    }
+
     public function destroy($id){
         try {
             $booking = Booking::findOrFail($id);

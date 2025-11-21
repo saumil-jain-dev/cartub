@@ -23,4 +23,15 @@ class FeedbackController extends Controller
         $this->data['ratings'] = $ratings;
         return view('admin.customer-feedback.index',$this->data);
     }
+
+    public function destroy($id){
+        try {
+            $user = Rating::findOrFail($id);
+            $user->delete();
+
+            return response()->json(['success' => true, 'message' => 'Customer ratting or feedback deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
 }
