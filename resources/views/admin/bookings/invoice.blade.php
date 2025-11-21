@@ -15,6 +15,9 @@
   <!-- html2pdf.js CDN for PDF generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 
     <style>
         * {
@@ -470,18 +473,47 @@
   <script>
 // Download function
 function downloadInvoice() {
-    
-    const element = document.getElementById('invoice-container');
+
+    const element = document.getElementById("invoice-container");
+
     const opt = {
-        margin: [0.5, 0.5, 0.5, 0.5],
-        filename: 'invoice-INV-2024-001.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, width: 1160 },
-        jsPDF: { unit: 'in', format: [8.5, 11], orientation: 'portrait' },
-        pagebreak: { mode: ['css', 'legacy'], avoid: ['table', 'tr'] }
+        scale: 2, // high quality
+        useCORS: true,
+        logging: false
     };
-    html2pdf().set(opt).from(element).save();
+
+    html2canvas(element, opt).then(canvas => {
+
+        const imgData = canvas.toDataURL("image/png");
+
+        // A4 size in pixels at 96 DPI
+        const pdfWidth = 595.28;
+        const pdfHeight = 841.89;
+
+        // Image width = pdf width
+        const imgWidth = pdfWidth;
+        const imgHeight = canvas.height * (imgWidth / canvas.width);
+
+        const pdf = new window.jspdf.jsPDF("p", "pt", "a4");
+
+        let position = 0;
+
+        // If content > one page → split automatically
+        if (imgHeight < pdfHeight) {
+            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+        } else {
+            while (position < imgHeight) {
+                pdf.addImage(imgData, "PNG", 0, position * -1, imgWidth, imgHeight);
+                position += pdfHeight;
+
+                if (position < imgHeight) pdf.addPage();
+            }
+        }
+
+        pdf.save("{{ $bookingDetails->booking_number }}.pdf");
+    });
 }
+
 
 // Print function
 function printInvoice() {
