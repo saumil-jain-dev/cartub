@@ -39,7 +39,7 @@
                 </div>
             </a>
         </div>
-        
+
         <div class="col-xl-3 col-sm-6 d-none d-md-flex">
              <a href="{{ route('users.index') }}" class="text-decoration-none">
                 <div class="card widget-13 widget-hover">
@@ -57,7 +57,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
              </a>
@@ -164,7 +164,7 @@
                         <table class="table" id="shipment-tracking-table liveWashTable">
                             <thead>
                                 <tr>
-                                    
+
                                     <th>Vehicle</th>
                                     <th>Status</th>
                                     <th style="display: contents;">Booking Date</th>
@@ -175,7 +175,7 @@
                             <tbody id="liveWashTableBody">
                                 @foreach($live_wash_data as $booking)
                                 <tr class="inbox-data">
-                                    
+
                                     <td><a href="{{ route('bookings.show',$booking->id) }}" target="_blank">{{ $booking->vehicle?->model }}
                                             ({{ $booking->vehicle?->license_plate }})</a></td>
 
@@ -236,7 +236,7 @@
                     <div class="header-top">
                         <h5>Service Summary</h5>
                         <div class="card-header-right-icon">
-                            
+
                         </div>
                     </div>
                 </div>
@@ -364,7 +364,7 @@
                         `;
                         const row = `
                         <tr>
-                            <td><a href="/bookings/${b.id}" target="_blank">${b.vehicle}</a></td>
+                            <td><a href="/bookings/details/${b.id}" target="_blank">${b.vehicle}</a></td>
                             <td><span class="badge f-14 f-w-400 txt-dark">${b.status}</span></td>
                             <td style="display: contents;">${b.booking_date}</td>
                             <td style="display: contents;">${b.schedule_date}</td>
