@@ -237,7 +237,7 @@
                                                                     $badgeClass = 'badge-danger';
                                                                     break;
                                                                 case 'mark_as_arrived':
-                                                                    $badgeText = 'Mark As Arrived';
+                                                                    $badgeText = 'Marked As Arrived';
                                                                     $badgeClass = 'badge-dark';
                                                                     break;
                                                                 default:

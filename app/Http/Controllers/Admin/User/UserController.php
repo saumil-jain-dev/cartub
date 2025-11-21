@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\Coupon;
 use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
@@ -82,10 +83,30 @@ class UserController extends Controller
         $bookings = Booking::with(['cleaner','customer','vehicle','service','payment','washType'])->where('customer_id', $id)->orderBy('id','desc')->get();
         $vehicles = Vehicle::where('customer_id',$id)->orderBy('id','desc')->get();
 
+        $promoCoupon = Coupon::where('code', $user->promocode)->first();
+        $promoUsage = collect(); // default empty
+
+        if ($promoCoupon) {
+            // All bookings where this promo was used
+            $promoUsage = Booking::with(['customer', 'payment'])
+                ->where('coupon_id', $promoCoupon->id)
+                ->orderBy('id', 'desc')
+                ->get()
+                ->map(function ($b) {
+                    return [
+                        'customer_name' => $b->customer->name ?? 'N/A',
+                        'booking_number' => $b->booking_number ?? $b->id,
+                        'date' => $b->created_at->format('d-m-Y'),
+                        'amount' => $b->payment->amount ?? $b->total_amount ?? 0,
+                    ];
+                });
+        }
+
         $this->data['recentBooking'] = $recentBooking;
         $this->data['bookings'] = $bookings;
         $this->data['vehicles'] = $vehicles;
         $this->data['user'] = $user;
+        $this->data['promoUsage'] = $promoUsage;
         return view("admin.users.profile", $this->data);
     }
 
