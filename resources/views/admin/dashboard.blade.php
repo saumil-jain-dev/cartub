@@ -1,5 +1,9 @@
 @extends('admin.layouts.app')
 @section('pageTitle', $pageTitle)
+@section('styles')
+<style>
+</style>
+@endsection
 @section('content')
 @include('admin.components.breadcrumb', [
     'title' => $pageTitle,
@@ -8,122 +12,140 @@
         ['label' => $pageTitle] // Last item, no URL
     ]
 ])
+<div class="d-flex justify-content-end mb-3">
+    <input type="text" id="dateRangePicker" class="form-control" style="max-width:250px;"
+           placeholder="Select Date Range" name="dates" readonly>
+</div>
 <div class="container-fluid dashboard-13">
     <div class="row">
         <div class="col-xl-3 col-sm-6 d-none d-md-flex">
-             <a href="{{ route('bookings.index') }}" class="text-decoration-none">
-            <div class="card widget-13 widget-hover">
-                <div class="card-body">
-                    <div>
-                        <div class="stat-content">
-                            <div class="stat-square bg-light-primary">
-                                <svg class="fill-primary">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-package') }}"></use>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="c-o-light mb-1">Total Bookings</p>
-                                <h4><span id="totalBookings" class="counter" data-target="{{ $total_booking_count }}">{{ $total_booking_count }}</span></h4>
-                            </div>
-                        </div>
-                    </div>
-                    {{-- <div class="common-space">
-                        <div class="common-align font-success"><i class="me-1"
-                                data-feather="trending-up"></i><span>+12.02%</span></div>
-                        <div class="common-stat-option">
-                            <div id="package-chart"></div>
-                        </div>
-                    </div> --}}
-                </div>
-            </div>
-             </a>
-        </div>
-        <div class="col-xl-3 col-sm-6 d-none d-md-flex">
-            <a href="{{ route('payment.index') }}" class="text-decoration-none">
-            <div class="card widget-13 widget-hover">
-                <div class="card-body">
-                    <div>
-                        <div class="stat-content">
-                            <div class="stat-square bg-light-secondary">
-                                <svg class="fill-secondary">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-progress-delivery') }}">
-                                    </use>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="c-o-light mb-1">Total</p>
-                                <h4><span id="totalRevenue" class="counter" data-target="{{ $total_revenue }}">{{ $total_revenue }}</span></h4>
+            <a href="{{ route('bookings.index') }}" class="text-decoration-none">
+                <div class="card widget-13 widget-hover">
+                    <div class="card-body">
+                        <div>
+                            <div class="stat-content">
+                                <div class="stat-square bg-light-primary">
+                                    <svg class="fill-primary">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-package') }}"></use>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="c-o-light mb-1">Total Bookings</p>
+                                    <h4><span id="totalBookings" class="counter" data-target="{{ $total_booking_count }}">{{ $total_booking_count }}</span></h4>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {{-- <div class="common-space">
-                        <div class="common-align font-danger"><i class="me-1"
-                                data-feather="trending-down"></i><span>-0.03%</span></div>
-                        <div class="progress" role="progressbar" aria-label="Animated striped example"
-                            aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary"
-                                style="width: 75%;"></div>
-                        </div>
-                    </div> --}}
                 </div>
-            </div>
             </a>
         </div>
+        
         <div class="col-xl-3 col-sm-6 d-none d-md-flex">
              <a href="{{ route('users.index') }}" class="text-decoration-none">
-            <div class="card widget-13 widget-hover">
-                <div class="card-body">
-                    <div>
-                        <div class="stat-content">
-                            <div class="stat-square bg-light-warning">
-                                <svg class="fill-warning">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-delivered') }}"></use>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="c-o-light mb-1">Active Customers</p>
-                                <h4><span id="activeCustomers" class="counter" data-target="{{ $total_active_customer }}">{{ $total_active_customer }}</span></h4>
+                <div class="card widget-13 widget-hover">
+                    <div class="card-body">
+                        <div>
+                            <div class="stat-content">
+                                <div class="stat-square bg-light-warning">
+                                    <svg class="fill-warning">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-delivered') }}"></use>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="c-o-light mb-1">Active Customers</p>
+                                    <h4><span id="activeCustomers" class="counter" data-target="{{ $total_active_customer }}">{{ $total_active_customer }}</span></h4>
+                                </div>
                             </div>
                         </div>
+                        
                     </div>
-                    {{-- <div class="common-space">
-                        <div class="common-align font-success"><i class="me-1"
-                                data-feather="trending-up"></i><span>+13.04%</span></div>
-                        <div class="delivered-stat-option">
-                            <div id="package-delivered"></div>
-                        </div>
-                    </div> --}}
                 </div>
-            </div>
              </a>
         </div>
         <div class="col-xl-3 col-sm-6 d-none d-md-flex">
              <a href="{{ route('cleaners.index') }}" class="text-decoration-none">
-            <div class="card widget-13 widget-hover">
-                <div class="card-body">
-                    <div>
-                        <div class="stat-content">
-                            <div class="stat-square bg-light-success">
-                                <svg class="fill-success">
-                                    <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-client') }}"></use>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="c-o-light mb-1">Active Cleaners</p>
-                                <h4><span id="activeCleaners" class="counter" data-target="{{ $total_active_cleaner }}">{{ $total_active_cleaner }}</span></h4>
+                <div class="card widget-13 widget-hover">
+                    <div class="card-body">
+                        <div>
+                            <div class="stat-content">
+                                <div class="stat-square bg-light-success">
+                                    <svg class="fill-success">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-client') }}"></use>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="c-o-light mb-1">Active Cleaners</p>
+                                    <h4><span id="activeCleaners" class="counter" data-target="{{ $total_active_cleaner }}">{{ $total_active_cleaner }}</span></h4>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {{-- <div class="common-space">
-                        <div class="common-align font-danger"><i class="me-1"
-                                data-feather="trending-down"></i><span>-0.08%</span></div>
-                        <div class="common-stat-option client-chart">
-                            <div id="new-clients-chart"></div>
-                        </div>
-                    </div> --}}
                 </div>
-            </div>
             </a>
+        </div>
+        <div class="col-xl-3 col-sm-6 d-none d-md-flex">
+            <a href="{{ route('payment.index') }}" class="text-decoration-none">
+                <div class="card widget-13 widget-hover">
+                    <div class="card-body">
+                        <div>
+                            <div class="stat-content">
+                                <div class="stat-square bg-light-secondary">
+                                    <svg class="fill-secondary">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-progress-delivery') }}">
+                                        </use>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="c-o-light mb-1">Total</p>
+                                    <h4><span id="totalRevenue" class="counter" data-target="{{ $total_revenue }}">{{ $total_revenue }}</span></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-xl-3 col-sm-6 d-none d-md-flex">
+             <a href="{{ route('bookings.index') }}" class="text-decoration-none">
+                <div class="card widget-13 widget-hover">
+                    <div class="card-body">
+                        <div>
+                            <div class="stat-content">
+                                <div class="stat-square bg-light-warning">
+                                    <svg class="fill-warning">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-delivered') }}"></use>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="c-o-light mb-1">Total Revenue</p>
+                                    <h4><span id="revenue" class="counter" data-target="{{ $total_amount }}">{{ $total_amount }}</span></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </a>
+        </div>
+        <div class="col-xl-3 col-sm-6 d-none d-md-flex">
+             <a href="{{ route('cleaners.performance-reports') }}" class="text-decoration-none">
+                <div class="card widget-13 widget-hover">
+                    <div class="card-body">
+                        <div>
+                            <div class="stat-content">
+                                <div class="stat-square bg-light-warning">
+                                    <svg class="fill-warning">
+                                        <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-delivered') }}"></use>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="c-o-light mb-1">Cleaner Commission</p>
+                                    <h4><span id="commission" class="counter" data-target="{{ $total_commission }}">{{ $total_commission }}</span></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </a>
         </div>
         <div class="col-xl-12">
             <div class="card heading-space">
@@ -145,7 +167,9 @@
                                     
                                     <th>Vehicle</th>
                                     <th>Status</th>
-                                    <th style="display: block;">Action</th>
+                                    <th style="display: contents;">Booking Date</th>
+                                    <th style="display: contents;">Schedule Date</th>
+                                    <th style="display: contents;">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="liveWashTableBody">
@@ -192,6 +216,8 @@
 
                                         <span class="badge {{ $badgeClass }}">{{ $badgeText }}</span>
                                     </td>
+                                    <td style="display: contents;">{{ $booking->scheduled_date }}</td>
+                                    <td style="display: contents;">{{ $booking->scheduled_date }}</td>
                                 </tr>
 
                                 @endforeach
@@ -311,6 +337,8 @@
             const $totalRevenue    = $('#totalRevenue');
             const $activeCustomers = $('#activeCustomers');
             const $activeCleaners  = $('#activeCleaners');
+            const $totalAmount     = $('#revenue');
+            const $totalCommission = $('#commission');
             const $liveWashBody    = $('#liveWashTableBody');
             const $liveWashTypeTableBody = $('#liveWashTypeTableBody');
 
@@ -322,6 +350,8 @@
                     // 1) Update cards
                     $totalBookings.text(data.total_booking_count);
                     $totalRevenue.text(parseFloat(data.total_revenue).toFixed(2));
+                    $totalAmount.text(parseFloat(data.total_amount).toFixed(2));
+                    $totalCommission.text(parseFloat(data.total_commission).toFixed(2));
                     $activeCustomers.text(data.total_active_customer);
                     $activeCleaners.text(data.total_active_cleaner);
 
@@ -336,7 +366,9 @@
                         <tr>
                             <td><a href="/bookings/${b.id}" target="_blank">${b.vehicle}</a></td>
                             <td><span class="badge f-14 f-w-400 txt-dark">${b.status}</span></td>
-                            <td style="display: block;">${actionBtns}</td>
+                            <td style="display: contents;">${b.booking_date}</td>
+                            <td style="display: contents;">${b.schedule_date}</td>
+                            <td style="display: contents;">${actionBtns}</td>
 
                         </tr>`;
                         $liveWashBody.append(row);
@@ -427,5 +459,60 @@
                 modal.show();
             });
         });
+    </script>
+    <script>
+    $('#dateRangePicker').daterangepicker(
+        {
+            opens: 'left',
+            autoUpdateInput: false,
+            locale: { cancelLabel: 'Clear' }
+        }
+    );
+
+    $('#dateRangePicker').on('apply.daterangepicker', function(ev, picker) {
+
+        // Set selected date range in input field
+        $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+
+        // AJAX CALL
+        $.ajax({
+            url: "{{ route('dashboard.filter') }}",   // your route
+            type: "GET",
+            data: {
+                start: picker.startDate.format('YYYY-MM-DD'),
+                end: picker.endDate.format('YYYY-MM-DD')
+            },
+            success: function(res) {
+                // Update counts
+                updateCounts(res)
+            }
+        });
+
+    });
+
+    // CANCEL EVENT (clear filter and load all data)
+    $('#dateRangePicker').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+
+        // Reload full dashboard data
+        $.ajax({
+            url: "{{ route('dashboard.filter') }}",
+            type: "GET",
+            data: { reset: true },
+            success: function(res) {
+                updateCounts(res)
+            }
+        });
+    });
+
+    function updateCounts(res) {
+        $('#totalBookings').text(res.total_booking_count);
+        $('#activeCustomers').text(res.total_active_customer);
+        $('#activeCleaners').text(res.total_active_cleaner);
+        $('#totalRevenue').text(res.total_revenue);
+        $('#revenue').text(res.total_amount);
+        $('#commission').text(res.total_commission);
+    }
+
     </script>
 @endsection

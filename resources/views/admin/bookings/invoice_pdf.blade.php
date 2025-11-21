@@ -11,7 +11,7 @@
   <meta name="author" content="pixelstrap">
     <link rel="icon" href="assets/images/favicon.png" type="image/x-icon">
  <link rel="shortcut icon" href="assets/images/favicon.png" type="image/x-icon">
-  <title>{{ $pageTitle }}</title>
+  <title>Invoice</title>
   <!-- html2pdf.js CDN for PDF generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -24,7 +24,7 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: "DejaVu Sans", sans-serif !important;
             background: #f5f5f5;
             padding: 20px;
         }
@@ -459,9 +459,9 @@
     
         <!-- Action Buttons -->
     <div class="action-buttons">
-        <button class="btn btn-download" onclick="downloadInvoice()">
-            <span>📥</span> Download PDF
-        </button>
+        <a href="{{ route('bookings.downloadInvoice', $bookingDetails->id) }}" class="btn btn-download">
+            📥 Download PDF
+        </a>
         <button class="btn btn-print" onclick="printInvoice()">
             <span>🖨️</span> Print Invoice
         </button>

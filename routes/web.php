@@ -49,6 +49,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::get('/bookings/by-status',  'getByStatus')->name('dashboard.bookings.by-status');
             Route::get('today-wash', 'todayWash')->name('dashboard.today-wash');
             Route::get('metrics', 'metrics')->name('dashboard.metrics');
+            Route::get('/dashboard-filter', 'filter')->name('dashboard.filter');
         });
     });
     //Role Permission Management
@@ -82,6 +83,7 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
             Route::post('validate-coupon','validateCoupon')->name('bookings.validate-coupon');
             Route::get('search-vehicle','searchVehicle')->name('bookings.search-vehicle');
             Route::get('track/{id}', 'trackBooking')->name('bookings.track');
+            Route::get('/{id}/download-invoice', 'downloadInvoice')->name('bookings.downloadInvoice');
         });
     });
 
@@ -150,4 +152,5 @@ Route::middleware(['redirect.if.unauthenticated'])->prefix('admin')->group(funct
 
     //Customer Feedback Route
     Route::get('customer-feedback', [FeedbackController::class,'index'])->name('customer-feedback.index');
+    Route::delete('customer-feedback/{id}', [FeedbackController::class,'destroy'])->name('customer-feedback.destroy');
 });
